@@ -90,18 +90,18 @@ const MssgSent = () => {
     id: 1,
     name: 'Mohamed',
     image: logoImg,
-    message1: 'Hello everyone!',
+    message1: 'Hello everyone sfsdrtertertrtyrtyrtyr SIIIIIIIIIIIIIIIIIIIIIIIIIR jafafdheshkg jqwgjhgwhjgshadgsg!',
     message2: 'Hello back!',
     date: 'Today, 12:15pm',
     group: 'Friends Forever',
     online: 'Online - Last seen, 2.02pm'
   };
   return (
-    <div className='w-full h-full m-[15px]'>
-      <div className='w-full h-full flex'>
-        <div className="w-[15px] h-[15px] mt-[50px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]">
+    <div className='w-[70%] h-full m-[15px]'>
+      <div className='w-full h-fit flex'>
+        <div className=" w-[15px] h-[15px] mt-[50px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]">
           </div>
-        <div className='p-[10px] ml-[15px] mt-[10px] w-[150px] h-[40px] bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-center text-black dark:text-white' style={{fontFamily: 'Roboto', fontSize: '17px', fontStyle: 'normal', fontWeight: 400, lineHeight: 'normal', letterSpacing: '1px'}}>
+        <div className='p-[10px] ml-[15px] mt-[10px] max-w-[100%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-black dark:text-white text-clip overflow-hidden' style={{fontFamily: 'Roboto', fontSize: '17px', fontStyle: 'normal', fontWeight: 400, lineHeight: 'normal', letterSpacing: '1px'}}>
           {defaultConvData.message1}
         </div>
 
@@ -109,30 +109,6 @@ const MssgSent = () => {
     </div>
   );
 };
-// const MssgReceived = () => {
-//   const defaultConvData: ConvData = {
-//     id: 1,
-//     name: 'Mohamed',
-//     image: logoImg,
-//     message1: 'Hello everyone!',
-//     message2: 'Hello back!',
-//     date: 'Today, 12:15pm',
-//     group: 'Friends Forever',
-//     online: 'Online - Last seen, 2.02pm'
-//   };
-//   return (
-//     <div className='w-full h-full m-[15px] flex flex-row-reverse'>
-//       <div className='w-full h-fit flex'>
-//         <div className="w-[15px] h-[15px] mt-[50px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]">
-//           </div>
-//         <div className='p-[10px] mr-[30px] mt-[10px] w-[130px] h-[40px] bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-center text-black ' style={{fontFamily: 'Roboto', fontSize: '17px', fontStyle: 'normal', fontWeight: 400, lineHeight: 'normal', letterSpacing: '1px'}}>
-//           {defaultConvData.message2}
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// };
 
 
 const Chat = () => {
@@ -181,7 +157,7 @@ const Chat = () => {
            <ContactBar />
         </div>
         <div className='w-full h-[70%] mt-[25px] flex-wrap'>
-          < MssgSent /> 
+          < MssgSent />
         </div>
         <div className='w-full h-[10%] border-solid'>
         </div>
