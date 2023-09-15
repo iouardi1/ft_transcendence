@@ -12,6 +12,8 @@ import {
 import { MessageService } from './message.service';
 import { Socket, Server } from 'socket.io';
 import { messageDTO } from '../dto/messageDTO';
+import { userDTO } from '../dto/userDTO';
+import { dmDTO } from '../dto/dmDTO';
 
 @WebSocketGateway({
   cors: {
@@ -24,6 +26,22 @@ export class MessageGateway
   constructor(private messageService: MessageService) {}
 
   @WebSocketServer() server: Server;
+
+  @SubscribeMessage('addUser')
+  async handleAddUser(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: userDTO,
+  ) {
+    this.messageService.createUser(client, payload);
+  }
+
+  @SubscribeMessage('addDm')
+  async handleAddDm(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: dmDTO,
+  ) {
+    this.messageService.createDm(client, payload);
+  }
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
