@@ -1,3 +1,5 @@
 export class dmDTO {
-    adminId: number;
+    senderId: number;
+    receiverName: string;
+
 }

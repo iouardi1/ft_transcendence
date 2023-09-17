@@ -9,7 +9,7 @@ import { Socket, Server } from 'socket.io';
 export class MessageService {
   constructor(private prismaService: PrismaService) {}
 
-  async createMessage(client: Socket, payload: messageDTO) {
+  async createMessage(client: Socket, payload: messageDTO, server: Server) {
     console.log(payload)
     const message = await this.prismaService.message.create({
       data: {
@@ -44,7 +44,9 @@ export class MessageService {
       }
     })
     console.log("AFTER BRUH")
-    client.emit('createdMessage', message)
+    client.broadcast.emit('createdMessage', message)
+    //client.to("${payload.dmId}").emit('createdMessage', message)
+
   }
   
   async createUser(client: Socket, payload: userDTO) {
@@ -60,14 +62,33 @@ export class MessageService {
   
   async createDm(client: Socket, payload: dmDTO) {
     console.log(payload)
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: payload.receiverName
+      }
+    })
+    console.log(user);
     const dm = await this.prismaService.dM.create({
       data: {
-        adminId : payload.adminId
+        participantId : user.id
       },
     });
     await this.prismaService.user.update({
       where: {
-        id: payload.adminId,
+        id: payload.senderId,
+      },
+      data : {
+        dmAdmin: {
+          connect: {
+            id: dm.id
+          }
+        }
+      }
+    })
+    
+    await this.prismaService.user.update({
+      where: {
+        id: user.id,
       },
       data : {
         dmAdmin: {
@@ -78,6 +99,6 @@ export class MessageService {
       }
     })
     console.log("AFTER BRUH")
-    client.emit('createdDm', dm)
+    client.emit('createdDm', dm.id)
   }
 }

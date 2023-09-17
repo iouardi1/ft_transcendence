@@ -47,8 +47,9 @@ export class MessageGateway
   async handleSendMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: messageDTO,
+    server: Server
   ) {
-    this.messageService.createMessage(client, payload);
+    this.messageService.createMessage(client, payload, server);
   }
 
   afterInit(server: Server) {

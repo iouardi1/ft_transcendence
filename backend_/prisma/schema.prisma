@@ -16,7 +16,7 @@ model User{
   // updatedAt DateTime @updatedAt
   // userId  String @unique
   // email String @unique
-  username String
+  username String @unique
   // displayName String
   // image String
   dmAdmin DM[]
@@ -26,7 +26,7 @@ model User{
   // participant DM[]  @relation("participant")
   // Admin Notification[] @relation("Admin")
   // participantNotif Notification[] @relation("participantNotif")
-  // roomAdmin RoomMember[] @relation("roomAdmin")
+  // roomMember RoomMember[] @relation("roomMember")
   // requestSender friendRequest[]
   // fdId  Int
   // friends FriendList @relation(fields: [fdId], references: [id])
@@ -46,10 +46,10 @@ model Message {
 
 model DM  {
   id Int @id @default(autoincrement())
-  adminId Int
+  participantId Int
   // participantId Int
   // msgId Int
-  admin User  @relation(fields: [adminId],references: [id])
+  participant User  @relation(fields: [participantId],references: [id])
   // participant RoomMember @relation("participant", fields: [participantId], references: [id])
   // participants RoomMember[]
   msg Message[]
@@ -104,10 +104,11 @@ model Room  {
 model RoomMember  {
   id  Int @id  @default(autoincrement())
   RoomId  Int
-  adminId Int
-  dmId Int
+  memberId Int
+  // dmId Int
+  role Role @default(USER)
   room  Room  @relation(fields: [RoomId], references: [id])
-  // admin User  @relation("roomAdmin", fields: [adminId],references: [id])
+  // member User  @relation("roomMember", fields: [memberId],references: [id])
   // dmRoom DM @relation(fields: [dmId], references: [id])
   joinTime DateTime
   leftTime DateTime
@@ -127,4 +128,5 @@ model RoomMember  {
 enum Role {
   USER
   ADMIN
+  OWNER
 }
