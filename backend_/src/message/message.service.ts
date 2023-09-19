@@ -46,7 +46,6 @@ export class MessageService {
     });
     console.log('AFTER BRUH');
     client.to(payload.dmId.toString()).emit('createdMessage', message);
-    //client.to("${payload.dmId}").emit('createdMessage', message)
   }
 
   async createUser(client: Socket, payload: userDTO) {
@@ -103,10 +102,13 @@ export class MessageService {
     /* fetching the socket by its key(username),
     and using it to emit to the addressee.*/
     mapy.get(user.username).emit('createdDm', dm.id);
+    client.join(dm.id.toString());
+    mapy.get(user.username).join(dm.id.toString());
     
   }
 
   async joinRooms(client: Socket, username: string) {
+    console.log(username);
     const user = await this.prismaService.user.findUnique({
       where: {
         username: username,

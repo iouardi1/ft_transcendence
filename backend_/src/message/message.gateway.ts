@@ -73,13 +73,28 @@ export class MessageGateway
     //Do stuffs
   }
 
+  private flag: boolean = false;
+
   async handleConnection(client: Socket) {
     console.log(`Connected ${client.id}`);
     /*For now, "token" is only a placeholder for the actual token to be intercepted, for now we will use it directly as a username, later we will do a lookup on it and figure out its corresponding user and then use the latter */
-    const {token} = client.handshake.auth; 
+    let {token} = client.handshake.auth;
     console.log(token);
-
-    this.mapy.set(token, client);
+    /*Get rid of this mess later */
+    if (typeof token === 'undefined' && !this.flag)
+    {
+      this.flag = true;
+      this.mapy.set('mamma mia', client);
+      token = 'mamma mia'
+    }
+    else if (typeof token === 'undefined' && this.flag)
+    {
+      // this.flag = true;
+      this.mapy.set('mamma', client);
+      token = 'mamma'
+    }
+    else
+      this.mapy.set(token, client);
     await this.messageService.joinRooms(client, token);
   }
 }
