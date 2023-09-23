@@ -1,5 +1,3 @@
-
-
 export class messageDTO {
     messageContent : string;
     dmId: number;

@@ -14,6 +14,8 @@ import { Socket, Server } from 'socket.io';
 import { messageDTO } from '../dto/messageDTO';
 import { userDTO } from '../dto/userDTO';
 import { dmDTO } from '../dto/dmDTO';
+import { roomDTO } from '../dto/roomDTO';
+import { roomInviteDTO } from '../dto/roomInviteDTO';
 
 @WebSocketGateway({
   cors: {
@@ -46,13 +48,44 @@ export class MessageGateway
     this.messageService.createDm(client, payload, this.mapy);
   }
 
+  @SubscribeMessage('addRoom')
+async handleAddRoom(
+  @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomDTO,
+  ) {
+    this.messageService.createRoom(client, payload, this.mapy);
+  }
+
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: messageDTO,
-    server: Server,
   ) {
-    this.messageService.createMessage(client, payload, server);
+    this.messageService.createMessage(client, payload);
+  }
+
+  @SubscribeMessage('roomInvite')
+  async handleRoomInvite(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.sendRoomInvite(client, payload, this.mapy);
+  }
+
+  @SubscribeMessage('roomInviteAccepted')
+  async handleRoomInviteApproval(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.roomInviteApproval(client, payload, this.mapy);
+  }
+
+  @SubscribeMessage('roomInviteRejected')
+  async handleRoomInviteRejection(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.roomInviteRejection(client, payload, this.mapy);
   }
 
   afterInit(server: Server) {
@@ -95,6 +128,7 @@ export class MessageGateway
     }
     else
       this.mapy.set(token, client);
-    await this.messageService.joinRooms(client, token);
+    const state = await this.messageService.fetchState(client, token);
+    return state;
   }
 }

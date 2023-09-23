@@ -25,12 +25,13 @@ model User{
   // historyOpponent MatchHistory[] @relation("opponentHistory")
   // participant DM[]  @relation("participant")
   // Admin Notification[] @relation("Admin")
-  // participantNotif Notification[] @relation("participantNotif")
+  participantNotifs Notification[] @relation("participantNotif")
   // roomMember RoomMember[] @relation("roomMember")
   // requestSender friendRequest[]
   // fdId  Int
   // friends FriendList @relation(fields: [fdId], references: [id])
   // bans BannedUser[]
+  rooms RoomMember[]
 }
 
 model Message {
@@ -71,9 +72,7 @@ model friendRequest {
   id Int @id @default(autoincrement())
   senderId  Int
   // sender  User @relation(fields: [senderId], references: [id])
-
 }
-
 
 model MatchHistory {
   id Int @id @default(autoincrement())
@@ -88,15 +87,18 @@ model MatchHistory {
 
 model Notification {
   id Int @id @default(autoincrement())
-  adminId Int
-  participantId Int?
-  msgId Int
-  // admin User  @relation("Admin", fields: [adminId],references: [id])
-  // participant User? @relation("participantNotif", fields: [participantId], references: [id])
+  senderId Int
+  type String
+
+  roomId Int?
+  matchId Int?
+  friendreqId Int?
+  participant User @relation("participantNotif", fields: [senderId], references: [id])
 }
 
 model Room  {
   id Int @id @default(autoincrement())
+  //improve later (pic)
   RoomName String
   RoomMembers RoomMember[]
 }
@@ -105,13 +107,11 @@ model RoomMember  {
   id  Int @id  @default(autoincrement())
   RoomId  Int
   memberId Int
-  // dmId Int
   role Role @default(USER)
   room  Room  @relation(fields: [RoomId], references: [id])
-  // member User  @relation("roomMember", fields: [memberId],references: [id])
-  // dmRoom DM @relation(fields: [dmId], references: [id])
+  member User  @relation(fields: [memberId],references: [id])
   joinTime DateTime
-  leftTime DateTime
+  // leftTime DateTime
 }
 
 // model MatchHistory {
