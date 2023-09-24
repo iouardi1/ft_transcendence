@@ -16,6 +16,7 @@ import { userDTO } from '../dto/userDTO';
 import { dmDTO } from '../dto/dmDTO';
 import { roomDTO } from '../dto/roomDTO';
 import { roomInviteDTO } from '../dto/roomInviteDTO';
+import { actionDTO } from '../dto/actionDTO';
 
 @WebSocketGateway({
   cors: {
@@ -86,6 +87,42 @@ async handleAddRoom(
     @MessageBody() payload: roomInviteDTO,
   ) {
     this.messageService.roomInviteRejection(client, payload, this.mapy);
+  }
+
+  @SubscribeMessage('notifClicked')
+  async handleNotifClicked(
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.notifClicked(payload);
+  }
+
+  //room privileges
+  @SubscribeMessage('promote')
+  async handlePromotion(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.promoteUser(payload, this.mapy);
+  }
+
+  @SubscribeMessage('demote')
+  async handleDemotion(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.demoteUser(payload, this.mapy);
+  }
+
+  @SubscribeMessage('mute')
+  async handleMute(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.muteUser(payload, this.mapy);
+  }
+
+  @SubscribeMessage('kick')
+  async handleKick(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.kickUser(payload, this.mapy);
   }
 
   afterInit(server: Server) {

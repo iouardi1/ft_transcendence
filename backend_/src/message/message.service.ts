@@ -5,6 +5,7 @@ import { userDTO } from '../dto/userDTO';
 import { dmDTO } from '../dto/dmDTO';
 import { roomDTO } from '../dto/roomDTO';
 import { roomInviteDTO } from '../dto/roomInviteDTO';
+import { actionDTO } from '../dto/actionDTO';
 import { Socket, Server } from 'socket.io';
 import { DM } from '@prisma/client';
 
@@ -46,6 +47,7 @@ export class MessageService {
         },
       },
     });
+    //improve to handle rooms aswell
     console.log('AFTER BRUH');
     client.to(payload.dmId.toString()).emit('createdMessage', message);
   }
@@ -178,7 +180,7 @@ export class MessageService {
         roomId: payload.roomId,
       },
     });
-    await this.prismaService.user.update({
+    const notifiedUser = await this.prismaService.user.update({
       where: {
         username: payload.invitee,
       },
@@ -198,6 +200,15 @@ export class MessageService {
   async roomInviteApproval(client: Socket, payload: roomInviteDTO, mapy: Map<string, Socket>) {
     client.join(payload.roomId.toString());
     //change notif state
+    await this.prismaService.notification.update({
+      where: {
+        id: payload.notifId,
+      },
+      data: {
+        read: true,
+        interactedWith: true,
+      }
+    })
     const room = await this.prismaService.room.findUnique({
       where: {
         id: payload.roomId,
@@ -242,12 +253,22 @@ export class MessageService {
       invitee: payload.invitee,
       roomName: room.RoomName
     };
+    //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(sender.username).emit('notifSent', notif);
     mapy.get(sender.username).emit('roomInviteApproved', data);
   }
 
   async roomInviteRejection(client: Socket, payload: roomInviteDTO, mapy: Map<string, Socket>) {
     //change notif state
+    await this.prismaService.notification.update({
+      where: {
+        id: payload.notifId,
+      },
+      data: {
+        read: true,
+        interactedWith: true,
+      }
+    })
     const room = await this.prismaService.room.findUnique({
       where: {
         id: payload.roomId,
@@ -256,7 +277,7 @@ export class MessageService {
     
     const notif = await this.prismaService.notification.create({
       data: {
-        senderId: payload.senderId,
+        senderId: payload.senderId, //change to invitee
         type: "roomInviteRejected",
       }
     })
@@ -278,8 +299,116 @@ export class MessageService {
       invitee: payload.invitee,
       roomName: room.RoomName
     };
+    //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(sender.username).emit('notifSent', notif);
     mapy.get(sender.username).emit('roomInviteRejected', data);
+  }
+
+  //notifClick event handler(sets read to true)
+  async notifClicked(payload: roomInviteDTO) {
+    await this.prismaService.notification.update({
+      where: {
+        id: payload.notifId,
+      },
+      data: {
+        read: true,
+      }
+    })
+  }
+
+  async promoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    await this.prismaService.roomMember.update({
+      where: {
+        id: payload.subjectId,
+      },
+      data: {
+        role: 'ADMIN',
+      }
+    })
+    const notif = await this.prismaService.notification.create({
+      data: {
+        senderId: payload.userId,
+        type: 'promotion',
+      }
+    })
+    const subject = await this.prismaService.user.findUnique({
+      where: {
+        id: payload.subjectId,
+      }
+    })
+    //update this to include the notif AND other necessary data (e.g roomname)
+    mapy.get(subject.username).emit('notifSent', notif);
+  }
+
+  async demoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    await this.prismaService.roomMember.update({
+      where: {
+        id: payload.subjectId,
+      },
+      data: {
+        role: 'USER',
+      }
+    })
+    const notif = await this.prismaService.notification.create({
+      data: {
+        senderId: payload.userId,
+        type: 'demotion',
+      }
+    })
+    const subject = await this.prismaService.user.findUnique({
+      where: {
+        id: payload.subjectId,
+      }
+    })
+    //update this to include the notif AND other necessary data (e.g roomname)
+    mapy.get(subject.username).emit('notifSent', notif);
+  }
+
+  async muteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    await this.prismaService.roomMember.update({
+      where: {
+        id: payload.subjectId,
+      },
+      data: {
+        muted: true,
+      }
+    })
+    const notif = await this.prismaService.notification.create({
+      data: {
+        senderId: payload.userId,
+        type: 'mute',
+      }
+    })
+    const subject = await this.prismaService.user.findUnique({
+      where: {
+        id: payload.subjectId,
+      }
+    })
+    //update this to include the notif AND other necessary data (e.g roomname)
+    mapy.get(subject.username).emit('notifSent', notif);
+    mapy.get(subject.username).emit('muted');
+  }
+
+  async kickUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    await this.prismaService.roomMember.delete({
+      where: {
+        id: payload.subjectId,
+      }
+    })
+    const notif = await this.prismaService.notification.create({
+      data: {
+        senderId: payload.userId,
+        type: 'kick',
+      }
+    })
+    const subject = await this.prismaService.user.findUnique({
+      where: {
+        id: payload.subjectId,
+      }
+    })
+    //update this to include the notif AND other necessary data (e.g roomname)
+    mapy.get(subject.username).emit('notifSent', notif);
+    mapy.get(subject.username).emit('kicked', payload.roomId);
   }
 
   async fetchState(client: Socket, username: string) {
