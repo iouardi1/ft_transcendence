@@ -22,9 +22,8 @@
 //     '@typescript-eslint/explicit-module-boundary-types': 'off',
 //     '@typescript-eslint/no-explicit-any': 'off',
 //   },
-  
-// };
 
+// };
 
 /* eslint-env node */
 require('@rushstack/eslint-patch/modern-module-resolution');
@@ -33,7 +32,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es6: true
+    es6: true,
   },
   parser: 'vue-eslint-parser',
   plugins: ['standard-recommended'],
@@ -45,15 +44,15 @@ module.exports = {
     '@vue/eslint-config-typescript/recommended',
     '@vue/eslint-config-prettier',
     './.eslintrc-auto-import.json',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 'latest',
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
-    project: './tsconfig.json'
+    project: './tsconfig.json',
   },
   rules: {
     'standard-recommended/no-index': 'error',
@@ -139,8 +138,8 @@ module.exports = {
         selector: 'memberLike',
         modifiers: ['private'],
         format: ['camelCase'],
-        leadingUnderscore: 'require'
-      }
+        leadingUnderscore: 'require',
+      },
     ],
     'vue/html-self-closing': [
       'error',
@@ -148,11 +147,11 @@ module.exports = {
         html: {
           void: 'always',
           normal: 'always',
-          component: 'always'
+          component: 'always',
         },
         svg: 'always',
-        math: 'always'
-      }
+        math: 'always',
+      },
     ],
     'vue/multiline-html-element-content-newline': 'error',
     'vue/no-spaces-around-equal-signs-in-attribute': 'error',
@@ -160,7 +159,7 @@ module.exports = {
     'vue/no-setup-props-destructure': 'off',
     'vue/prop-name-casing': 'error',
     'vue/multi-word-component-names': 'off',
-    'vue/no-v-html': 'off'
+    'vue/no-v-html': 'off',
   },
   overrides: [
     {
@@ -171,17 +170,22 @@ module.exports = {
         'src/types/global.d.ts',
         'src/utils/component.ts',
         'src/utils/extends.ts',
-        'src/utils/localstorage.ts'
+        'src/utils/localstorage.ts',
       ],
       rules: {
-        '@typescript-eslint/no-explicit-any': 'off'
-      }
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
     },
     {
-      files: ['src/directive/index.ts', 'src/plugins/core/index.ts', 'src/service/index.ts', 'src/router/index.ts'],
+      files: [
+        'src/directive/index.ts',
+        'src/plugins/core/index.ts',
+        'src/service/index.ts',
+        'src/router/index.ts',
+      ],
       rules: {
-        'standard-recommended/no-index': 'off'
-      }
-    }
-  ]
+        'standard-recommended/no-index': 'off',
+      },
+    },
+  ],
 };

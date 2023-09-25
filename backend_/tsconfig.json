@@ -18,7 +18,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  },
+  }
   // "files": [
   //   "/nfs/homes/iouardi/goinfre/ft_tranc/ft_transcendence-branch/backend_/src/main.ts",
   //   // Add other file paths here if needed
