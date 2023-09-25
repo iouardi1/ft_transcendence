@@ -52,17 +52,6 @@ export class MessageService {
     client.to(payload.dmId.toString()).emit('createdMessage', message);
   }
 
-  async createUser(client: Socket, payload: userDTO) {
-    console.log(payload);
-    const user = await this.prismaService.user.create({
-      data: {
-        username: payload.username,
-      },
-    });
-    console.log('AFTER BRUH');
-    client.emit('createdUser', user);
-  }
-
   async createDm(client: Socket, payload: dmDTO, mapy: Map<string, Socket>) {
     console.log(payload);
     const user = await this.prismaService.user.findUnique({
@@ -108,10 +97,13 @@ export class MessageService {
     mapy.get(user.username).emit('createdDm', dm.id);
     client.join(dm.id.toString());
     mapy.get(user.username).join(dm.id.toString());
-    
   }
 
-  async createRoom(client: Socket, payload: roomDTO, mapy: Map<string, Socket>) {
+  async createRoom(
+    client: Socket,
+    payload: roomDTO,
+    mapy: Map<string, Socket>,
+  ) {
     console.log(payload);
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -133,15 +125,15 @@ export class MessageService {
       },
     });
     await this.prismaService.room.update({
-      where : {
+      where: {
         id: roomMember.id,
       },
       data: {
-        RoomMembers : {
+        RoomMembers: {
           connect: {
             id: roomMember.id,
-          }
-        }
+          },
+        },
       },
     });
     await this.prismaService.user.update({
@@ -158,10 +150,13 @@ export class MessageService {
     });
     console.log('AFTER BRUH');
     client.emit('createdRoom', room);
-  
   }
 
-  async sendRoomInvite(client: Socket, payload: roomInviteDTO, mapy: Map<string, Socket>) {
+  async sendRoomInvite(
+    client: Socket,
+    payload: roomInviteDTO,
+    mapy: Map<string, Socket>,
+  ) {
     console.log(payload);
     /* Fetch the inviter's username, will come in handy later */
     let notifSenderName: string;
@@ -171,8 +166,8 @@ export class MessageService {
     const notifSender = await this.prismaService.user.findUnique({
       where: {
         username: notifSenderName,
-      }
-    })
+      },
+    });
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: notifSender.id,
@@ -197,7 +192,11 @@ export class MessageService {
     mapy.get(payload.invitee).emit('notifSent', notif);
   }
 
-  async roomInviteApproval(client: Socket, payload: roomInviteDTO, mapy: Map<string, Socket>) {
+  async roomInviteApproval(
+    client: Socket,
+    payload: roomInviteDTO,
+    mapy: Map<string, Socket>,
+  ) {
     client.join(payload.roomId.toString());
     //change notif state
     await this.prismaService.notification.update({
@@ -207,13 +206,13 @@ export class MessageService {
       data: {
         read: true,
         interactedWith: true,
-      }
-    })
+      },
+    });
     const room = await this.prismaService.room.findUnique({
       where: {
         id: payload.roomId,
-      }
-    })
+      },
+    });
     //update the invitee
     await this.prismaService.user.update({
       where: {
@@ -228,13 +227,13 @@ export class MessageService {
       },
     });
     client.emit('joinedRoom', room); //emit room to invitee
-    
+
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.senderId,
-        type: "roomInviteApproved",
-      }
-    })
+        type: 'roomInviteApproved',
+      },
+    });
     //get sender's name using their ID
     const sender = await this.prismaService.user.update({
       where: {
@@ -244,21 +243,25 @@ export class MessageService {
         participantNotifs: {
           connect: {
             id: notif.id,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
     const data = {
       invitee: payload.invitee,
-      roomName: room.RoomName
+      roomName: room.RoomName,
     };
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(sender.username).emit('notifSent', notif);
     mapy.get(sender.username).emit('roomInviteApproved', data);
   }
 
-  async roomInviteRejection(client: Socket, payload: roomInviteDTO, mapy: Map<string, Socket>) {
+  async roomInviteRejection(
+    client: Socket,
+    payload: roomInviteDTO,
+    mapy: Map<string, Socket>,
+  ) {
     //change notif state
     await this.prismaService.notification.update({
       where: {
@@ -267,20 +270,20 @@ export class MessageService {
       data: {
         read: true,
         interactedWith: true,
-      }
-    })
+      },
+    });
     const room = await this.prismaService.room.findUnique({
       where: {
         id: payload.roomId,
-      }
-    })
-    
+      },
+    });
+
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.senderId, //change to invitee
-        type: "roomInviteRejected",
-      }
-    })
+        type: 'roomInviteRejected',
+      },
+    });
     //get sender's name using their ID
     const sender = await this.prismaService.user.update({
       where: {
@@ -290,14 +293,14 @@ export class MessageService {
         participantNotifs: {
           connect: {
             id: notif.id,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
     const data = {
       invitee: payload.invitee,
-      roomName: room.RoomName
+      roomName: room.RoomName,
     };
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(sender.username).emit('notifSent', notif);
@@ -312,8 +315,8 @@ export class MessageService {
       },
       data: {
         read: true,
-      }
-    })
+      },
+    });
   }
 
   async promoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
@@ -323,19 +326,19 @@ export class MessageService {
       },
       data: {
         role: 'ADMIN',
-      }
-    })
+      },
+    });
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.userId,
         type: 'promotion',
-      }
-    })
+      },
+    });
     const subject = await this.prismaService.user.findUnique({
       where: {
         id: payload.subjectId,
-      }
-    })
+      },
+    });
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(subject.username).emit('notifSent', notif);
   }
@@ -347,19 +350,19 @@ export class MessageService {
       },
       data: {
         role: 'USER',
-      }
-    })
+      },
+    });
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.userId,
         type: 'demotion',
-      }
-    })
+      },
+    });
     const subject = await this.prismaService.user.findUnique({
       where: {
         id: payload.subjectId,
-      }
-    })
+      },
+    });
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(subject.username).emit('notifSent', notif);
   }
@@ -371,19 +374,19 @@ export class MessageService {
       },
       data: {
         muted: true,
-      }
-    })
+      },
+    });
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.userId,
         type: 'mute',
-      }
-    })
+      },
+    });
     const subject = await this.prismaService.user.findUnique({
       where: {
         id: payload.subjectId,
-      }
-    })
+      },
+    });
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(subject.username).emit('notifSent', notif);
     mapy.get(subject.username).emit('muted');
@@ -393,19 +396,19 @@ export class MessageService {
     await this.prismaService.roomMember.delete({
       where: {
         id: payload.subjectId,
-      }
-    })
+      },
+    });
     const notif = await this.prismaService.notification.create({
       data: {
         senderId: payload.userId,
         type: 'kick',
-      }
-    })
+      },
+    });
     const subject = await this.prismaService.user.findUnique({
       where: {
         id: payload.subjectId,
-      }
-    })
+      },
+    });
     //update this to include the notif AND other necessary data (e.g roomname)
     mapy.get(subject.username).emit('notifSent', notif);
     mapy.get(subject.username).emit('kicked', payload.roomId);
@@ -432,5 +435,4 @@ export class MessageService {
     });
     return user.participantNotifs;
   }
-
 }

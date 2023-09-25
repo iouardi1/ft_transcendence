@@ -26,20 +26,11 @@ import { actionDTO } from '../dto/actionDTO';
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(
-    private messageService: MessageService,) {}
+  constructor(private messageService: MessageService) {}
 
   @WebSocketServer() server: Server;
 
   private mapy = new Map<string, Socket>();
-
-  @SubscribeMessage('addUser')
-  async handleAddUser(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: userDTO,
-  ) {
-    this.messageService.createUser(client, payload);
-  }
 
   @SubscribeMessage('addDm')
   async handleAddDm(
@@ -50,8 +41,8 @@ export class MessageGateway
   }
 
   @SubscribeMessage('addRoom')
-async handleAddRoom(
-  @ConnectedSocket() client: Socket,
+  async handleAddRoom(
+    @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomDTO,
   ) {
     this.messageService.createRoom(client, payload, this.mapy);
@@ -90,38 +81,28 @@ async handleAddRoom(
   }
 
   @SubscribeMessage('notifClicked')
-  async handleNotifClicked(
-    @MessageBody() payload: roomInviteDTO,
-  ) {
+  async handleNotifClicked(@MessageBody() payload: roomInviteDTO) {
     this.messageService.notifClicked(payload);
   }
 
   //room privileges
   @SubscribeMessage('promote')
-  async handlePromotion(
-    @MessageBody() payload: actionDTO,
-  ) {
+  async handlePromotion(@MessageBody() payload: actionDTO) {
     this.messageService.promoteUser(payload, this.mapy);
   }
 
   @SubscribeMessage('demote')
-  async handleDemotion(
-    @MessageBody() payload: actionDTO,
-  ) {
+  async handleDemotion(@MessageBody() payload: actionDTO) {
     this.messageService.demoteUser(payload, this.mapy);
   }
 
   @SubscribeMessage('mute')
-  async handleMute(
-    @MessageBody() payload: actionDTO,
-  ) {
+  async handleMute(@MessageBody() payload: actionDTO) {
     this.messageService.muteUser(payload, this.mapy);
   }
 
   @SubscribeMessage('kick')
-  async handleKick(
-    @MessageBody() payload: actionDTO,
-  ) {
+  async handleKick(@MessageBody() payload: actionDTO) {
     this.messageService.kickUser(payload, this.mapy);
   }
 
@@ -148,23 +129,18 @@ async handleAddRoom(
   async handleConnection(client: Socket) {
     console.log(`Connected ${client.id}`);
     /*For now, "token" is only a placeholder for the actual token to be intercepted, for now we will use it directly as a username, later we will do a lookup on it and figure out its corresponding user and then use the latter */
-    let {token} = client.handshake.auth;
+    let { token } = client.handshake.auth;
     console.log(token);
     /*Get rid of this mess later */
-    if (typeof token === 'undefined' && !this.flag)
-    {
+    if (typeof token === 'undefined' && !this.flag) {
       this.flag = true;
       this.mapy.set('mamma mia', client);
-      token = 'mamma mia'
-    }
-    else if (typeof token === 'undefined' && this.flag)
-    {
+      token = 'mamma mia';
+    } else if (typeof token === 'undefined' && this.flag) {
       // this.flag = true;
       this.mapy.set('mamma', client);
-      token = 'mamma'
-    }
-    else
-      this.mapy.set(token, client);
+      token = 'mamma';
+    } else this.mapy.set(token, client);
     const state = await this.messageService.fetchState(client, token);
     return state;
   }
