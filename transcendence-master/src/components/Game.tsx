@@ -1,7 +1,5 @@
 function Game() {
-  return (
-    <div className="">Game</div>
-  )
+  return <div className="">Game</div>;
 }
 
-export default Game
+export default Game;

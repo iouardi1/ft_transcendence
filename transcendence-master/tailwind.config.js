@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-
 // import plugin from 'tailwindcss/plugin'; /**/
-
 
 // const plugin = require("tailwindcss/plugin");
 
@@ -15,8 +13,6 @@
 // });
 
 // module.exports = {
-
-
 
 export default {
   darkMode: "class",
@@ -45,8 +41,8 @@ export default {
         bouncing: "bounce 1s linear infinite",
         bouncing1: "bounce1 1s linear infinite",
       },
-      fontFamily:{
-        'poppins' :['poppins', 'sans-serif'],
+      fontFamily: {
+        poppins: ["poppins", "sans-serif"],
       },
     },
     screens: {

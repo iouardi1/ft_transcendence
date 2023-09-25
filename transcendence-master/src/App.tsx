@@ -7,6 +7,15 @@ import Comp from "./components/Comp";
 import FindGame from "./components/FindGame";
 import Game from "./components/Game";
 import  Chat from './components/Chat';
+import Login from "./components/Login";
+import Cookies from 'js-cookie';
+import jwt from 'jwt-decode';
+
+
+export interface Token {
+  sub: string;
+  email: string;
+}
 
 
 function App() {
@@ -19,28 +28,36 @@ function App() {
   function toggleOpen() {
     setOpen(!open);
   }
-  return (
-    <BrowserRouter> 
-      <div className={`${darkMode ? "dark" : ""}`}>
-        <div className="bg-[#EEEEFF] dark:bg-[#1A1C26] w-screen h-screen overflow-hidden">
-          <HorzNav darkMode={darkMode} toggleDarkMode={toggleDarkMode} open={open} toggleOpen={toggleOpen} />
-          <div className="flex mt-[80px] h-full">
-            <VertNav open={open} />
-            <div className={`${open ? "" : ""}bg-[#EEEEFF] dark:bg-[#1A1C26] w-full h-full flex z-0` }>
-                <Routes>
-                  <Route path="home" element={<Comp name="home"/>}/>
-                  {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
-                  <Route path="play" element={<FindGame/>} />
-                  <Route path="chat" element={<Chat/>} />
-                  <Route path="stats" element={<Comp name="stats"/>}/>
-                  <Route path="game" element={<Game/>} />
-                </Routes>
+  const token = Cookies.get('accessToken');
+  if (token) {
+    const decode: Token = jwt(token);
+    const userId: string = decode.sub;
+    return (
+      <BrowserRouter> 
+        <div className={`${darkMode ? "dark" : ""}`}>
+          <div className="bg-[#EEEEFF] dark:bg-[#1A1C26] w-screen h-screen overflow-hidden">
+            <HorzNav darkMode={darkMode} toggleDarkMode={toggleDarkMode} open={open} toggleOpen={toggleOpen} />
+            <div className="flex mt-[80px] h-full">
+              <VertNav open={open} />
+              <div className={`${open ? "" : ""}bg-[#EEEEFF] dark:bg-[#1A1C26] w-full h-full flex z-0` }>
+                  <Routes>
+                    <Route path="home" element={<Comp name="home"/>}/>
+                    {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
+                    <Route path="play" element={<FindGame/>} />
+                    <Route path="chat" element={<Chat/>} />
+                    <Route path="stats" element={<Comp name="stats"/>}/>
+                    <Route path="game" element={<Game/>} />
+                  </Routes>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </BrowserRouter>
-  );
+      </BrowserRouter>
+    );
+  }
+  return(
+    <Login/>
+  )
 }
 
 export default App;

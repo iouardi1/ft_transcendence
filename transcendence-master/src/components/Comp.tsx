@@ -6,15 +6,12 @@
 //   )
 // }
 
-
 // import React from 'react';
 
 interface CompProps {
   name: string;
 }
 
-export default function Comp(props: CompProps = { name: '' }) {
-  return (
-    <div>{props.name}</div>
-  );
+export default function Comp(props: CompProps = { name: "" }) {
+  return <div>{props.name}</div>;
 }
