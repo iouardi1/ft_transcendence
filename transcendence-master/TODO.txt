@@ -1,0 +1,7 @@
+Setup endpoints for each components
+Routes to set:
+
+    -CreateRoom
+    -JoinRoom
+    -Dashboard for chatRooms
+    -Dashboard for DMs

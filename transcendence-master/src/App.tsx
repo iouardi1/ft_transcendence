@@ -10,6 +10,9 @@ import  Chat from './components/Chat';
 import Login from "./components/Login";
 import Cookies from 'js-cookie';
 import jwt from 'jwt-decode';
+import CreateRoom from "./components/CreateRoom";
+import JoinRoom from "./components/JoinRoom";
+import DMConveComponent from "./components/DMConvComp";
 
 
 export interface Token {
@@ -32,6 +35,7 @@ function App() {
   if (token) {
     const decode: Token = jwt(token);
     const userId: string = decode.sub;
+    console.log(userId);
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
@@ -44,9 +48,14 @@ function App() {
                     <Route path="home" element={<Comp name="home"/>}/>
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
                     <Route path="play" element={<FindGame/>} />
-                    <Route path="chat" element={<Chat/>} />
-                    <Route path="stats" element={<Comp name="stats"/>}/>
+                    <Route path="/chat" element={<Chat/>} >
+                      <Route index element={<DMConveComponent/>}/>
+                      <Route path="createRoom" element={<CreateRoom/>}/>
+                      <Route path="joinRoom" element={<JoinRoom/>}/>
+                    </Route>
+                    <Route path="stats" element={<Comp name="stats"/>}/> 
                     <Route path="game" element={<Game/>} />
+                    {/* <Route path="joinRoom" element={<JoinRoom/>} /> */}
                   </Routes>
               </div>
             </div>
