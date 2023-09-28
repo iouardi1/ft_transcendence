@@ -12,7 +12,9 @@ import Cookies from 'js-cookie';
 import jwt from 'jwt-decode';
 import CreateRoom from "./components/CreateRoom";
 import JoinRoom from "./components/JoinRoom";
-import DMConveComponent from "./components/DMConvComp";
+import DMConv from "./components/DMConv";
+import DefaultChatComp from "./components/DefaultChatComp";
+import AddPeople from "./components/AddPeople";
 
 
 export interface Token {
@@ -48,14 +50,15 @@ function App() {
                     <Route path="home" element={<Comp name="home"/>}/>
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
                     <Route path="play" element={<FindGame/>} />
-                    <Route path="/chat" element={<Chat/>} >
-                      <Route index element={<DMConveComponent/>}/>
+                    <Route path="chat" element={<Chat/>} >
+                      <Route index element={<DefaultChatComp/>}/>
                       <Route path="createRoom" element={<CreateRoom/>}/>
                       <Route path="joinRoom" element={<JoinRoom/>}/>
+                      <Route path="addPeople" element={<AddPeople/>}/>
+                      <Route path="dmConv" element={<DMConv/>}/>
                     </Route>
                     <Route path="stats" element={<Comp name="stats"/>}/> 
-                    <Route path="game" element={<Game/>} />
-                    {/* <Route path="joinRoom" element={<JoinRoom/>} /> */}
+                    <Route path="game" element={<Game/>}/>
                   </Routes>
               </div>
             </div>

@@ -19,7 +19,7 @@ function DMsComponent ()
             }} >
             People
             </div>
-            <Link to="joinRoom" className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]" style={{
+            <Link to="addpeople" className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]" style={{
               fontFamily: "Roboto",
               fontSize: "25px",
               }}>+</Link>

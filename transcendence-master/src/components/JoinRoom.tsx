@@ -29,7 +29,7 @@ const JoinRoomButton = () => {
   };
 
   return (
-    <div className="icon w-full h-full flex-wrap  justify-around">
+    <div className="icon w-full h-full flex-wrap justify-around m-auto">
       <div className="icon w-full h-[40px] flex justify-around items-center">
         <div className="w-full h-full flex justify-around items-center">
           <img
@@ -73,22 +73,23 @@ const JoinRoomButton = () => {
 
 function ExistinRoom() {
   return (
-    <div className='w-[260px] h-[50px] m-auto p-auto  border-3 rounded-[25px] border-solid bg-[#EEEEFF]
-    shadow-xl  dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
+    <div className='w-[350px] max-h-[50px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
+     dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
       <JoinRoomButton />
     </div>
   )
 
-};
+}
 
 
 export default function JoinRoom() {
+  
   return (
     <div className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:dark:border-[#272932] lg:dark:bg-[#272932]
-        ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
+        ml-[-10px] mr-[15px] my-[15px] w-[55%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
     > 
       <div className='w-full h-full flex-wrap justify-center'>
-        <div className="w-full h-[10%] m-auto flex items-center justify-center text-black dark:text-white text-center" style={{
+        <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-black dark:text-white text-center" style={{
                 fontFamily: "poppins",
                 fontSize: "25px",
                 fontStyle: "normal",
@@ -99,12 +100,31 @@ export default function JoinRoom() {
         </div>
         <hr className=" w-[50%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]">
         </hr>
-        <div className="w-[90%] h-[60%] my-[20px] flex flex-wrap items-center justify-center">
+        <div className="h-[86%] convs my-[20px] overflow-y-scroll">
+          
           {< ExistinRoom/>}
-         { < ExistinRoom/>}
-         { < ExistinRoom/>}
-         { < ExistinRoom/>}
-         { < ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+          {< ExistinRoom/>}
+      
         </div>
         </div>
        

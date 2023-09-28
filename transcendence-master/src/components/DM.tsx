@@ -27,6 +27,7 @@ interface ConvData {
     };
   
     return (
+      <div >
       <div className="icon w-full h-[40px] mb-[15px] flex-wrap">
         <div className="icon w-full h-[40px] mb-[15px] flex justify-between">
           <div className="w-[70%] h-full ">
@@ -79,6 +80,7 @@ interface ConvData {
           </div>
         </div>
         <hr className=" w-[90%] h-[1px] my-[-9px] bg-[#2C2C2CBD] opacity-[15%] border-0  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
+      </div>
       </div>
     );
   };

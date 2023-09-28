@@ -44,7 +44,7 @@ function CreateRoom() {
                 fontFamily: "poppins",
                 fontSize: "20px",
                 fontStyle: "normal",
-                fontWeight: 600,
+                fontWeight: 400,
                 letterSpacing: "1.5px",
                 }}>Group Name </label>
               <input required
@@ -60,17 +60,19 @@ function CreateRoom() {
                 fontFamily: "poppins",
                 fontSize: "20px",
                 fontStyle: "normal",
-                fontWeight: 600,
+                fontWeight: 400,
                 letterSpacing: "1.5px",
                 }}>Group Picture
               </label>
             
-              <input className="form-input w-[55%] file:w-[100%] file:h-[40px] file:border-none file:text-[#8F8F8F] file:dark:text-white file:rounded-[25px] file:dark:bg-[#1A1C26] file:bg-[#EEEEFF] file:hover:bg-[#6F37CF] file:dark:hover:bg-[#6F37CF] file:p-[5px] file:hover:text-white"
+              <input 
+              required
+              className="form-input w-[55%] file:w-[100%] file:h-[40px] file:border-none file:text-[#8F8F8F] file:dark:text-white file:rounded-[25px] file:dark:bg-[#1A1C26] file:bg-[#EEEEFF] file:hover:bg-[#6F37CF] file:dark:hover:bg-[#6F37CF] file:p-[5px] file:hover:text-white"
               style={{
                 fontFamily: "poppins",
                 fontSize: "15px",
                 fontStyle: "normal",
-                fontWeight:600,
+                fontWeight:400,
                 letterSpacing: "1.5px",
                 }} type="file" name="" id=""/>
             </div>
@@ -80,7 +82,7 @@ function CreateRoom() {
                 fontFamily: "poppins",
                 fontSize: "22px",
                 fontStyle: "normal",
-                fontWeight: 600,
+                fontWeight: 400,
                 letterSpacing: "1.5px",
                 }}>Group Type
                 </label>
@@ -94,6 +96,13 @@ function CreateRoom() {
                   key={index}
                   className="dark:bg-[#1A1C26] bg-[#EEEEFF] hover:bg-[#6F37CF] dark:hover:bg-[#6F37CF] hover:text-white dark:text-white text-[#8F8F8F] font-semibold py-2 px-4 rounded-md"
                   onClick={option.onClick} id='option.id'
+                  style={{
+                    fontFamily: "poppins",
+                    fontSize: "15px",
+                    fontStyle: "normal",
+                    fontWeight: 300,
+                    letterSpacing: "1.5px",
+                    }}
                 >
                 {option.label}
                 </button>
