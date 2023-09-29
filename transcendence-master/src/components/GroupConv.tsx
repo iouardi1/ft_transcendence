@@ -1,6 +1,7 @@
 
-// import React from 'react';
+import React from 'react';
 import logoImg from "../assets/panda.svg";
+import { Link } from 'react-router-dom';
 // import { BrowserRouter,Router , Route, Routes, Outlet} from 'react-router-dom';
 // import { useHistory } from 'react-router-dom'
 // import CreateRoom from './CreateRoom.tsx';
@@ -28,19 +29,19 @@ const ContactBar = () => {
       message2: "Hello back!",
       date: "Today, 12:15pm",
       group: "Friends Forever",
-      online: "Online",
+      online: "",
       msgSent: true,
     };
   
     return (
-      <div className="w-full h-full p-[20px] flex">
-        <div className="w-[100%] flex flex-wrap">
+        <div className='w-full h-full flex-wrap justify-center'>
+      <div className="w-full h-full flex p-[auto] items-center justify-between">
           <img
-            className="logoImg rounded-[50px] w-[40px] h-[40px]"
+            className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px]"
             src={defaultConvData.image}
             alt={"${defaultConvdata.name}"}
           />
-          <div className="w-full h-[40px] mt-[-42px] ml-[55px] flex-wrap justify-around items-center">
+          <div className="w-[70%] h-full ml-[20px] flex items-center">
             <div className=" text-black dark:text-white w-full h-[50%]"
               style={{
                 fontFamily: "poppins",
@@ -51,25 +52,33 @@ const ContactBar = () => {
                 letterSpacing: "1.5px",
               }}
             >
-              {defaultConvData.name}
+              {defaultConvData.group}  
             </div>
-            <div
-              className="w-full h-[50%] mt-[7px] text-black dark:text-white"
-              style={{
-                fontFamily: "poppins",
-                fontSize: "15px",
-                fontStyle: "normal",
-                fontWeight: 300,
-                lineHeight: "normal",
-                letterSpacing: "1.5px",
-              }}
-            >
-              {defaultConvData.online}
             </div>
-            <hr className=" w-[90%] h-[1px] my-[15px] bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
-          </div>
+            <div className='w-[20%] h-full flex items-center justify-end'>
+                <div className='w-full h-full flex flex-row justify-end items-center'>
+                    <Link to="/chat/invToRoom" 
+                    className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]" style={{
+                    fontFamily: "Roboto",
+                    fontSize: "25px",
+                    }}>+</Link>
+                </div>
+                <div className='w-full h-full flex flex-row justify-end items-center'>
+                    <Link to="/chat/invToRoom" >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"        stroke-width="1.5" stroke="currentColor" 
+                        className="w-8 h-8 dark:text-white text-center">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                    </svg>
+
+                                
+                
+                    </Link>
+                </div>
+            </div>
+            
         </div>
-      </div>
+            <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
+        </div>
     );
   };
   
@@ -82,7 +91,7 @@ const ContactBar = () => {
       message2: "Hello back!",
       date: "Today, 12:15pm",
       group: "Friends Forever",
-      online: "Online",
+      online: "Online - Last seen, 2.02pm",
       msgSent: false,
     };
     if (defaultConvData.msgSent) {
@@ -130,7 +139,7 @@ const ContactBar = () => {
     }
   };
 
-const DMConveComponent = () => {
+const GroupConveComponent = () => {
   const defaultConvData: ConvData = 
     {
       id: 1,
@@ -187,4 +196,4 @@ const DMConveComponent = () => {
       </div>
     );
 }
-export default DMConveComponent;
+export default GroupConveComponent;

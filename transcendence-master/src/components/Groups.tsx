@@ -1,7 +1,6 @@
 import React, { useState} from 'react';
 import { Link } from 'react-router-dom';
-
-import DMComp from './DM.tsx';
+import Group from './Group.tsx';
 
 function GroupsComponent() {
 
@@ -69,18 +68,8 @@ function GroupsComponent() {
             </div>
           </div>
           <div className="h-[79%] convs my-[10px] ml-[10px] overflow-y-scroll">
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
-            <DMComp />
+            <Group />
+            <Group />
           </div>
           </div>
     )

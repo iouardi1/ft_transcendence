@@ -3,7 +3,7 @@ import "./App.css";
 import HorzNav from "./components/Navigation/HorzNav";
 import VertNav from "./components/Navigation/VertNav";
 import { BrowserRouter, Route, Routes} from "react-router-dom";
-import Comp from "./components/Comp";
+// import Comp from "./components/Comp";
 import FindGame from "./components/FindGame";
 import Game from "./components/Game";
 import  Chat from './components/Chat';
@@ -15,6 +15,8 @@ import JoinRoom from "./components/JoinRoom";
 import DMConv from "./components/DMConv";
 import DefaultChatComp from "./components/DefaultChatComp";
 import AddPeople from "./components/AddPeople";
+import GroupConv from "./components/GroupConv";
+import InvToRoom from "./components/InvToRoom";
 
 
 export interface Token {
@@ -47,7 +49,7 @@ function App() {
               <VertNav open={open} />
               <div className={`${open ? "" : ""}bg-[#EEEEFF] dark:bg-[#1A1C26] w-full h-full flex z-0` }>
                   <Routes>
-                    <Route path="home" element={<Comp name="home"/>}/>
+                    {/* <Route path="home" element={<Comp name="home"/>}/> */}
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
                     <Route path="play" element={<FindGame/>} />
                     <Route path="chat" element={<Chat/>} >
@@ -56,8 +58,10 @@ function App() {
                       <Route path="joinRoom" element={<JoinRoom/>}/>
                       <Route path="addPeople" element={<AddPeople/>}/>
                       <Route path="dmConv" element={<DMConv/>}/>
+                      <Route path="groupConv" element={<GroupConv/>}/>
+                      <Route path="invToRoom" element={<InvToRoom/>}/>
                     </Route>
-                    <Route path="stats" element={<Comp name="stats"/>}/> 
+                    {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}
                     <Route path="game" element={<Game/>}/>
                   </Routes>
               </div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
 
 
@@ -16,7 +15,7 @@ interface ConvData {
   msgSent: boolean;
 }
 
-const DmRoomButton = () => {
+const InvToRoomButton = () => {
   const defaultConvData: ConvData = {
     id: 1,
     name: "Mohamed",
@@ -54,8 +53,8 @@ const DmRoomButton = () => {
             {defaultConvData.name}
           </div>
         </div>
-        <Link 
-          to="/chat/invitToGame"
+        <button 
+          // here we need to send a notif to the user and desactivate the click button for him once he clicks waiting for the feedback
           className="w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:dark:shadow-lg hover:shadow-lg"
           >
             <div className="w-full h-full text-white text-center mt-[5px]"
@@ -68,26 +67,9 @@ const DmRoomButton = () => {
               letterSpacing: "0.13px",
               }}>
 
-              Play
+              Invite
             </div>
-        </Link>
-        <Link 
-          to="/chat/dmConv/"
-          className="w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] hover:dark:shadow-xl hover:shadow-xl"
-          >
-            <div className="w-full h-full text-white text-center mt-[5px]"
-            style={{
-              fontFamily: "poppins",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 600,
-              lineHeight: "normal",
-              letterSpacing: "0.13px",
-              }}>
-
-              DM
-            </div>
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -97,13 +79,13 @@ function ExistinUser() {
   return (
     <div className='w-[350px] max-h-[60px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
-      <DmRoomButton />
+      <InvToRoomButton />
     </div>
   )
 
 }
 
-export default function AddPeople () {
+export default function invToRoom () {
 
     return (
         <div className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
@@ -117,7 +99,7 @@ export default function AddPeople () {
                 fontWeight: 900,
                 letterSpacing: "1.5px",
             }} >
-              Add DM
+              Suggestions
         </div>
         <hr className=" w-[50%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]">
         </hr>

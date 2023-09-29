@@ -14,7 +14,7 @@ interface ConvData {
     msgSent: boolean;
   }
   
-  const DMComp = () => {
+  const GroupComp = () => {
     const defaultConvData: ConvData = {
       id: 1,
       name: "Mohamed",
@@ -29,7 +29,7 @@ interface ConvData {
   
     return (
       <Link 
-      to="/chat/dmConv">
+      to="/chat/groupConv">
       <div className="icon w-full h-[40px] mb-[15px] flex-wrap">
         <div className="icon w-full h-[40px] mb-[15px] flex justify-between">
           <div className="w-[70%] h-full ">
@@ -87,4 +87,4 @@ interface ConvData {
     );
   };
 
-export default DMComp
+export default GroupComp
