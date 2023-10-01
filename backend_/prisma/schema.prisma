@@ -40,14 +40,14 @@ model User{
 
 model Message {
   id       Int  @id @default(autoincrement())
-  sentAt DateTime
+  sentAt DateTime @default(now())
   messageContent String
-  dmId  Int
+  dmId  Int?
   userId  Int
-  roomId  Int
-  dm  DM  @relation(fields: [dmId], references: [id])
+  roomId  Int?
+  dm  DM? @relation(fields: [dmId], references: [id])
   sender  User @relation(fields: [userId], references: [id])
-  room  Room @relation(fields: [roomId], references: [id])
+  room  Room? @relation(fields: [roomId], references: [id])
 
 }
 

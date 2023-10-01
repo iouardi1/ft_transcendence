@@ -9,6 +9,8 @@ import {
     HttpStatus,
     Res,
     Query,
+    Param,
+    ParseIntPipe,
   } from '@nestjs/common';
   import { Request, Response } from 'express';
   import { HttpService } from './http.service';
@@ -20,6 +22,12 @@ import {
     async fetchRooms(@Query() body: {userId: string}) {
         const userId = body.userId;
         return (await this.httpService.fetchRooms(userId));
+    }
+
+    @Get(':id')
+    async fetchRoomContent(@Param('id', ParseIntPipe) roomId: number, @Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.fetchRoomContent(roomId, userId));
     }
   }
   
