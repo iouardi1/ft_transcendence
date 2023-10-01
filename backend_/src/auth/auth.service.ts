@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -32,6 +33,7 @@ export class AuthService {
             displayName: req.user.displayName,
             email: req.user.email,
             image: req.user.image,
+            
           },
         });
       } catch (error) {
@@ -60,9 +62,22 @@ export class AuthService {
     };
     const secret = this.config.get('JWT_Secret');
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '60m',
+      expiresIn: '200m',
       secret: secret,
     });
     return token;
+  }
+
+
+  async user_data(id: any) {
+    let user = await this.prisma.user.findFirst({
+      where: {
+        userId: id.id,
+      },
+    });
+    if (!user) {
+      throw new HttpException('User Not found!', HttpStatus.NOT_FOUND);
+    }
+    return {user};
   }
 }

@@ -20,17 +20,7 @@ export class AuthController {
   @Get('42')
   @UseGuards(AuthGuard('passport-42'))
   async auth(@Res() res: Response) {}
-  /** this if for auth header */
-  // @Get('42/redirect')
-  // @UseGuards(AuthGuard('passport-42'))
-  // async authRedirect(
-  //   @Req()
-  //   req,
-  // ) {
-  //   return this.authService.fortyTwoLogin(req);
-  // }
-
-  /* -- this is for cookie -----*/
+  
   @Get('42/redirect')
   @UseGuards(AuthGuard('passport-42'))
   async authRedirect(
@@ -39,8 +29,14 @@ export class AuthController {
     req,
   ) {
     const accessToken = await this.authService.fortyTwoLogin(req);
-    console.log(accessToken);
     response.cookie('accessToken', accessToken);
     response.redirect('http://localhost:5173/');
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  @Post('data')
+  async userData(@Body() id: any, @Res({ passthrough: true }) res) {
+    return await this.authService.user_data(id);
   }
 }

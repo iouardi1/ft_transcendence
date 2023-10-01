@@ -1,7 +1,8 @@
 export class messageDTO {
-  messageContent: string;
+  messageContent : string;
   dmId: number;
   userId: number;
+  roomId: number;
   sentAt: Date;
 }
 //data transfor object DTO
