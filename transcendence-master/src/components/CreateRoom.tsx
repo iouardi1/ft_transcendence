@@ -111,9 +111,9 @@ function CreateRoom() {
               
             </div>
             <div className="w-full flex mt-[20px] items-stretch justify-center">
-              <input required={display === "" ? true : false} id="i" type="text" placeholder="RoomPassword" className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`} style={{
+              <input required={display === "" ? true : false} id="i" type="text" placeholder="Your group's password" className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`} style={{
                   fontFamily: "poppins",
-                  fontSize: "15px",
+                  fontSize: "13px",
                   fontStyle: "normal",
                   letterSpacing: "1.5px",
                   }}/>

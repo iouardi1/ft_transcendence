@@ -17,6 +17,7 @@ import DefaultChatComp from "./components/DefaultChatComp";
 import AddPeople from "./components/AddPeople";
 import GroupConv from "./components/GroupConv";
 import InvToRoom from "./components/InvToRoom";
+import RoomSettings from "./components/RoomSettings";
 
 
 export interface Token {
@@ -35,11 +36,12 @@ function App() {
   function toggleOpen() {
     setOpen(!open);
   }
+  
   const token = Cookies.get('accessToken');
   if (token) {
     const decode: Token = jwt(token);
     const userId: string = decode.sub;
-    console.log(userId);
+
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
@@ -52,14 +54,15 @@ function App() {
                     {/* <Route path="home" element={<Comp name="home"/>}/> */}
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
                     <Route path="play" element={<FindGame/>} />
-                    <Route path="chat" element={<Chat/>} >
+                    <Route path="chat" element={<Chat userId={userId} />} >
                       <Route index element={<DefaultChatComp/>}/>
                       <Route path="createRoom" element={<CreateRoom/>}/>
                       <Route path="joinRoom" element={<JoinRoom/>}/>
                       <Route path="addPeople" element={<AddPeople/>}/>
                       <Route path="dmConv" element={<DMConv/>}/>
-                      <Route path="groupConv" element={<GroupConv/>}/>
+                      <Route path="groupConv" element={<GroupConv userId={userId}/>}/>
                       <Route path="invToRoom" element={<InvToRoom/>}/>
+                      <Route path="roomSettings" element={<RoomSettings/>}/>
                     </Route>
                     {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}
                     <Route path="game" element={<Game/>}/>

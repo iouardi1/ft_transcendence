@@ -6,6 +6,7 @@ import  DMComponent from './People.tsx';
 // import  DMConveComponent from './DMConvComp.tsx';
 // import { useState, useEffect } from 'react';
 import {  Outlet} from 'react-router-dom';
+import { useState, useEffect } from 'react';
 // import { useHistory } from 'react-router-dom'
 // import CreateRoom from './CreateRoom.tsx';
 // import JoinRoom from './JoinRoom.tsx';
@@ -23,28 +24,12 @@ import {  Outlet} from 'react-router-dom';
 //   msgSent: boolean;
 // }
 
-const Chat = () => {
+interface PropsType {
+  userId: string;
+}
 
-  // const [convData, setConvData] = useState(null); // Initialize with null or initial data
-  // // const [isLoading, setIsLoading] = useState(true);
-
-  // // Fetch data from the backend when the component mounts
-  // useEffect(() => {
-  //   // Replace this with your actual backend API fetch logic
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:3000/chat');
-  //       const data = await response.json();
-  //       setConvData(data);
-  //       // setIsLoading(false);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //       // setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
+const Chat = (props: PropsType) => {
+  const userId = props.userId;
 
   return (
     <div
@@ -55,8 +40,8 @@ const Chat = () => {
         className="lg:ml-[20px] lg:mr-[-10px] lg:my-[15px] lg:h-full lg:w-full lg:flex-wrap lg:gap-[0px] lg:items-start
       ml-[20px] mr-[-10px] my-[15px] h-full w-full flex-wrap gap-[0px] items-start"
       >
-        < GroupsComponent/>
-        < DMComponent/>
+        < GroupsComponent userId={userId}/>
+        < DMComponent userId={userId}/>
       </div>
       <Outlet/>
     </div>

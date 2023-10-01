@@ -54,7 +54,7 @@ const JoinRoomButton = () => {
         </div>
         <button 
         type='button'
-        className="date w-[40px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px]"
+        className="date w-[40px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px] hover:shadow-lg"
         style={{
           fontFamily: "poppins",
           fontSize: "14px",
