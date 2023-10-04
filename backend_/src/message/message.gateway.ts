@@ -127,7 +127,7 @@ async handleAddRoom(
   @SubscribeMessage('verifyMessageVisibility')
   async handleMessageVisibility(
     @ConnectedSocket() client: Socket,
-    @MessageBody() senderId: number,
+    @MessageBody() senderId: string,
   ) {
     this.messageService.verifyMessageVisibility(client, senderId, this.mapy);
   }
@@ -142,7 +142,7 @@ async handleAddRoom(
   @SubscribeMessage('blockUser')
   async handleUserBlock(
     @ConnectedSocket() client: Socket,
-    @MessageBody() blockedUserId: number,
+    @MessageBody() blockedUserId: string,
   ) {
     this.messageService.blockUser(client, blockedUserId, this.mapy);
   }

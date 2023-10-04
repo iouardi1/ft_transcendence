@@ -3,5 +3,6 @@ export class roomDTO {
   roomName: string;
   joinTime: Date;
   visibility: string;
+  image: string;
   password?: string;
 }

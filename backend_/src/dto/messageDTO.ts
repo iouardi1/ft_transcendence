@@ -1,7 +1,7 @@
 export class messageDTO {
   messageContent : string;
   dmId: number;
-  userId: number;
+  userId: string;
   roomId: number;
   sentAt: Date;
 }

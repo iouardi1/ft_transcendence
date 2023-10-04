@@ -33,7 +33,7 @@ model User{
   // bannedUserId  Int
   // banned User[] @relation(fields: [bannedUserId], references: [id])
   friends Json[]
-  blockedUsers Int[]
+  blockedUsers String[]
   rooms RoomMember[]
   roomInvites Json[]
 }
@@ -43,10 +43,10 @@ model Message {
   sentAt DateTime @default(now())
   messageContent String
   dmId  Int?
-  userId  Int
+  senderId  String
   roomId  Int?
   dm  DM? @relation(fields: [dmId], references: [id])
-  sender  User @relation(fields: [userId], references: [id])
+  sender  User @relation(fields: [senderId], references: [userId])
   room  Room? @relation(fields: [roomId], references: [id])
 
 }
@@ -108,7 +108,7 @@ model Notification {
 model Room {
   id Int @id @default(autoincrement())
   msgs Message[]
-  //improve later (pic)
+  image String
   RoomName String
   visibility String
   password String?

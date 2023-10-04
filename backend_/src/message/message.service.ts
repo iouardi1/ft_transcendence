@@ -35,7 +35,7 @@ export class MessageService {
         messageContent: payload.messageContent,
         dmId: (conversationType = 'dm') ? payload.dmId : -1,
         roomId: (conversationType = 'room') ? payload.roomId : -1,
-        userId: payload.userId,
+        senderId: payload.userId,
       },
     });
     if ((conversationType = 'dm')) {
@@ -67,7 +67,7 @@ export class MessageService {
     }
     await this.prismaService.user.update({
       where: {
-        id: payload.userId,
+        userId: payload.userId,
       },
       data: {
         messages: {
@@ -148,6 +148,7 @@ export class MessageService {
     console.log(user);
     const room = await this.prismaService.room.create({
       data: {
+        image: payload.image,
         RoomName: payload.roomName,
         visibility: payload.visibility,
         password: payload.password ? payload.password : null,
@@ -787,7 +788,7 @@ export class MessageService {
 
   async verifyMessageVisibility(
     client: Socket,
-    senderId: number,
+    senderId: string,
     mapy: Map<string, Socket>,
   ) {
     let username: string;
@@ -806,7 +807,7 @@ export class MessageService {
 
   async blockUser(
     client: Socket,
-    blockedUserId: number,
+    blockedUserId: string,
     mapy: Map<string, Socket>,
   ) {
     let blocker: string;
