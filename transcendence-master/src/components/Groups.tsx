@@ -87,18 +87,18 @@ function GroupsComponent(props:any) {
                         <Link to="joinRoom" onClick={() => setDisplay(true)}>Join Room
                         </Link>
                       </li>
-                    </ul>
+                    </ul>    
                   </div>
               </div>
             </div>
             <div className="h-[79%] convs my-[10px] ml-[10px] overflow-y-scroll">
                 {
                   convData.map( (Group1) => (
-                  <Group key={Group1.id} groupData={Group1}/>))
+                  <Group key={Group1.id} groupData={Group1} userId={userId}/>))
                 }
             </div>
             </div>
-      )
+      )  
   }
 }
 

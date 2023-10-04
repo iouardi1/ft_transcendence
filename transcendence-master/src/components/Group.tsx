@@ -13,14 +13,15 @@ interface ConvData {
   }
 
   const GroupComp = (groupData) => {
+    // console.log("----------->", groupData);
     const defaultConvData: ConvData = {
       id: groupData.groupData.id,
       roomName: groupData.groupData.RoomName,
       image: logoImg,
-      message1: groupData.groupData.msgs[groupData.groupData.msgs.length - 1].messageContent,
-      date: new Date(groupData.groupData.msgs[groupData.groupData.msgs.length - 1].sentAt),
       visibility: groupData.groupData.visibility,
       password: groupData.groupData.password,
+      message1: (groupData.groupData.msgs.length) ? groupData.groupData.msgs[groupData.groupData.msgs.length - 1].messageContent : "",
+      date: (groupData.groupData.msgs.length) ? new Date(groupData.groupData.msgs[groupData.groupData.msgs.length - 1].sentAt) : null,
     };
     // console.log(defaultConvData.date.getMonth());
     // console.log(defaultConvData.date.getDay());
@@ -28,6 +29,8 @@ interface ConvData {
     // console.log(defaultConvData.date.getMonth());
 
     const encodedData = encodeURIComponent(groupData.groupData.id);
+    if (encodedData)
+    {
     return (
       <Link 
       to= {`/chat/groupConv/?id=${encodedData}`}
@@ -90,6 +93,7 @@ interface ConvData {
       </div>
       </Link>
     );
+          }
   };
 
 export default GroupComp

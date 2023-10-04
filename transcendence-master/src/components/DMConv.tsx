@@ -78,27 +78,28 @@ const ContactBar = () => {
       id: 1,
       name: "Mohamed",
       image: logoImg,
-      message1: "Hello everyone !",
+      message1: "Hello everyone !lsjfklshdfkjhsdkjfhskd asdsadasd",
       message2: "Hello back!",
       date: "Today, 12:15pm",
       group: "Friends Forever",
       online: "Online",
-      msgSent: false,
+      msgSent: true,
     };
     if (defaultConvData.msgSent) {
       return (
-        <div className="w-[70%] h-fit m-[15px]">
-          <div className="w-full h-fit flex">
+        <div className="w-[70%] max-h-[60%] m-[15px]">
+          <div className="w-full h-full">
             <div className=" w-[15px] h-[15px] mt-[50px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[100%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-black dark:text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] max-w-[60%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
               style={{
                 fontFamily: "poppins",
-                fontSize: "17px",
+                fontSize: "14px",
                 fontStyle: "normal",
-                fontWeight: 400,
+                fontWeight: 600,
                 lineHeight: "normal",
                 letterSpacing: "1px",
+                overflowWrap: "break-word",
               }}
             >
               {defaultConvData.message1}
@@ -108,11 +109,11 @@ const ContactBar = () => {
       );
     } else {
       return (
-        <div className="w-[90%] h-fit m-[15px]">
-          <div className="max-w-[90%] w-fit h-fit flex flex-row-reverse">
+        <div className="w-full max-h-[60%] m-[15px] ml-[-10px]">
+          <div className="w-full h-full flex flex-row-reverse">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[100%] w-fit h-fit bg-[#6F37CF] rounded-[25px] text-left text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip overflow-hidden"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -120,6 +121,7 @@ const ContactBar = () => {
                 fontWeight: 600,
                 lineHeight: "normal",
                 letterSpacing: "1px",
+                overflowWrap: "break-word",
               }}
             >
               {defaultConvData.message1}
@@ -148,10 +150,10 @@ const DMConveComponent = () => {
         className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
         ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
       >
-          <div className="w-full h-[10%] border-solid mb-[25px]">
+          <div className="w-full h-[10%] border-solid mb-[5px]">
             <ContactBar />
           </div>
-          <div className="w-full h-[70%] mt-[25px] flex-wrap">
+          <div className="w-full h-[70%] flex-wrap">
             <Mssg />
           </div>
           <div className="w-[90%] h-[50px] border-solid flex  m-auto items-center">
