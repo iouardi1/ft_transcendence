@@ -5,13 +5,10 @@ import axios from 'axios';
 
 function GroupsComponent(props:any) {
 
-  // const axios = require('axios');
   const userId = props.userId;
-  const [convData, setConvData] = useState(null); // Initialize with null or initial data
-  // const [isLoading, setIsLoading] = useState(true);
+  const [convData, setConvData] = useState(null);
   const fetchData = async () => {
     try {
-      // const response = await fetch('http://localhost:3000/chat/groups');
       const response = await axios.get('http://localhost:3003/chat/groups', {
         params: {
           userId: props.userId,
@@ -20,22 +17,18 @@ function GroupsComponent(props:any) {
       if (response.status === 200) {
         setConvData(response.data);
     }
-      // setIsLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
-      // setIsLoading(false);
     }
   };
-  // Fetch data from the backend when the component mounts
+
   useEffect(() => {
-    // Replace this with your actual backend API fetch logic
     fetchData();
   }, []);
 
     const [display, setDisplay] = useState(true);
     if (convData)
     {
-      // console.log("====> ", convData);
       return (
           <div className="lg:w-[90%] lg:h-[32%] lg:rounded-[25px] lg:border-solid lg:flex-wrap lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
           w-[90%] h-[32%] rounded-[25px] border-solid flex-wrap border-[#FFFFFF] bg-[#FFFFFF]  shadow-none dark:border-[#272932] dark:bg-[#272932]"
@@ -51,22 +44,6 @@ function GroupsComponent(props:any) {
             >
               Groups
               </div>
-              {/* <select
-              value={selectedOption}
-              onChange={handleOptionChange}
-              className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[20px] w-[20px] rounded-full m-[10px] mr-[15px]"
-              style={{
-                fontFamily: "Roboto",
-                fontSize: "25px",groupdata
-                }}>
-                  <option>
-
-                  </option>
-              </select> */}
-
-              {/* <Link to={selectedOption} className="text-white">
-                {selectedOption}
-              </Link> */}
               <div className='w-full h-[45px] flex flex-col items-end'>
                 <button onClick={() => {setDisplay(!display)}} className={`flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]`} style={{
                   fontFamily: "Roboto",
@@ -84,7 +61,7 @@ function GroupsComponent(props:any) {
                         <Link to="createRoom" onClick={() => setDisplay(true)}>Create Room</Link>
                       </li>
                       <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                        <Link to="joinRoom" onClick={() => setDisplay(true)}>Join Room
+                        <Link to="joinRoom" onClick={() => setDisplay(true) }>Join Room
                         </Link>
                       </li>
                     </ul>    

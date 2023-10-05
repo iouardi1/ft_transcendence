@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import HorzNav from "./components/Navigation/HorzNav";
 import VertNav from "./components/Navigation/VertNav";
@@ -18,6 +18,7 @@ import AddPeople from "./components/AddPeople";
 import GroupConv from "./components/GroupConv";
 import InvToRoom from "./components/InvToRoom";
 import RoomSettings from "./components/RoomSettings";
+import { io } from 'socket.io-client';
 
 
 export interface Token {
@@ -27,6 +28,7 @@ export interface Token {
 
 
 function App() {
+  const [socket, setSocket] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [open, setOpen] = useState(false);
   function toggleDarkMode() {
@@ -42,6 +44,17 @@ function App() {
     const decode: Token = jwt(token);
     const userId: string = decode.sub;
 
+    if (!socket)
+    {
+        const socketInstance = io('http://localhost:3003', {
+          auth: {
+            token: userId,
+          }
+        });
+      setSocket(socketInstance);
+      console.log("DKHLTIIII LHNAAAA?");
+    }
+
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
@@ -53,16 +66,16 @@ function App() {
                   <Routes>
                     {/* <Route path="home" element={<Comp name="home"/>}/> */}
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
-                    <Route path="play" element={<FindGame/>} />
-                    <Route path="chat" element={<Chat userId={userId} />} >
+                    <Route path="play" element={<FindGame />} />
+                    <Route path="chat" element={<Chat userId={userId} socket={socket}/>} >
                       <Route index element={<DefaultChatComp/>}/>
-                      <Route path="createRoom" element={<CreateRoom/>}/>
-                      <Route path="joinRoom" element={<JoinRoom/>}/>
-                      <Route path="addPeople" element={<AddPeople/>}/>
-                      <Route path="dmConv" element={<DMConv/>}/>
-                      <Route path="groupConv" element={<GroupConv userId={userId}/>}/>
-                      <Route path="invToRoom" element={<InvToRoom/>}/>
-                      <Route path="roomSettings" element={<RoomSettings/>}/>
+                      <Route path="createRoom" element={<CreateRoom socket={socket}/>}/>
+                      <Route path="joinRoom" element={<JoinRoom userId={userId} socket={socket}/>}/>
+                      <Route path="addPeople" element={<AddPeople socket={socket}/>}/>
+                      <Route path="dmConv" element={<DMConv socket={socket}/>}/>
+                      <Route path="groupConv" element={<GroupConv userId={userId} socket={socket}/>}/>
+                      <Route path="invToRoom" element={<InvToRoom socket={socket}/>}/>
+                      <Route path="roomSettings" element={<RoomSettings socket={socket}/>}/>
                     </Route>
                     {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}
                     <Route path="game" element={<Game/>}/>
