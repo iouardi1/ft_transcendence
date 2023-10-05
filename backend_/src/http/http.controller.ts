@@ -15,19 +15,26 @@ import {
   import { Request, Response } from 'express';
   import { HttpService } from './http.service';
 
-  @Controller('chat/groups')
+  @Controller('chat')
   export class HttpController {
     constructor(private httpService: HttpService) {}
-    @Get()
+    @Get('groups')
     async fetchRooms(@Query() body: {userId: string}) {
         const userId = body.userId;
         return (await this.httpService.fetchRooms(userId));
     }
 
-    @Get(':id')
+    @Get('groups/:id')
     async fetchRoomContent(@Param('id', ParseIntPipe) roomId: number, @Query() body: {userId: string}) {
         const userId = body.userId;
         return (await this.httpService.fetchRoomContent(roomId, userId));
     }
+
+    @Get('groupsList')
+    async fetchRoomsToJoin(@Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.fetchRoomsToJoin(userId));
+    }
   }
+
   

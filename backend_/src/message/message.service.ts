@@ -12,6 +12,7 @@ import { DM } from '@prisma/client';
 import { map } from 'rxjs';
 import { send } from 'process';
 import { join } from 'path';
+import { WebSocketServer } from '@nestjs/websockets';
 
 interface notifInfo {
   senderId: number;
@@ -24,21 +25,20 @@ interface notifInfo {
 export class MessageService {
   constructor(private prismaService: PrismaService) {}
 
-  async createMessage(client: Socket, payload: messageDTO) {
+  async createMessage(client: Socket, payload: messageDTO, server: Server) {
     console.log(payload);
 
-    let conversationType: string;
-    payload.dmId ? (conversationType = 'dm') : (conversationType = 'room');
+
     const message = await this.prismaService.message.create({
       data: {
         sentAt: payload.sentAt,
         messageContent: payload.messageContent,
-        dmId: (conversationType = 'dm') ? payload.dmId : -1,
-        roomId: (conversationType = 'room') ? payload.roomId : -1,
+        dmId: payload.dmId ? payload.dmId : null,
+        roomId: payload.dmId ? null : payload.roomId,
         senderId: payload.userId,
       },
     });
-    if ((conversationType = 'dm')) {
+    if (payload.dmId) {
       await this.prismaService.dM.update({
         where: {
           id: payload.dmId,
@@ -77,14 +77,13 @@ export class MessageService {
         },
       },
     });
-    if ((conversationType = 'dm'))
-      client
-        .to(payload.dmId.toString().concat('dm'))
-        .emit('createdMessage', message);
+    //server vs client emit
+    if (payload.dmId)
+      client.to(payload.dmId.toString().concat('dm')).emit('createdMessage', message);
     else
-      client
-        .to(payload.roomId.toString().concat('room'))
-        .emit('createdMessage', message);
+    {
+      server.to(payload.roomId.toString().concat('room')).emit('createdMessage', message);
+    }
   }
 
   async createDm(client: Socket, payload: dmDTO, mapy: Map<string, Socket>) {
@@ -761,18 +760,18 @@ export class MessageService {
       where: {
         id: payload.subjectId,
       },
-	  data: {
-		role: 'OWNER',
-	  }
+      data: {
+        role: 'OWNER',
+      },
     });
-	await this.prismaService.roomMember.update({
-		where: {
-		  id: payload.userId,
-		},
-		data: {
-		  role: 'USER',
-		}
-	  });
+    await this.prismaService.roomMember.update({
+      where: {
+        id: payload.userId,
+      },
+      data: {
+        role: 'USER',
+      },
+    });
 
     const subject = await this.prismaService.user.findUnique({
       where: {
@@ -958,13 +957,12 @@ export class MessageService {
   async roomJoinLogic(
     client: Socket,
     payload: roomJoinDTO,
-    joinerName: string,
   ) {
     client.join(payload.roomId.toString().concat('room'));
 
     const joiner = await this.prismaService.user.findUnique({
       where: {
-        username: joinerName,
+        userId: payload.userId,
       },
     });
     const roomMember = await this.prismaService.roomMember.create({
@@ -972,7 +970,7 @@ export class MessageService {
         RoomId: payload.roomId,
         memberId: joiner.userId,
         role: 'USER',
-        joinTime: Date(),
+        joinTime: payload.joinDate,
       },
     });
     const room = await this.prismaService.room.update({
@@ -989,7 +987,7 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        username: joiner.username,
+        userId: joiner.userId,
       },
       data: {
         rooms: {
@@ -1005,25 +1003,23 @@ export class MessageService {
   async roomJoin(
     client: Socket,
     payload: roomJoinDTO,
-    mapy: Map<string, Socket>,
   ) {
-    let joinerName: string;
 
-    for (let entry of mapy.entries()) {
-      if (entry[1] == client) joinerName = entry[0];
-    }
     if (payload.visibility == 'public') {
-      this.roomJoinLogic(client, payload, joinerName)
+      console.log("dkhlti hnaa babe? (public) :3");
+      this.roomJoinLogic(client, payload);
     } else {
       const roomToJoin = await this.prismaService.room.findUnique({
         where: {
           id: payload.roomId,
         },
       });
+      console.log("dkhlti hnaa babe? :3");
       if (roomToJoin.password == payload.password) {
-		this.roomJoinLogic(client, payload, joinerName)
+        this.roomJoinLogic(client, payload);
       } else {
-        alert('Wrong password, please try again!');
+        console.log(roomToJoin.password, payload.password)
+        client.emit('joinedRoom', "Wrong password, please try again..");
       }
     }
   }
@@ -1089,11 +1085,11 @@ export class MessageService {
     });
   }
 
-  async fetchState(client: Socket, username: string) {
-    console.log(username);
+  async fetchState(client: Socket, userId: string) {
+    console.log(userId);
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: username,
+        userId: userId,
       },
       include: {
         dmAdmin: true,
@@ -1101,13 +1097,15 @@ export class MessageService {
         participantNotifs: true,
       },
     });
-    user.dmAdmin.forEach((dm) => {
-      client.join(dm.id.toString().concat('dm'));
-    });
-
-    user.rooms.forEach((room) => {
-      client.join(room.id.toString().concat('room'));
-    });
-    return user.participantNotifs;
+    if (user.dmAdmin) {
+      user.dmAdmin.forEach((dm) => {
+        client.join(dm.id.toString().concat('dm'));
+      });
+    }
+    if (user.rooms) {
+      user.rooms.forEach((room) => {
+        client.join(room.id.toString().concat('room'));
+      });
+    }
   }
 }

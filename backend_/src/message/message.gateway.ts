@@ -55,7 +55,7 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: messageDTO,
   ) {
-    this.messageService.createMessage(client, payload);
+    this.messageService.createMessage(client, payload, this.server);
   }
 
   @SubscribeMessage('roomInvite')
@@ -174,7 +174,7 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomJoinDTO,
   ) {
-    this.messageService.roomJoin(client, payload, this.mapy);
+    this.messageService.roomJoin(client, payload);
   }
 
   @SubscribeMessage('leaveRoom')
@@ -197,29 +197,11 @@ async handleAddRoom(
     }
   }
 
-  private flag: boolean = false;
-
   async handleConnection(client: Socket) {
     console.log(`Connected ${client.id}`);
     /*For now, "token" is only a placeholder for the actual token to be intercepted, for now we will use it directly as a username, later we will do a lookup on it and figure out its corresponding user and then use the latter */
     let {token} = client.handshake.auth;
-    console.log(token);
-    /*Get rid of this mess later */
-    if (typeof token === 'undefined' && !this.flag)
-    {
-      this.flag = true;
-      this.mapy.set('mamma mia', client);
-      token = 'mamma mia'
-    }
-    else if (typeof token === 'undefined' && this.flag)
-    {
-      // this.flag = true;
-      this.mapy.set('mamma', client);
-      token = 'mamma'
-    }
-    else
-      this.mapy.set(token, client);
-    const state = await this.messageService.fetchState(client, token);
-    return state;
+    this.mapy.set(token, client);
+    await this.messageService.fetchState(client, token);
   }
 }

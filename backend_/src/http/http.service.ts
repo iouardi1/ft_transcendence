@@ -71,6 +71,23 @@ export class HttpService {
     });
     await Promise.all(asyncOperations);
     console.log(customArray);
-    return {msgs: customArray, roomName: room.RoomName, roomImage: room.image};
+    return {msgs: customArray, roomName: room.RoomName, roomImage: room.image, roomId: room.id};
+  }
+
+  async fetchRoomsToJoin(userId: string) {
+    const rooms = await this.prismaService.room.findMany({
+      select: {
+        id: true,
+        image: true,
+        RoomName: true,
+        visibility: true,
+        password: true,
+      }
+    })
+    const filteredRooms = rooms.filter((room: any) => {
+      if (room.visibility != "private")
+        return (room);
+    })
+    return filteredRooms;
   }
 }
