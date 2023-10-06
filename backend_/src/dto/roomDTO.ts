@@ -1,5 +1,5 @@
 export class roomDTO {
-  ownerId: number;
+  ownerId: string;
   roomName: string;
   joinTime: Date;
   visibility: string;

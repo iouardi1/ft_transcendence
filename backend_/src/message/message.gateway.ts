@@ -42,7 +42,7 @@ export class MessageGateway
     this.messageService.createDm(client, payload, this.mapy);
   }
 
-  @SubscribeMessage('addRoom')
+  @SubscribeMessage('createRoom')
 async handleAddRoom(
   @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomDTO,

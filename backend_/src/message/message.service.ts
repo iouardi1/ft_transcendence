@@ -141,7 +141,7 @@ export class MessageService {
     console.log(payload);
     const user = await this.prismaService.user.findUnique({
       where: {
-        id: payload.ownerId,
+        userId: payload.ownerId,
       },
     });
     console.log(user);
@@ -163,7 +163,7 @@ export class MessageService {
     });
     await this.prismaService.room.update({
       where: {
-        id: roomMember.id,
+        id: room.id,
       },
       data: {
         RoomMembers: {
@@ -175,12 +175,12 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        id: payload.ownerId,
+        userId: payload.ownerId,
       },
       data: {
         rooms: {
           connect: {
-            id: room.id,
+            id: roomMember.id,
           },
         },
       },
@@ -381,7 +381,7 @@ export class MessageService {
       data: {
         rooms: {
           connect: {
-            id: room.id,
+            id: roomMember.id,
           },
         },
       },
@@ -992,12 +992,12 @@ export class MessageService {
       data: {
         rooms: {
           connect: {
-            id: room.id,
+            id: roomMember.id,
           },
         },
       },
     });
-    client.emit('joinedRoom', room);
+    client.emit('joinedRoom', "success");
   }
 
   async roomJoin(
@@ -1019,7 +1019,7 @@ export class MessageService {
         this.roomJoinLogic(client, payload);
       } else {
         console.log(roomToJoin.password, payload.password)
-        client.emit('joinedRoom', "Wrong password, please try again..");
+        client.emit('joinedRoom', "failure");
       }
     }
   }

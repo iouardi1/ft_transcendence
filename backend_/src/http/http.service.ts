@@ -76,6 +76,15 @@ export class HttpService {
 
   async fetchRoomsToJoin(userId: string) {
     const rooms = await this.prismaService.room.findMany({
+      where: {
+        NOT: {
+          RoomMembers: {
+            some: {
+              memberId: userId,
+            },
+          },
+        },
+      },
       select: {
         id: true,
         image: true,
