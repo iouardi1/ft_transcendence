@@ -69,7 +69,7 @@ function App() {
                     <Route path="play" element={<FindGame />} />
                     <Route path="chat" element={<Chat userId={userId} socket={socket}/>} >
                       <Route index element={<DefaultChatComp/>}/>
-                      <Route path="createRoom" element={<CreateRoom socket={socket}/>}/>
+                      <Route path="createRoom" element={<CreateRoom socket={socket} userId={userId} />}/>
                       <Route path="joinRoom" element={<JoinRoom userId={userId} socket={socket}/>}/>
                       <Route path="addPeople" element={<AddPeople socket={socket}/>}/>
                       <Route path="dmConv" element={<DMConv socket={socket}/>}/>

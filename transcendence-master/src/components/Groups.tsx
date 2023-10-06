@@ -15,7 +15,7 @@ function GroupsComponent(props:any) {
         }
       });
       if (response.status === 200) {
-        setConvData(response.data);
+        setConvData(response.data)
     }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -23,6 +23,7 @@ function GroupsComponent(props:any) {
   };
 
   useEffect(() => {
+
     fetchData();
   }, []);
 

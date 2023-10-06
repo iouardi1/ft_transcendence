@@ -4,9 +4,10 @@ import axios from "axios";
 
 
 const JoinRoomButton = (props: any) => {
-  console.log("here: ----", props)
+  // console.log("here: ----", props)
   const [display, setDisplay] = useState(true);
   const [password, setPassword] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const toggleDiv = () => {
     setDisplay(!display);
@@ -24,7 +25,16 @@ const JoinRoomButton = (props: any) => {
       console.log('Submitted without password');
       props.socket.emit('joinRoom', {visibility: "public", password: password, roomId: props.group.id, userId: props.userId, joinDate: new Date()})
     }
+    
+    setIsButtonDisabled(true);
   };
+
+  props.socket.on("joinedRoom", (feedback: string) => {
+    if (feedback == "success")
+      console.log("TRUE")
+    else
+      alert("Wrong password, please try again..");
+  })
 
   return (
     <div className="icon w-full h-full flex-wrap justify-around m-auto">
@@ -52,16 +62,17 @@ const JoinRoomButton = (props: any) => {
         </div>
         <form onSubmit={handleSubmit}>
           <button 
-          type='submit'
-          onClick= { toggleDiv }
-          className="date w-[40px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px] hover:shadow-lg"
-          style={{
-            fontFamily: "poppins",
-            fontSize: "14px",
-            fontStyle: "normal",
-            fontWeight: 600,
-            lineHeight: "normal",
-            letterSpacing: "0.13px",
+            type='submit'
+            disabled={isButtonDisabled}
+            onClick= { toggleDiv }
+            className={`date w-[40px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px] hover:shadow-lg ${isButtonDisabled ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button'}`}
+            style={{
+              fontFamily: "poppins",
+              fontSize: "14px",
+              fontStyle: "normal",
+              fontWeight: 600,
+              lineHeight: "normal",
+              letterSpacing: "0.13px",
             }}
           >
           Join
@@ -73,10 +84,9 @@ const JoinRoomButton = (props: any) => {
                 <input 
                   required
                   id="i" 
-                  type="text" 
+                  type="password" 
                   placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  // onChange={(e) => setPassword(e.target.value)}
                   className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`}
                   style={{
                     fontFamily: "poppins",
