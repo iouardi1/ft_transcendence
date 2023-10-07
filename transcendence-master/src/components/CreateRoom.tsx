@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-// import DMConveComponent from "./DMConvComp.tsx";
-// import GroupsComponent from "./Groups.tsx";
-// import DMsComponent from "./People.tsx";
 
 
 
@@ -15,27 +12,57 @@ function CreateRoom(props: any) {
   const [password, setPassword] = useState("")
 
 
-  console.log("props in create room : ", props)
+  const handleImageChange = (e) => {
+    const selectedImage = e.target.files[0];
+    setImage(selectedImage);
+  }
+
   
   const buttonOptions = [
-    { label: 'Public' , id:'Public', dispalyInput: () => {
+    { label: 'public' , id:'public', dispalyInput: () => {
       setDisplay("hidden")
       setClicked("public")
     }},
-    { label: 'Protected', id:'Protected', dispalyInput: () => {
+    { label: 'protected', id:'protected', dispalyInput: () => {
       setDisplay("")
       setClicked("protected")
     }},
-    { label: 'Private', id:'Private', dispalyInput: () => {
+    { label: 'private', id:'private', dispalyInput: () => {
       setDisplay("hidden")
       setClicked("private")
     }},
   ];
 
-  const handleSubmit = (e) => {
+
+  const  convertImageToBase64 = async (image) => {
+    return new Promise((resolve, reject) => {
+      if (!image) {
+        resolve(null);
+      } else {
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onload = () => {
+          resolve(reader.result.split(',')[1]); // Extract the Base64 part
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+      }
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("password here-----------------", password)
-    props.socket.emit('createRoom', {ownerId: props.userId, roomName: roomName, joinTime: new Date(), visibility: clicked, image: image, password: password})
+    const imageBase64 = await convertImageToBase64(image);
+    console.log("---------------------", imageBase64);
+    props.socket.emit('createRoom', {
+      ownerId: props.userId, 
+      roomName: roomName, 
+      joinTime: new Date(),
+      visibility: clicked, 
+      image: imageBase64, 
+      password: password,
+    });
   }
 
   return (
@@ -95,9 +122,9 @@ function CreateRoom(props: any) {
                   fontWeight:400,
                   letterSpacing: "1.5px",
                   }} 
-                  onChange={(e) => setImage(e.target.value)}
+                  onChange={handleImageChange}
                 type="file" 
-                accept="file_extension|image/*"
+                accept="image/*"
                 name="" 
                 id=""/>
             </div>
@@ -122,7 +149,7 @@ function CreateRoom(props: any) {
                   className={`${option.label === clicked ? "bg-[#6F37CF] text-white" : "bg-[#EEEEFF] dark:bg-[#1A1C26]"}   hover:bg-[#6F37CF] dark:hover:bg-[#6F37CF] hover:text-white dark:text-white text-[#8F8F8F] font-semibold py-2 px-4 rounded-md` }
                   onClick={option.dispalyInput}
                   
-                  id='option.id'
+                  id={option.id}
                   style={{
                     fontFamily: "poppins",
                     fontSize: "15px",
@@ -140,7 +167,7 @@ function CreateRoom(props: any) {
             <div className="w-full flex mt-[20px] items-stretch justify-center">
               <input 
                 required={display === "" ? true : false} 
-                id="i" 
+              
                 type="password" 
                 placeholder="Your group's password" 
                 value={password}

@@ -40,17 +40,17 @@ const JoinRoomButton = (props: any) => {
   })
 
   return (
-    <div className="icon w-full h-full flex-wrap justify-around m-auto">
-      <div className="icon w-full h-[40px] flex justify-around items-center">
+    <div className="icon w-full h-full">
+      <div className="icon w-full h-[55px] flex justify-around items-center">
         <div className="w-full h-full flex justify-around items-center">
           <img
             className="logoImg rounded-[50px] w-[40px] h-[40px]"
-            src={ props.group.image ? props.group.image  : logoImg}
+            src={ props.group.image ? `data:image/jpeg;base64,${props.group.image}`  : logoImg}
             alt={""}
           />
 
           <div
-            className="groupName text-black dark:text-white w-full ml-[20px]"
+            className="groupName text-black dark:text-white w-[50%] ml-[20px]"
             style={{
               fontFamily: "poppins",
               fontSize: "15px",
@@ -63,45 +63,48 @@ const JoinRoomButton = (props: any) => {
             { props.group.RoomName }
           </div>
         </div>
-        <form onSubmit={handleSubmit}>
-          <button 
-            type='submit'
-            disabled={isButtonDisabled}
-            onClick= { toggleDiv }
-            className={`date w-[40px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px] hover:shadow-lg ${isButtonDisabled ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button'}`}
-            style={{
-              fontFamily: "poppins",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 600,
-              lineHeight: "normal",
-              letterSpacing: "0.13px",
-            }}
-          >
-          Join
-          </button>
-          {
-            props.group.visibility === "protected" && !display &&
-            (
-              <div className="w-fit wrap">
-                <input 
-                  required
-                  id="i" 
-                  type="password" 
-                  placeholder="Enter password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`}
-                  style={{
-                    fontFamily: "poppins",
-                    fontSize: "11px",
-                    fontStyle: "normal",
-                    letterSpacing: "1.5px",
-                    }}/>
+        <div className="w-[20%] h-full">
+          <form onSubmit={handleSubmit}
+            className="w-full h-full mt-[12px] ml-[50px] flex-wrap">
+            <button 
+              type='submit'
+              disabled={isButtonDisabled}
+              onClick= { toggleDiv }
+              className={`date w-[50px] h-[30px] bg-[#6F37CF]  text-white rounded-[25%] ml-[-65px] hover:shadow-lg ${isButtonDisabled ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button'}`}
+              style={{
+                fontFamily: "poppins",
+                fontSize: "14px",
+                fontStyle: "normal",
+                fontWeight: 600,
+                lineHeight: "normal",
+                letterSpacing: "0.13px",
+              }}
+            >
+            Join
+            </button>
+            {
+              props.group.visibility === "protected" && !display &&
+              (
+                <div className={`${display} w-[100px] h-[30px] ml-[-80px] mt-[15px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] flex items-center`}>
+                  <input 
+                    required
+                    id="i" 
+                    type="password" 
+                    placeholder="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={` ${display} w-full h-[20px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`}
+                    style={{
+                      fontFamily: "poppins",
+                      fontSize: "11px",
+                      fontStyle: "normal",
+                      letterSpacing: "1.5px",
+                      }}/>
 
-              </div>
-            )
-          }
-        </form>
+                </div>
+              )
+            }
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -110,7 +113,7 @@ const JoinRoomButton = (props: any) => {
 function ExistinRoom(props: any) {
   console.log("props here:---------------", props);
   return (
-    <div className='w-[350px] max-h-[50px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
+    <div className='w-[350px] max-h-[100px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
       <JoinRoomButton group={props.groupsList} socket={props.socket} userId={props.userId}/>
     </div>

@@ -53,9 +53,9 @@ const ContactBar = (barData) => {
       return (
         <div className="w-[70%] max-h-[60%] m-[15px]">
           <div className="w-full h-full">
-            <div className=" w-[15px] h-[15px] mt-[50px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
+            <div className=" w-[15px] h-[15px] mt-[15px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
             <div
-              className="p-[10px] ml-[15px] max-w-[60%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -147,17 +147,18 @@ const DMConveComponent = (props: any) => {
 
   if (dataState)
   {
+    console.log("dataState in dmConv--------", dataState)
       return (
           <div
           className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
           ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
         >
             <div className="w-full h-[10%] border-solid mb-[5px]">
-              <ContactBar barData={dataState}/>
+              <ContactBar barData={dataState.dm}/>
             </div>
-            <div className="w-full h-[70%] flex-wrap">
+            <div className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll">
             {
-              dataState.msg.map((element) => (
+              dataState.dm.msg.map((element) => (
                  <Mssg key={element.id} msgData={element} userId={props.userId} />
               ))
             }
@@ -166,7 +167,7 @@ const DMConveComponent = (props: any) => {
             <div className="w-[90%] h-[50px] border-solid flex  m-auto items-center">
                 <img
                   className="logoImg rounded-[50px] w-[40px] h-[40px]"
-                  src={dataState.participants[0].image}
+                  src={dataState.image.image}
                   alt={""}
                 />
                 <form 

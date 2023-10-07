@@ -11,7 +11,7 @@ const ContactBar = (barData) => {
       <div className="w-full h-full flex p-[auto] items-center justify-between">
           <img
             className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px]"
-            src={ barData.barData.roomImage ? barData.barData.roomImage : logoImg }
+            src={ barData.barData.roomImage ? `data:image/jpeg;base64,${barData.barData.roomImage}` : logoImg }
             alt={""}
           />
           <div className="w-[70%] h-full ml-[20px] flex items-center">

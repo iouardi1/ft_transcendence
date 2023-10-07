@@ -1,12 +1,7 @@
 tomorrow's tasks nchaelah:
 
-    - Working on the images upload in all components
-    - Work on the useEffects re-render everytime the data changes
-    - center the password input div to join room
-    - in the Create Room component work on the onclick visibility button to stay clicked 
+    - check image size (only <500kb)
     - set a perform input validation in all the input fields , especially in the create room form
-    - in the group component, when a message apear to be long, it overfloaws, FIX IT grrrr...
     - Dashboard abatala
-    - Password input mab9ach f create room
-
-
+    - date dispaly format
+    and we be done nchaelah

@@ -42,6 +42,7 @@ const DmRoomButton = (props) => {
         </div>
         <Link 
           to="/chat/invitToGame"
+          // to="/chat/dmConv"
           className="w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:dark:shadow-lg hover:shadow-lg"
           >
             <div className="w-full h-full text-white text-center mt-[5px]"
@@ -127,7 +128,8 @@ export default function AddPeople (props) {
         ml-[-10px] mr-[15px] my-[15px] w-[55%] h-[88%] rounded-[25px] flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none  dark:border-[#272932] dark:bg-[#272932]">
               
         <div className='w-full h-full flex-wrap justify-center'>
-        <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-black dark:text-white text-center" style={{
+        <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-black dark:text-white text-center" 
+          style={{
                 fontFamily: "poppins",
                 fontSize: "25px",
                 fontStyle: "normal",

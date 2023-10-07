@@ -30,7 +30,7 @@ function GroupsComponent(props:any) {
   const [display, setDisplay] = useState(true);
   if (convData)
   {
-    console.log("non sorted:====", convData);
+    console.log("non sorted:========", convData);
     const sorted = convData.sort((a, b) => {
       const sentAtA = a?.msgs?.[a.msgs.length - 1]?.sentAt || 0;
       const sentAtB = b?.msgs?.[b.msgs.length - 1]?.sentAt || 0;
