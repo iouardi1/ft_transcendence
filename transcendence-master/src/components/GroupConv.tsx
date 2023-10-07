@@ -1,26 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import logoImg from "../assets/panda.svg";
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-// import { BrowserRouter,Router , Route, Routes, Outlet} from 'react-router-dom';
-// import { useHistory } from 'react-router-dom'
-// import CreateRoom from './CreateRoom.tsx';
-// import JoinRoom from './JoinRoom.tsx';
-
-interface ConvData {
-    id: number;
-    name: string;
-    image: string;
-    message1: string;
-    message2: string;
-    date: string;
-    group: string;
-    online: string;
-    msgSent: boolean;
-  }
 
 const ContactBar = (barData) => {
     return (
@@ -75,8 +58,6 @@ const ContactBar = (barData) => {
   const Mssg = (msgData) => {
 
     if (msgData.msgData[0].senderId !== msgData.userId) {
-      // console.log("userId from props: " + msgData.userId);
-      // console.log("userId from Mois: " + msgData.msgData[0]);
       return (
         <div className=" w-[70%] max-h-[60%] m-[15px] ">
           <div className="w-full h-full flex">
@@ -131,9 +112,7 @@ const ContactBar = (barData) => {
     }
   };
 
-  interface MyComponentProps {
-    dataState: any; // Replace 'any' with the actual type of dataState
-  }
+
 
 const GroupConveComponent = (props:any) => {
 
@@ -145,9 +124,6 @@ const GroupConveComponent = (props:any) => {
   const params = new URLSearchParams(search);
   const receivedData = params.get('id');
   
-
-  console.log("------->", props);
-
 
   const [message, setMessage] = useState('');
   const fetchData = async () => {
@@ -170,27 +146,6 @@ const GroupConveComponent = (props:any) => {
     console.log("---chi haaaja");
     
   }, []);
-
-
-    // const [message, setMessage] = useState('');
-    // const [socket, setSocket] = useState(null);
-  
-    // useEffect(() => {
-    //   const socketInstance = io('http://localhost:3003', {
-    //     auth: {
-    //       token: props.userId,
-    //     }
-    //   });
-    //   setSocket(socketInstance);
-    //   socketInstance.on("createdMessage", () => {
-    //     fetchData();
-    //   })
-
-    //   return () => {
-    //     socketInstance.disconnect();
-    //   };
-    // }, []);
-
 
     const handleSubmit = (e) => {
       console.log(message);

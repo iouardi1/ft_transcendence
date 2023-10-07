@@ -8,31 +8,34 @@ import React, { useState } from "react";
 function CreateRoom(props: any) {
 
   const [display, setDisplay] = useState("hidden")
+  const [clicked, setClicked] = useState("")
 
   const [roomName, setRoomName] = useState(null)
   const [image, setImage] = useState(null)
-  const [visibility, setVisibility] = useState(null)
-  const [password, setPassword] = useState(null)
+  const [password, setPassword] = useState("")
 
 
   console.log("props in create room : ", props)
   
   const buttonOptions = [
-    { label: 'Public' , id:'Public', onClick: () => setDisplay("hidden") },
-    { label: 'Protected', id:'Protected', onClick: () => setDisplay("") },
-    { label: 'Private', id:'Private', onClick: () => setDisplay("hidden") },
+    { label: 'Public' , id:'Public', dispalyInput: () => {
+      setDisplay("hidden")
+      setClicked("public")
+    }},
+    { label: 'Protected', id:'Protected', dispalyInput: () => {
+      setDisplay("")
+      setClicked("protected")
+    }},
+    { label: 'Private', id:'Private', dispalyInput: () => {
+      setDisplay("hidden")
+      setClicked("private")
+    }},
   ];
-  
-  // const MyComponent = () => {
-  //   const handleOptionClick = (option) => {
-  //     // Handle the button click for the selected option
-  //     console.log(`Clicked on Option ${option}`);
-  //   };
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.socket.emit('createRoom', {ownerId: props.userId, roomName: roomName, joinTime: new Date(), visibility: visibility, image: image, password: password})
+    console.log("password here-----------------", password)
+    props.socket.emit('createRoom', {ownerId: props.userId, roomName: roomName, joinTime: new Date(), visibility: clicked, image: image, password: password})
   }
 
   return (
@@ -110,15 +113,15 @@ function CreateRoom(props: any) {
                 </label>
               
             </div>
-            <div className="space-x-5 h-[15%] flex justify-center items-end">
+            <div className={`space-x-5 h-[15%] flex justify-center items-end`}>
               {buttonOptions.map((option, index) =>
               (
                 <button
                   type="button"
                   key={index}
-                  className="dark:bg-[#1A1C26] bg-[#EEEEFF] hover:bg-[#6F37CF] dark:hover:bg-[#6F37CF] hover:text-white dark:text-white text-[#8F8F8F] font-semibold py-2 px-4 rounded-md"
-                  // onClick={() => setVisibility(option.label)}
-                  onClick={option.onclick}
+                  className={`${option.label === clicked ? "bg-[#6F37CF] text-white" : "bg-[#EEEEFF] dark:bg-[#1A1C26]"}   hover:bg-[#6F37CF] dark:hover:bg-[#6F37CF] hover:text-white dark:text-white text-[#8F8F8F] font-semibold py-2 px-4 rounded-md` }
+                  onClick={option.dispalyInput}
+                  
                   id='option.id'
                   style={{
                     fontFamily: "poppins",
@@ -137,8 +140,12 @@ function CreateRoom(props: any) {
             <div className="w-full flex mt-[20px] items-stretch justify-center">
               <input 
                 required={display === "" ? true : false} 
-                id="i" type="text" placeholder="Your group's password" 
-                className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`} 
+                id="i" 
+                type="password" 
+                placeholder="Your group's password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} 
+                className={` ${display}  w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`} 
                 style={{
                   fontFamily: "poppins",
                   fontSize: "13px",

@@ -3,24 +3,14 @@ import { Link } from "react-router-dom";
 import logoImg from "../assets/panda.svg";
 
 interface ConvData {
-    id: number;
-    roomName: string;
-    image: string;
-    message1: string;
+    
     date: Date;
-    visibility: string;
-    password: string;
   }
 
   const GroupComp = (groupData) => {
-    // console.log("----------->", groupData);
+    console.log("------------------>", groupData);
     const defaultConvData: ConvData = {
-      id: groupData.groupData.id,
-      roomName: groupData.groupData.RoomName,
-      image: logoImg,
-      visibility: groupData.groupData.visibility,
-      password: groupData.groupData.password,
-      message1: (groupData.groupData.msgs.length) ? groupData.groupData.msgs[groupData.groupData.msgs.length - 1].messageContent : "",
+
       date: (groupData.groupData.msgs.length) ? new Date(groupData.groupData.msgs[groupData.groupData.msgs.length - 1].sentAt) : null,
     };
     // console.log(defaultConvData.date.getMonth());
@@ -40,8 +30,8 @@ interface ConvData {
           <div className="w-[70%] h-full ">
             <img
               className="logoImg rounded-[50px] w-[40px] h-[40px]"
-              src={defaultConvData.image}
-              alt={"${defaultConvdata.name}"}
+              src={(groupData.groupData.image) ? groupData.groupData.image : logoImg}
+              alt={""}
             />
   
             <div
@@ -55,10 +45,10 @@ interface ConvData {
                 letterSpacing: "0.75px",
               }}
             >
-              {defaultConvData.roomName}
+              {groupData.groupData.RoomName}
             </div>
             <div
-              className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px]"
+              className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px] overflow-hidden whitespace-nowrap"
               style={{
                 fontFamily: "poppins",
                 fontSize: "12px",
@@ -68,7 +58,7 @@ interface ConvData {
                 letterSpacing: "0.65px",
               }}
             >
-              {defaultConvData.message1}
+              {(groupData.groupData.msgs.length) ? groupData.groupData.msgs[groupData.groupData.msgs.length - 1].messageContent : ""}
             </div>
           </div>
           <div

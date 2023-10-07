@@ -1,33 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 
-import logoImg from "../assets/panda.svg";
+const DmRoomButton = (props) => {
 
-interface ConvData {
-  id: number;
-  name: string;
-  image: string;
-  message1: string;
-  message2: string;
-  date: string;
-  group: string;
-  online: string;
-  msgSent: boolean;
-}
+  console.log("PROOOOOOOOOOOOOPS", props);
 
-const DmRoomButton = () => {
-  const defaultConvData: ConvData = {
-    id: 1,
-    name: "Mohamed",
-    image: logoImg,
-    message1: "Hello everyone!",
-    message2: "Hello back!",
-    date: "Today, 12:15pm",
-    group: "Friends Forever",
-    online: "Online",
-    msgSent: true,
-  };
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const handleButtonClick = () =>  {
+    props.socket.emit('createDm', {senderId: props.userData.userId, receiverName: props.userData.userData.username});
+    setIsButtonDisabled(true);
+  }
 
   return (
     <div className="icon w-[95%] h-full flex-wrap m-auto">
@@ -36,8 +22,8 @@ const DmRoomButton = () => {
         <div className="w-full h-full flex items-center">
           <img
             className="logoImg rounded-[40px] w-[40px] h-[40px]"
-            src={defaultConvData.image}
-            alt={"${defaultConvdata.name}"}
+            src={props.userData.userData.image}
+            alt={""}
           />
 
           <div
@@ -51,7 +37,7 @@ const DmRoomButton = () => {
               letterSpacing: "0.75px",
             }}
           >
-            {defaultConvData.name}
+            {props.userData.userData.username}
           </div>
         </div>
         <Link 
@@ -71,9 +57,12 @@ const DmRoomButton = () => {
               Play
             </div>
         </Link>
-        <Link 
-          to="/chat/dmConv/"
-          className="w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] hover:dark:shadow-xl hover:shadow-xl"
+        <button 
+          // to="/chat/dmConv/"
+          type='button'
+          disabled={isButtonDisabled}
+          onClick={handleButtonClick}
+          className={`w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] hover:dark:shadow-xl hover:shadow-xl ${isButtonDisabled ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button'}`}
           >
             <div className="w-full h-full text-white text-center mt-[5px]"
             style={{
@@ -87,24 +76,52 @@ const DmRoomButton = () => {
 
               DM
             </div>
-        </Link>
+        </button>
       </div>
     </div>
   );
 };
 
-function ExistinUser() {
+function ExistinUser(userData) {
+  console.log("users here: ", userData);
   return (
     <div className='w-[350px] max-h-[60px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
-      <DmRoomButton />
+      <DmRoomButton userData={userData} socket={userData.socket}/>
     </div>
   )
 
 }
 
-export default function AddPeople () {
+export default function AddPeople (props) {
 
+  const socket = props.socket;
+  const userId = props.userId;
+  const [addUsers, setAddUsers] = useState(null);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3003/chat/addPeople', {
+        params: {
+          userId: props.userId,
+        }
+      });
+      if (response.status === 200) {
+        setAddUsers(response.data)
+    }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+
+    fetchData();
+  }, []);
+
+    console.log('PAAAAPAAAAAPAAAAAAPPAAAA 3la users:', addUsers);
+
+  if (addUsers)
+  {
     return (
         <div className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
         ml-[-10px] mr-[15px] my-[15px] w-[55%] h-[88%] rounded-[25px] flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none  dark:border-[#272932] dark:bg-[#272932]">
@@ -123,33 +140,17 @@ export default function AddPeople () {
         </hr>
         <div className="h-[88%] convs  overflow-y-scroll">
           
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
-          {< ExistinUser/>}
+        {
+                 
+                 addUsers.map( (user) => (
+                 <ExistinUser key={user.id} userData={user} userId={userId} socket={socket}/>))
+        }
       
         </div>
         </div>
         
       </div>
         
-    )
+    );
+    }
 }

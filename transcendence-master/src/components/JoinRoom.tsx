@@ -17,6 +17,8 @@ const JoinRoomButton = (props: any) => {
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the form from submitting traditionally
 
+    console.log("join room props: ", props.group);
+
     if (props.group.visibility === 'protected') {
 
       console.log('Submitted Password:', password);
@@ -33,7 +35,8 @@ const JoinRoomButton = (props: any) => {
     if (feedback == "success")
       console.log("TRUE")
     else
-      alert("Wrong password, please try again..");
+      // alert("Wrong password, please try again..");
+      console.log("Wrong password");
   })
 
   return (
@@ -86,7 +89,7 @@ const JoinRoomButton = (props: any) => {
                   id="i" 
                   type="password" 
                   placeholder="Enter password"
-                  // onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   className={` ${display} w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`}
                   style={{
                     fontFamily: "poppins",
@@ -129,7 +132,7 @@ export default function JoinRoom(props: any) {
       });
       if (response.status === 200) {
         setRooms(response.data);
-        // console.log("rooms i get:", rooms);
+        console.log("rooms i get:", response.data);
     }
     } catch (error) {
       console.error('Error fetching data:', error);

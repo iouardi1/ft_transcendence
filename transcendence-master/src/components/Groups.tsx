@@ -27,9 +27,16 @@ function GroupsComponent(props:any) {
     fetchData();
   }, []);
 
-    const [display, setDisplay] = useState(true);
-    if (convData)
-    {
+  const [display, setDisplay] = useState(true);
+  if (convData)
+  {
+    console.log("non sorted:====", convData);
+    const sorted = convData.sort((a, b) => {
+      const sentAtA = a?.msgs?.[a.msgs.length - 1]?.sentAt || 0;
+      const sentAtB = b?.msgs?.[b.msgs.length - 1]?.sentAt || 0;
+      return sentAtA - sentAtB;
+    });
+    console.log("sorted:----", sorted);
       return (
           <div className="lg:w-[90%] lg:h-[32%] lg:rounded-[25px] lg:border-solid lg:flex-wrap lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
           w-[90%] h-[32%] rounded-[25px] border-solid flex-wrap border-[#FFFFFF] bg-[#FFFFFF]  shadow-none dark:border-[#272932] dark:bg-[#272932]"
@@ -71,7 +78,8 @@ function GroupsComponent(props:any) {
             </div>
             <div className="h-[79%] convs my-[10px] ml-[10px] overflow-y-scroll">
                 {
-                  convData.map( (Group1) => (
+                 
+                  sorted.map( (Group1) => (
                   <Group key={Group1.id} groupData={Group1} userId={userId}/>))
                 }
             </div>
