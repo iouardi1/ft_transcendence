@@ -27,8 +27,6 @@ export class MessageService {
 
   async createMessage(client: Socket, payload: messageDTO, server: Server) {
     console.log(payload);
-
-
     const message = await this.prismaService.message.create({
       data: {
         sentAt: payload.sentAt,
@@ -82,7 +80,7 @@ export class MessageService {
       client.to(payload.dmId.toString().concat('dm')).emit('createdMessage', message);
     else
     {
-      server.to(payload.roomId.toString().concat('room')).emit('createdMessage', message);
+      client.to(payload.roomId.toString().concat('room')).emit('createdMessage', message);
     }
   }
 
@@ -96,41 +94,19 @@ export class MessageService {
     console.log(user);
     const dm = await this.prismaService.dM.create({
       data: {
-        participantId: user.id,
-      },
+        participants: {
+          connect: [{userId: payload.senderId}, {userId: user.userId}]
+        }
+      }
     });
-    await this.prismaService.user.update({
-      where: {
-        id: payload.senderId,
-      },
-      data: {
-        dmAdmin: {
-          connect: {
-            id: dm.id,
-          },
-        },
-      },
-    });
-
-    await this.prismaService.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        dmAdmin: {
-          connect: {
-            id: dm.id,
-          },
-        },
-      },
-    });
+    
     console.log('AFTER BRUH');
     client.emit('createdDm', dm.id);
     /* fetching the socket by its key(username),
     and using it to emit to the addressee.*/
-    mapy.get(user.username).emit('createdDm', dm.id);
+    mapy.get(user.userId).emit('createdDm', dm.id);
     client.join(dm.id.toString().concat('dm'));
-    mapy.get(user.username).join(dm.id.toString().concat('dm'));
+    mapy.get(user.userId).join(dm.id.toString().concat('dm'));
   }
 
   async createRoom(
@@ -147,7 +123,7 @@ export class MessageService {
     console.log(user);
     const room = await this.prismaService.room.create({
       data: {
-        image: payload.image,
+        image: payload.image ? payload.image : "",
         RoomName: payload.roomName,
         visibility: payload.visibility,
         password: payload.password ? payload.password : null,
@@ -1006,7 +982,7 @@ export class MessageService {
   ) {
 
     if (payload.visibility == 'public') {
-      console.log("dkhlti hnaa babe? (public) :3");
+      console.log("dkhlti hnaa ? (public) :3");
       this.roomJoinLogic(client, payload);
     } else {
       const roomToJoin = await this.prismaService.room.findUnique({
@@ -1014,7 +990,7 @@ export class MessageService {
           id: payload.roomId,
         },
       });
-      console.log("dkhlti hnaa babe? :3");
+      console.log("dkhlti hnaa ? :3");
       if (roomToJoin.password == payload.password) {
         this.roomJoinLogic(client, payload);
       } else {
@@ -1092,19 +1068,19 @@ export class MessageService {
         userId: userId,
       },
       include: {
-        dmAdmin: true,
+        dms: true,
         rooms: true,
         participantNotifs: true,
       },
     });
-    if (user.dmAdmin) {
-      user.dmAdmin.forEach((dm) => {
+    if (user.dms) {
+      user.dms.forEach((dm) => {
         client.join(dm.id.toString().concat('dm'));
       });
     }
     if (user.rooms) {
       user.rooms.forEach((room) => {
-        client.join(room.id.toString().concat('room'));
+        client.join(room.RoomId.toString().concat('room'));
       });
     }
   }

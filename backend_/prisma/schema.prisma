@@ -19,7 +19,7 @@ model User{
   username String @unique
   displayName String
   image String
-  dmAdmin DM[]
+  dms DM[] @relation("participants")
   messages Message[]
   // historyAdmin MatchHistory[] @relation("userHistory")
   // historyOpponent MatchHistory[] @relation("opponentHistory")
@@ -53,14 +53,14 @@ model Message {
 
 model DM {
   id Int @id @default(autoincrement())
-  participantId Int
   // participantId Int
   // msgId Int
-  participant User  @relation(fields: [participantId],references: [id])
+  participants User[]   @relation("participants")
   // participant RoomMember @relation("participant", fields: [participantId], references: [id])
   // participants RoomMember[]
   msg Message[]
 }
+
 
 model BannedUser {
   id Int @id @default(autoincrement())

@@ -15,6 +15,7 @@ import {
   import { Request, Response } from 'express';
   import { HttpService } from './http.service';
 
+
   @Controller('chat')
   export class HttpController {
     constructor(private httpService: HttpService) {}
@@ -34,6 +35,21 @@ import {
     async fetchRoomsToJoin(@Query() body: {userId: string}) {
         const userId = body.userId;
         return (await this.httpService.fetchRoomsToJoin(userId));
+    }
+    @Get('dms')
+    async fetchDMs(@Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.fetchDMs(userId));
+    }
+    @Get('dms/:id')
+    async fetchDMContent(@Param('id', ParseIntPipe) dmId: number, @Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.fetchDMContent(dmId, userId));
+    }
+    @Get('addPeople')
+    async addPeopleFetch(@Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.addPeopleFetch(userId));
     }
   }
 

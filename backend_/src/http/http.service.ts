@@ -6,8 +6,11 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { async } from 'rxjs';
 import { roomDTO } from 'src/dto/roomDTO';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Socket } from 'socket.io';
+
 
 @Injectable()
 export class HttpService {
@@ -98,5 +101,104 @@ export class HttpService {
         return (room);
     })
     return filteredRooms;
+  }
+
+  async fetchDMs(userId: string) {
+    const dms = await this.prismaService.dM.findMany({
+      where: {
+        participants: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      include: {
+        participants: {
+          where: {
+            NOT: {
+              userId: userId,
+            },
+          },
+          select: {
+            displayName: true,
+            image: true,
+          },
+        },
+        msg: true,
+      },
+    });
+
+    const customArray = dms.map((dm) => ({
+      dmId: dm.id,
+      messages: dm.msg,
+      participants: dm.participants,
+    }));
+  
+    return customArray;
+  }
+
+  async fetchDMContent(dmId: number, userId: string) {
+    const dm = await this.prismaService.dM.findUnique({
+      where: {
+        id: dmId,
+      },
+      include: {
+        participants: {
+          where: {
+            NOT: {
+              userId: userId,
+            },
+          },
+          select: {
+            displayName: true,
+            image: true,
+          },
+        },
+        msg: true,
+      },
+    });
+    return (dm);
+  }
+
+  async addPeopleFetch(userId: string) {
+    const currentUser = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        dms: true,
+      },
+    });
+    const blockedUserIds = currentUser.blockedUsers.map((blockedUser) => blockedUser);
+    const dmIds = currentUser.dms.map((dm) => dm.id);
+
+    const users = await this.prismaService.user.findMany({
+      where: {
+        NOT: {
+          userId: {
+            in: blockedUserIds,
+          },
+        },
+        AND: {
+          NOT: {
+            dms: {
+              some: {
+                id: {
+                  in: dmIds,
+                },
+              },
+            },
+            blockedUsers: {
+              has: userId,
+            },
+          },
+          userId: {
+            not: userId,
+          },
+        },
+      },
+    });
+    console.log(users);
+    return users;
   }
 }

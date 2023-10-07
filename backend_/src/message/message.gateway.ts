@@ -28,13 +28,12 @@ export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(
-    private messageService: MessageService,) {}
+    private messageService: MessageService) {}
 
   @WebSocketServer() server: Server;
 
   private mapy = new Map<string, Socket>();
-
-  @SubscribeMessage('addDm')
+  @SubscribeMessage('createDm')
   async handleAddDm(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: dmDTO,
