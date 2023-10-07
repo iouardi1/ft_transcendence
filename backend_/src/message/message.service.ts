@@ -47,6 +47,7 @@ export class MessageService {
               id: message.id,
             },
           },
+          lastUpdate: new Date(),
         },
       });
     } else {
@@ -60,6 +61,7 @@ export class MessageService {
               id: message.id,
             },
           },
+          lastUpdate: new Date(),
         },
       });
     }
@@ -94,6 +96,7 @@ export class MessageService {
     console.log(user);
     const dm = await this.prismaService.dM.create({
       data: {
+        creatorId: payload.senderId,
         participants: {
           connect: [{userId: payload.senderId}, {userId: user.userId}]
         }

@@ -11,34 +11,25 @@ import { roomDTO } from 'src/dto/roomDTO';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Socket } from 'socket.io';
 
-
 @Injectable()
 export class HttpService {
   constructor(private prismaService: PrismaService) {}
   async fetchRooms(userId: string) {
-    const user = await this.prismaService.user.findUnique({
+    const rooms = await this.prismaService.room.findMany({
       where: {
-        userId: userId,
+        RoomMembers: {
+          some: {
+            memberId: userId,
+          },
+        },
       },
       include: {
-        rooms: true,
+        msgs: true,
+      },
+      orderBy: {
+        lastUpdate: 'desc',
       },
     });
-    const rooms = await Promise.all(
-      user.rooms.map(async (roomMember: any) => {
-        const room = await this.prismaService.room.findUnique({
-          where: {
-            id: roomMember.RoomId,
-          },
-          include: {
-            msgs: true,
-          },
-        });
-        //console.log('room : ', room);
-        return room;
-      }),
-    );
-    //console.log('rooms : ', rooms);
     return rooms;
   }
 
@@ -48,7 +39,7 @@ export class HttpService {
         userId: userId,
       },
     });
-    
+
     return user.blockedUsers.includes(blockedUserId);
   }
 
@@ -74,7 +65,12 @@ export class HttpService {
     });
     await Promise.all(asyncOperations);
     console.log(customArray);
-    return {msgs: customArray, roomName: room.RoomName, roomImage: room.image, roomId: room.id};
+    return {
+      msgs: customArray,
+      roomName: room.RoomName,
+      roomImage: room.image,
+      roomId: room.id,
+    };
   }
 
   async fetchRoomsToJoin(userId: string) {
@@ -94,12 +90,11 @@ export class HttpService {
         RoomName: true,
         visibility: true,
         password: true,
-      }
-    })
+      },
+    });
     const filteredRooms = rooms.filter((room: any) => {
-      if (room.visibility != "private")
-        return (room);
-    })
+      if (room.visibility != 'private') return room;
+    });
     return filteredRooms;
   }
 
@@ -111,6 +106,23 @@ export class HttpService {
             userId: userId,
           },
         },
+        OR: [
+          {
+            msg: {
+              some: {}, // not empty
+            },
+          },
+          {
+            NOT: {
+              msg: {
+                some: {},
+              },
+            },
+            AND: {
+              creatorId: userId,
+            },
+          },
+        ],
       },
       include: {
         participants: {
@@ -126,6 +138,9 @@ export class HttpService {
         },
         msg: true,
       },
+      orderBy: {
+        lastUpdate: 'desc',
+      },
     });
 
     const customArray = dms.map((dm) => ({
@@ -133,7 +148,7 @@ export class HttpService {
       messages: dm.msg,
       participants: dm.participants,
     }));
-  
+
     return customArray;
   }
 
@@ -157,7 +172,15 @@ export class HttpService {
         msg: true,
       },
     });
-    return (dm);
+    const ownImage = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+      select: {
+        image: true,
+      },
+    });
+    return { dm: dm, image: ownImage };
   }
 
   async addPeopleFetch(userId: string) {
@@ -169,7 +192,9 @@ export class HttpService {
         dms: true,
       },
     });
-    const blockedUserIds = currentUser.blockedUsers.map((blockedUser) => blockedUser);
+    const blockedUserIds = currentUser.blockedUsers.map(
+      (blockedUser) => blockedUser,
+    );
     const dmIds = currentUser.dms.map((dm) => dm.id);
 
     const users = await this.prismaService.user.findMany({

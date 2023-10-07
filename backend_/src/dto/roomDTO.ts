@@ -4,5 +4,6 @@ export class roomDTO {
   joinTime: Date;
   visibility: string;
   image: string;
+  imageExtension: string;
   password?: string;
 }

@@ -55,10 +55,12 @@ model DM {
   id Int @id @default(autoincrement())
   // participantId Int
   // msgId Int
+  creatorId String
   participants User[]   @relation("participants")
   // participant RoomMember @relation("participant", fields: [participantId], references: [id])
   // participants RoomMember[]
   msg Message[]
+  lastUpdate DateTime @updatedAt
 }
 
 
@@ -113,6 +115,7 @@ model Room {
   visibility String
   password String?
   RoomMembers RoomMember[]
+  lastUpdate DateTime @updatedAt
 }
 
 model RoomMember {
