@@ -6,7 +6,7 @@ import axios from 'axios';
 
 
 const ContactBar = (barData) => {
-  console.log("barDaata: ", barData)
+  console.log("barDaata: roomId", (barData.barData.roomId))
   const encodedData = encodeURIComponent(barData.barData.roomId);
   if (encodedData)
   {
@@ -41,7 +41,7 @@ const ContactBar = (barData) => {
                     }}>+</Link>
                 </div>
                 <div className='w-full h-full flex flex-row justify-end items-center'>
-                    <Link to="/chat/roomSettings" >
+                    <Link to={`/chat/roomSettings/?id=${encodedData}`} >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" 
                         className="w-8 h-8 dark:text-white text-center">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />

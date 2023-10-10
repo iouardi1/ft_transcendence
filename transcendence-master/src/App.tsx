@@ -74,7 +74,7 @@ function App() {
                       <Route path="dmConv" element={<DMConv socket={socket} userId={userId}/>}/>
                       <Route path="groupConv" element={<GroupConv userId={userId} socket={socket}/>}/>
                       <Route path="invToRoom" element={<InvToRoom socket={socket} userId={userId}/>}/>
-                      <Route path="roomSettings" element={<RoomSettings socket={socket}/>}/>
+                      <Route path="roomSettings" element={<RoomSettings socket={socket} userId={userId}/>}/>
                     </Route>
                     {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}
                     <Route path="game" element={<Game/>}/>

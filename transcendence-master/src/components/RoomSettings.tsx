@@ -1,11 +1,10 @@
 
-import React from 'react';
+import { useLocation } from "react-router-dom";
 import logoImg from "../assets/panda.svg";
 import { Link } from 'react-router-dom';
-// import { BrowserRouter,Router , Route, Routes, Outlet} from 'react-router-dom';
-// import { useHistory } from 'react-router-dom'
-// import CreateRoom from './CreateRoom.tsx';
-// import JoinRoom from './JoinRoom.tsx';
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 
 interface ConvData {
     id: number;
@@ -172,36 +171,53 @@ const defaultConvData: ConvData =
 );
 };
 
-const RoomSettings = () => {
-  const defaultConvData: ConvData = 
+const RoomSettings = (props) => {
+    const userId = props.userId;
+  
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    const receivedData = params.get('id');
+
+    const [roomState, setRoomState] = useState(null);
+
+    const fetchData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3003/chat/groupSettings/${receivedData}`, {
+            params: {
+              userId: userId,
+            }
+          });
+          if (response.status === 200) {
+            setRoomState(response.data);
+            console.log("rooms i get:", response.data);
+        }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+        useEffect(() => {
+          fetchData();
+        }, []);
+    if (roomState)
     {
-      id: 1,
-      name: "Mohamed",
-      image: logoImg,
-      message1: "Hello everyone!",
-      message2: "Hello back!",
-      date: "Today, 12:15pm",
-      group: "Friends Forever",
-      online: "Online - Last seen, 2.02pm",
-      msgSent: true,
-    };
-    return (
-        <div
-        className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
-        ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex-wrap dark:border-[#272932] dark:bg-[#272932]"
-        >
-            <div className='w-full h-full flex-wrap'>
-                <div className="w-full h-[15%] border-solid mb-[25px]">
-                    <GroupBar />
-                </div>
-                <div className="w-full h-[10%] mt-[25px] flex-wrap">
-                    < ParticipantsNumber />
-                </div>
-                <div className="w-full h-[10%] mt-[25px] flex-wrap">
-                    < ParticipantBar />
+        return (
+            <div
+            className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
+            ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex-wrap dark:border-[#272932] dark:bg-[#272932]"
+            >
+                <div className='w-full h-full flex-wrap'>
+                    <div className="w-full h-[15%] border-solid mb-[25px]">
+                        <GroupBar />
+                    </div>
+                    <div className="w-full h-[10%] mt-[25px] flex-wrap">
+                        < ParticipantsNumber />
+                    </div>
+                    <div className="w-full h-[10%] mt-[25px] flex-wrap">
+                        < ParticipantBar />
+                    </div>
                 </div>
             </div>
-      </div>
-    );
+        );
+    }
 }
 export default RoomSettings;

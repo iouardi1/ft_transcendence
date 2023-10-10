@@ -48,11 +48,11 @@ const ContactBar = (barData) => {
   const Mssg = (msgData) => {
     if (msgData.msgData.senderId !== msgData.userId) {
       return (
-        <div className="w-[70%] max-h-[60%] m-[15px]">
+        <div className="w-[60%] max-h-[60%] m-[15px]">
           <div className="w-full h-full">
             <div className=" w-[15px] h-[15px] mt-[15px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%]  w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -74,7 +74,7 @@ const ContactBar = (barData) => {
           <div className="w-full h-full flex flex-row-reverse">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip overflow-x-auto"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -82,8 +82,7 @@ const ContactBar = (barData) => {
                 fontWeight: 600,
                 lineHeight: "normal",
                 letterSpacing: "1px",
-                wordWrap: "break-word",
-                whiteSpace: "pre-wrap",
+                overflowWrap: "break-word",
                 maxWidth: "90%",
               }}
             >
@@ -141,8 +140,8 @@ const DMConveComponent = (props: any) => {
   {
       return (
           <div
-          className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
-          ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
+          className="
+          ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] dark:border-[#272932] dark:bg-[#272932]"
         >
             <div className="w-full h-[10%] border-solid mb-[5px]">
               <ContactBar barData={dataState.dm}/>
@@ -198,3 +197,7 @@ const DMConveComponent = (props: any) => {
 }
 
 export default DMConveComponent;
+
+
+
+// lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF] lg:dark:border-[#272932] lg:dark:bg-[#272932]
