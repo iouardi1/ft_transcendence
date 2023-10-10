@@ -33,7 +33,6 @@ function CreateRoom(props: any) {
     }},
   ];
 
-
   const  convertImageToBase64 = async (image) => {
     return new Promise((resolve, reject) => {
       if (!image) {
@@ -54,7 +53,6 @@ function CreateRoom(props: any) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const imageBase64 = await convertImageToBase64(image);
-    console.log("---------------------", imageBase64);
     props.socket.emit('createRoom', {
       ownerId: props.userId, 
       roomName: roomName, 
@@ -64,6 +62,8 @@ function CreateRoom(props: any) {
       password: password,
     });
   }
+
+  const maxLength = 15;
 
   return (
     <form 
@@ -94,7 +94,9 @@ function CreateRoom(props: any) {
                 }}>Group Name </label>
               <input required
                 onChange={(e) => setRoomName(e.target.value)}
-                id="i" type="text" placeholder="Your group's name.." className="w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center" 
+                id="i" type="text" 
+                maxLength={maxLength}
+                placeholder="Your group's name.." className="w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center" 
                 style={{
                   fontFamily: "poppins",
                   fontSize: "15px",
@@ -170,6 +172,7 @@ function CreateRoom(props: any) {
               
                 type="password" 
                 placeholder="Your group's password" 
+                maxLength={maxLength}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)} 
                 className={` ${display}  w-[55%] h-[40px] rounded-[25px] p-[15px] dark:bg-[#1A1C26] bg-[#EEEEFF] dark:text-white text-black text-center`} 

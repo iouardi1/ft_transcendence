@@ -52,7 +52,6 @@ function App() {
           }
         });
       setSocket(socketInstance);
-      console.log("DKHLTIIII LHNAAAA?");
     }
 
     return (
@@ -74,7 +73,7 @@ function App() {
                       <Route path="addPeople" element={<AddPeople socket={socket} userId={userId}/>}/>
                       <Route path="dmConv" element={<DMConv socket={socket} userId={userId}/>}/>
                       <Route path="groupConv" element={<GroupConv userId={userId} socket={socket}/>}/>
-                      <Route path="invToRoom" element={<InvToRoom socket={socket}/>}/>
+                      <Route path="invToRoom" element={<InvToRoom socket={socket} userId={userId}/>}/>
                       <Route path="roomSettings" element={<RoomSettings socket={socket}/>}/>
                     </Route>
                     {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}

@@ -4,14 +4,22 @@ import logoImg from "../assets/panda.svg";
 
 
   const GroupComp = (groupData) => {
-    console.log("------------------>", groupData);
+    let date : Date;
+    date = ((groupData.groupData.msgs.length) ? new Date(groupData.groupData.msgs[groupData.groupData.msgs.length - 1].sentAt) : null);
 
-    // const  date: ((groupData.groupData.msgs.length) ? new Date(groupData.groupData.msgs[groupData.groupData.msgs.length - 1].sentAt) : null)
-  
-    // console.log(defaultConvData.date.getMonth());
-    // console.log(defaultConvData.date.getDay());
-    // console.log(defaultConvData.date.getMonth());
-    // console.log(defaultConvData.date.getMonth());
+    let formattedDate = null;
+
+    if (date)
+    {
+      const hour =  date.getHours();
+      const minutes = date.getMinutes();
+      const dayOfMonth = date.getDate();
+      const monthIndex = date.getMonth();
+
+      formattedDate = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${dayOfMonth.toString().padStart(2, '0')}-${monthIndex + 1}`;
+    }
+
+
 
     
     const encodedData = encodeURIComponent(groupData.groupData.id);
@@ -31,7 +39,7 @@ import logoImg from "../assets/panda.svg";
               />
     
               <div
-                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px]"
+                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px] overflow-hidden"
                 style={{
                   fontFamily: "poppins",
                   fontSize: "15px",
@@ -58,11 +66,11 @@ import logoImg from "../assets/panda.svg";
               </div>
             </div>
             <div
-              className="date w-[30%] ml-[10%]"
+              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center"
               style={{
                 color: "#7C7C7C",
                 fontFamily: "poppins",
-                fontSize: "13px",
+                fontSize: "12px",
                 fontStyle: "normal",
                 fontWeight: 300,
                 lineHeight: "normal",
@@ -70,7 +78,7 @@ import logoImg from "../assets/panda.svg";
               }}
             >
               {
-                // const date = defaultConvData.date.getUTCDate();
+               formattedDate
               
               }
             </div>

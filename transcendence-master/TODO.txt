@@ -1,7 +1,7 @@
 tomorrow's tasks nchaelah:
 
     - check image size (only <500kb)
-    - set a perform input validation in all the input fields , especially in the create room form
     - Dashboard abatala
-    - date dispaly format
     and we be done nchaelah
+    - THE FOCKIN TOO LAARGE URL 
+    - messages overflow the div

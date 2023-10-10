@@ -6,6 +6,10 @@ import axios from 'axios';
 
 
 const ContactBar = (barData) => {
+  console.log("barDaata: ", barData)
+  const encodedData = encodeURIComponent(barData.barData.roomId);
+  if (encodedData)
+  {
     return (
         <div className='w-full h-full flex-wrap justify-center'>
       <div className="w-full h-full flex p-[auto] items-center justify-between">
@@ -30,7 +34,7 @@ const ContactBar = (barData) => {
             </div>
             <div className='w-[20%] h-full flex items-center justify-end'>
                 <div className='w-full h-full flex flex-row justify-end items-center'>
-                    <Link to="/chat/invToRoom" 
+                    <Link to={`/chat/invToRoom/?id=${encodedData}`} 
                     className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]" style={{
                     fontFamily: "Roboto",
                     fontSize: "25px",
@@ -53,6 +57,7 @@ const ContactBar = (barData) => {
             <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
         </div>
     );
+  }
   };
   
   const Mssg = (msgData) => {
@@ -124,7 +129,6 @@ const GroupConveComponent = (props:any) => {
   const params = new URLSearchParams(search);
   const receivedData = params.get('id');
   
-
   const [message, setMessage] = useState('');
   const fetchData = async () => {
     try {
@@ -143,28 +147,18 @@ const GroupConveComponent = (props:any) => {
 
   useEffect(() => {
       fetchData();
-    console.log("---chi haaaja");
-    
   }, []);
 
     const handleSubmit = (e) => {
-      console.log(message);
       e.preventDefault(); 
-      
-      // console.log("dataState in conv component:", dataState);
-      
+
+
+      //check this below
       if (socket && message.trim() !== '') {
-        // Send the message to the server
         socket.emit('sendMessage', { messageContent: message, dmId: null, userId: props.userId, roomId: dataState.roomId, sentAt: new Date() });
-  
-        // Clear the input fieldgqwwqg
         setMessage('');
       }
     };
-
-
-
-  // console.log("data in groupConv: ", props.userId)
 
   if (dataState)
   {
@@ -186,7 +180,7 @@ const GroupConveComponent = (props:any) => {
           <div className="w-[90%] h-[50px] border-solid flex  m-auto items-center">
               <img
                 className="logoImg rounded-[50px] w-[40px] h-[40px]"
-                src={ dataState.roomImage ? dataState.roomImage : logoImg}
+                src={ dataState.userImage ? dataState.userImage : logoImg}
                 alt={""}
               />
               <form 

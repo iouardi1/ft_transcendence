@@ -1,6 +1,4 @@
-// import React from "react";
 import DMComp from './DM.tsx';
-// import DMConveComponent from "./DMConvComp.tsx";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -27,8 +25,6 @@ function DMsComponent (props:any)
 
     fetchData();
   }, []);
-
-    console.log("dmData: ", dmData);
     if (dmData)
     {
         return (

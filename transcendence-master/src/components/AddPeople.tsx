@@ -6,8 +6,6 @@ import axios from 'axios';
 
 const DmRoomButton = (props) => {
 
-  console.log("PROOOOOOOOOOOOOPS", props);
-
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const handleButtonClick = () =>  {
@@ -84,7 +82,6 @@ const DmRoomButton = (props) => {
 };
 
 function ExistinUser(userData) {
-  console.log("users here: ", userData);
   return (
     <div className='w-[350px] max-h-[60px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
@@ -118,8 +115,6 @@ export default function AddPeople (props) {
 
     fetchData();
   }, []);
-
-    console.log('PAAAAPAAAAAPAAAAAAPPAAAA 3la users:', addUsers);
 
   if (addUsers)
   {

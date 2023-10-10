@@ -1,8 +1,22 @@
 
 import { Link } from "react-router-dom";
-  
   const DMComp = (props) => {
-    console.log("props: DMComp   ", props);
+    let date : Date;
+    date = props.dmData.messages.length ? new Date(props.dmData.messages[props.dmData.messages.length - 1].sentAt) : null;
+
+    let formattedDate = null;
+
+    if (date)
+    {
+      const hour =  date.getHours();
+      const minutes = date.getMinutes();
+      const dayOfMonth = date.getDate();
+      const monthIndex = date.getMonth();
+
+      formattedDate = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${dayOfMonth.toString().padStart(2, '0')}-${monthIndex + 1}`;
+    }
+
+
     const encodedData = encodeURIComponent(props.dmData.dmId);
     if (encodedData)
     {
@@ -20,7 +34,7 @@ import { Link } from "react-router-dom";
               />
     
               <div
-                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px]"
+                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px] overflow-hidden"
                 style={{
                   fontFamily: "poppins",
                   fontSize: "15px",
@@ -33,7 +47,7 @@ import { Link } from "react-router-dom";
                 {props.dmData.participants[0].displayName}
               </div>
               <div
-                className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px]"
+                className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px] overflow-hidden"
                 style={{
                   fontFamily: "poppins",
                   fontSize: "12px",
@@ -47,18 +61,18 @@ import { Link } from "react-router-dom";
               </div>
             </div>
             <div
-              className="date w-[30%] ml-[10%] overflow-hidden whitespace-nowrap"
+              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center"
               style={{
                 color: "#7C7C7C",
                 fontFamily: "poppins",
-                fontSize: "13px",
+                fontSize: "12px",
                 fontStyle: "normal",
                 fontWeight: 300,
                 lineHeight: "normal",
                 letterSpacing: "0.13px",
               }}
             >
-              {props.dmData.messages.length ? props.dmData.messages[props.dmData.messages.length - 1].sentAt : null}
+              {formattedDate}
             </div>
           </div>
           <hr className=" w-[90%] h-[1px] my-[-9px] bg-[#2C2C2CBD] opacity-[15%] border-0  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>

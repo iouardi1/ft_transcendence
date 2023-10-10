@@ -17,27 +17,14 @@ const JoinRoomButton = (props: any) => {
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the form from submitting traditionally
 
-    console.log("join room props: ", props.group);
-
     if (props.group.visibility === 'protected') {
-
-      console.log('Submitted Password:', password);
       props.socket.emit('joinRoom', {visibility: "protected", password: password, roomId: props.group.id, userId: props.userId, joinDate: new Date()})
     } else {
-      console.log('Submitted without password');
       props.socket.emit('joinRoom', {visibility: "public", password: password, roomId: props.group.id, userId: props.userId, joinDate: new Date()})
     }
     
     setIsButtonDisabled(true);
   };
-
-  props.socket.on("joinedRoom", (feedback: string) => {
-    if (feedback == "success")
-      console.log("TRUE")
-    else
-      // alert("Wrong password, please try again..");
-      console.log("Wrong password");
-  })
 
   return (
     <div className="icon w-full h-full">
@@ -111,7 +98,6 @@ const JoinRoomButton = (props: any) => {
 };
 
 function ExistinRoom(props: any) {
-  console.log("props here:---------------", props);
   return (
     <div className='w-[350px] max-h-[100px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>

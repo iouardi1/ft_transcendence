@@ -1,4 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 
 import logoImg from "../assets/panda.svg";
@@ -85,7 +88,36 @@ function ExistinUser() {
 
 }
 
-export default function invToRoom () {
+export default function invToRoom (props) {
+
+  const userId = props.userId;
+  const socket = props.socket;
+
+
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const receivedData = params.get('id');
+
+  const [dataState, setDataState] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3003/chat/groups/groupCov/invitToRoom${receivedData}`, {
+        params: {
+          userId: userId,
+        }
+      });
+      if (response.status === 200) {
+        setDataState(response.data);
+    }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+      fetchData();
+  }, []);
 
     return (
         <div className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]

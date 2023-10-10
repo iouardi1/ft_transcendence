@@ -4,7 +4,6 @@ import axios from "axios";
 
 
 const ContactBar = (barData) => {
-  console.log("barData:----", barData);
     return (
       <div className="w-full h-full p-[20px] flex">
         <div className="w-[100%] flex flex-wrap">
@@ -47,8 +46,6 @@ const ContactBar = (barData) => {
   };
   
   const Mssg = (msgData) => {
-   
-    console.log("+++++++", msgData);
     if (msgData.msgData.senderId !== msgData.userId) {
       return (
         <div className="w-[70%] max-h-[60%] m-[15px]">
@@ -73,11 +70,11 @@ const ContactBar = (barData) => {
       );
     } else {
       return (
-        <div className="w-full max-h-[60%] m-[15px] ml-[-10px]">
+        <div className="w-full max-h-[90%] m-[15px] ml-[-10px] ">
           <div className="w-full h-full flex flex-row-reverse">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip overflow-x-auto"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -85,7 +82,9 @@ const ContactBar = (barData) => {
                 fontWeight: 600,
                 lineHeight: "normal",
                 letterSpacing: "1px",
-                overflowWrap: "break-word",
+                wordWrap: "break-word",
+                whiteSpace: "pre-wrap",
+                maxWidth: "90%",
               }}
             >
               {msgData.msgData.messageContent}
@@ -99,6 +98,7 @@ const ContactBar = (barData) => {
 const DMConveComponent = (props: any) => {
 
   const socket = props.socket;
+  const maxLength = 1000;
 
   const [dataState, setDataState] = useState(null);
 
@@ -116,7 +116,6 @@ const DMConveComponent = (props: any) => {
         }
       });
       if (response.status === 200) {
-        console.log("SALAAAAAAAM == ", response.data)
         setDataState(response.data);
     }
     } catch (error) {
@@ -126,28 +125,20 @@ const DMConveComponent = (props: any) => {
 
   useEffect(() => {
       fetchData();
-    console.log("---chi haaaja");
     
   }, []);
 
   const handleSubmit = (e) => {
-    console.log("message = ", message);
     e.preventDefault(); 
     
-    // console.log("dataState in conv component:", dataState);
-    
     if (socket && message.trim() !== '') {
-      // Send the message to the server
       socket.emit('sendMessage', { messageContent: message, dmId: Number(receivedData), userId: props.userId, roomId: null, sentAt: new Date() });
-
-      // Clear the input fieldgqwwqg
       setMessage('');
     }
   };
 
   if (dataState)
   {
-    console.log("dataState in dmConv--------", dataState)
       return (
           <div
           className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
@@ -176,6 +167,7 @@ const DMConveComponent = (props: any) => {
                     <div className="w-full h-full bg-[#EEEEFF] dark:bg-[#1A1C26] dark:text-white rounded-[10px]">
                       <input 
                         type="text"
+                        maxLength={maxLength}
                         placeholder="Type your text.."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
