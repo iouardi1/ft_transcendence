@@ -62,6 +62,7 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomInviteDTO,
   ) {
+    console.log("ANA HONA");
     this.messageService.sendRoomInvite(client, payload, this.mapy);
   }
 

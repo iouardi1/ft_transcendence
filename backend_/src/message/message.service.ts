@@ -15,7 +15,7 @@ import { join } from 'path';
 import { WebSocketServer } from '@nestjs/websockets';
 
 interface notifInfo {
-  senderId: number;
+  senderId: string;
   type: string;
   roomId?: number;
   matchId?: number;
@@ -183,7 +183,7 @@ export class MessageService {
   async getUserNotifications(notifiedUser: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: notifiedUser,
+        userId: notifiedUser,
       },
       include: {
         participantNotifs: {
@@ -206,9 +206,9 @@ export class MessageService {
       const notif = await this.prismaService.notification.create({
         data: notifInfo,
       });
-      const notifiedUser = await this.prismaService.user.update({
+      await this.prismaService.user.update({
         where: {
-          username: subject,
+          userId: subject,
         },
         data: {
           participantNotifs: {
@@ -236,21 +236,12 @@ export class MessageService {
     payload: roomInviteDTO,
     mapy: Map<string, Socket>,
   ) {
-    console.log(payload);
-    /* Fetch the inviter's username, will come in handy later */
-    let notifSenderName: string;
-    for (let entry of mapy.entries()) {
-      if (entry[1] == client) notifSenderName = entry[0];
-    }
-    const notifSender = await this.prismaService.user.findUnique({
-      where: {
-        username: notifSenderName,
-      },
-    });
+    console.log("INVITE == ", payload);
+    console.log(typeof payload.roomId)
     let info: notifInfo;
 
     info = {
-      senderId: notifSender.id,
+      senderId: payload.senderId,
       type: 'roomInvite',
       roomId: payload.roomId,
     };
@@ -262,52 +253,14 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        id: notifSender.id,
+        userId: payload.senderId,
       },
       data: {
         roomInvites: {
-          push: { userId: invitee.userId, state: 'pending', date: Date() },
+          push: { userId: invitee, roomId: payload.roomId, date: Date() },
         },
       },
     });
-    // const notifications = await this.getUserNotifications(payload.invitee);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: notifSender.id,
-    //       type: 'roomInvite',
-    //       roomId: payload.roomId,
-    //     },
-    //   });
-    //   const notifiedUser = await this.prismaService.user.update({
-    //     where: {
-    //       username: payload.invitee,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   client.emit('inviteSent');
-    //   mapy.get(payload.invitee).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: notifSender.id,
-    //       type: 'roomInvite',
-    //       roomId: payload.roomId,
-    //     },
-    //   });
-    //   client.emit('inviteSent');
-    //   mapy.get(payload.invitee).emit('notifSent', notif);
-    // }
   }
 
   async roomInviteApproval(
@@ -369,52 +322,15 @@ export class MessageService {
 
     const sender = await this.prismaService.user.findUnique({
       where: {
-        id: payload.senderId,
+        userId: payload.senderId,
       },
     });
     let info: notifInfo;
 
     info = { senderId: payload.senderId, type: 'roomInviteApproved' };
     this.notifProcessing(mapy, sender.username, info);
-    // const notifications = await this.getUserNotifications(sender.username);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: payload.senderId,
-    //       type: 'roomInviteApproved',
-    //     },
-    //   });
-    //   await this.prismaService.user.update({
-    //     where: {
-    //       username: sender.username,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   mapy.get(sender.username).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: payload.senderId,
-    //       type: 'roomInviteApproved',
-    //     },
-    //   });
-    //   mapy.get(sender.username).emit('notifSent', notif);
-    // }
-    const updatedRoomInvites = sender.roomInvites.map((element: any) => {
-      if (element.id === invitee.userId) {
-        return { userId: invitee.userId, state: 'approved', date: Date() };
-      }
-      return element;
+    const updatedRoomInvites = sender.roomInvites.filter((element: any) => {
+      return element.userId !== invitee.userId;
     });
     await this.prismaService.user.update({
       where: {
@@ -440,7 +356,7 @@ export class MessageService {
 
     const sender = await this.prismaService.user.findUnique({
       where: {
-        id: payload.senderId,
+        userId: payload.senderId,
       },
     });
     let info: notifInfo;
@@ -454,7 +370,7 @@ export class MessageService {
       },
     });
     const updatedRoomInvites = sender.roomInvites.filter((element: any) => {
-      return element.id !== invitee.userId;
+      return element.userId !== invitee.userId;
     });
     await this.prismaService.user.update({
       where: {
@@ -464,40 +380,6 @@ export class MessageService {
         roomInvites: updatedRoomInvites,
       },
     });
-    // const notifications = await this.getUserNotifications(sender.username);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: payload.senderId,
-    //       type: 'roomInviteRejected',
-    //     },
-    //   });
-    //   await this.prismaService.user.update({
-    //     where: {
-    //       username: sender.username,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   mapy.get(sender.username).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: payload.senderId,
-    //       type: 'roomInviteRejected',
-    //     },
-    //   });
-    //   mapy.get(sender.username).emit('notifSent', notif);
-    // }
   }
 
   async notifClicked(payload: roomInviteDTO) {
@@ -514,7 +396,7 @@ export class MessageService {
   async promoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
     await this.prismaService.roomMember.update({
       where: {
-        id: payload.subjectId,
+        memberId: payload.subjectId,
       },
       data: {
         role: 'ADMIN',
@@ -523,7 +405,7 @@ export class MessageService {
 
     const subject = await this.prismaService.user.findUnique({
       where: {
-        id: payload.subjectId,
+        userId: payload.subjectId,
       },
     });
 
@@ -531,46 +413,12 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'promotion' };
     this.notifProcessing(mapy, subject.username, info);
-    // const notifications = await this.getUserNotifications(subject.username);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'promotion',
-    //     },
-    //   });
-    //   await this.prismaService.user.update({
-    //     where: {
-    //       username: subject.username,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'promotion',
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // }
   }
 
   async demoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
     await this.prismaService.roomMember.update({
       where: {
-        id: payload.subjectId,
+        memberId: payload.subjectId,
       },
       data: {
         role: 'USER',
@@ -579,7 +427,7 @@ export class MessageService {
 
     const subject = await this.prismaService.user.findUnique({
       where: {
-        id: payload.subjectId,
+        userId: payload.subjectId,
       },
     });
 
@@ -587,46 +435,12 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'demotion' };
     this.notifProcessing(mapy, subject.username, info);
-    // const notifications = await this.getUserNotifications(subject.username);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'demotion',
-    //     },
-    //   });
-    //   await this.prismaService.user.update({
-    //     where: {
-    //       username: subject.username,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'demotion',
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // }
   }
 
   async muteUser(payload: actionDTO, mapy: Map<string, Socket>) {
     await this.prismaService.roomMember.update({
       where: {
-        id: payload.subjectId,
+        memberId: payload.subjectId,
       },
       data: {
         muted: true,
@@ -635,7 +449,7 @@ export class MessageService {
 
     const subject = await this.prismaService.user.findUnique({
       where: {
-        id: payload.subjectId,
+        userId: payload.subjectId,
       },
     });
 
@@ -683,13 +497,13 @@ export class MessageService {
   async kickUser(payload: actionDTO, mapy: Map<string, Socket>) {
     await this.prismaService.roomMember.delete({
       where: {
-        id: payload.subjectId,
+        memberId: payload.subjectId,
       },
     });
 
     const subject = await this.prismaService.user.findUnique({
       where: {
-        id: payload.subjectId,
+        userId: payload.subjectId,
       },
     });
 
@@ -697,47 +511,64 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'kick' };
     this.notifProcessing(mapy, subject.username, info);
-    // const notifications = await this.getUserNotifications(subject.username);
-    // if (notifications.length < 10) {
-    //   const notif = await this.prismaService.notification.create({
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'kick',
-    //     },
-    //   });
-    //   await this.prismaService.user.update({
-    //     where: {
-    //       username: subject.username,
-    //     },
-    //     data: {
-    //       participantNotifs: {
-    //         connect: {
-    //           id: notif.id,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // } else {
-    //   const oldestNotification = notifications[0];
-    //   const notif = await this.prismaService.notification.update({
-    //     where: {
-    //       id: oldestNotification.id,
-    //     },
-    //     data: {
-    //       senderId: payload.userId,
-    //       type: 'kick',
-    //     },
-    //   });
-    //   mapy.get(subject.username).emit('notifSent', notif);
-    // }
     mapy.get(subject.username).emit('kicked', payload.roomId);
   }
+
+  async banUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    await this.prismaService.roomMember.delete({
+      where: {
+        memberId: payload.subjectId,
+      },
+    });
+
+    const subject = await this.prismaService.user.findUnique({
+      where: {
+        userId: payload.subjectId,
+      },
+    });
+
+    await this.prismaService.room.update({
+      where: {
+        id: payload.roomId,
+      },
+      data: {
+        bannedUsers: {
+          push: subject.userId,
+        },
+      },
+    })
+
+    let info: notifInfo;
+
+    info = { senderId: payload.userId, type: 'ban' };
+    this.notifProcessing(mapy, subject.username, info);
+    mapy.get(subject.username).emit('banned', payload.roomId);
+  }
+
+  // async unbanUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  //   await this.prismaService.roomMember.delete({
+  //     where: {
+  //       id: payload.subjectId,
+  //     },
+  //   });
+
+  //   const subject = await this.prismaService.user.findUnique({
+  //     where: {
+  //       id: payload.subjectId,
+  //     },
+  //   });
+
+  //   let info: notifInfo;
+
+  //   info = { senderId: payload.userId, type: 'kick' };
+  //   this.notifProcessing(mapy, subject.username, info);
+  //   mapy.get(subject.username).emit('kicked', payload.roomId);
+  // }
 
   async OwnershipTransfer(payload: actionDTO, mapy: Map<string, Socket>) {
     await this.prismaService.roomMember.update({
       where: {
-        id: payload.subjectId,
+        memberId: payload.subjectId,
       },
       data: {
         role: 'OWNER',
@@ -745,7 +576,7 @@ export class MessageService {
     });
     await this.prismaService.roomMember.update({
       where: {
-        id: payload.userId,
+        memberId: payload.userId,
       },
       data: {
         role: 'USER',
@@ -754,7 +585,7 @@ export class MessageService {
 
     const subject = await this.prismaService.user.findUnique({
       where: {
-        id: payload.subjectId,
+        userId: payload.subjectId,
       },
     });
 
@@ -827,7 +658,7 @@ export class MessageService {
     let info: notifInfo;
 
     info = {
-      senderId: notifSender.id,
+      senderId: notifSender.userId,
       type: 'friendRequest',
     };
     this.notifProcessing(mapy, befriendedUser.username, info);
@@ -860,26 +691,26 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        id: payload.befriendedUserId,
+        userId: payload.befriendedUserId,
       },
       data: {
         friends: {
-          push: { id: payload.issuerId, state: 'approved', date: Date() },
+          push: { userId: payload.issuerId, state: 'approved', date: Date() },
         },
       },
     });
     const issuer = await this.prismaService.user.findUnique({
-      where: { id: payload.issuerId },
+      where: { userId: payload.issuerId },
     });
     const updatedFriends = issuer.friends.map((element: any) => {
-      if (element.id === payload.befriendedUserId) {
-        return { id: payload.issuerId, state: 'approved', date: Date() };
+      if (element.userId === payload.befriendedUserId) {
+        return { userId: payload.issuerId, state: 'approved', date: Date() };
       }
       return element;
     });
     await this.prismaService.user.update({
       where: {
-        id: payload.issuerId,
+        userId: payload.issuerId,
       },
       data: {
         friends: updatedFriends,
@@ -910,7 +741,7 @@ export class MessageService {
     });
     const issuer = await this.prismaService.user.findUnique({
       where: {
-        id: payload.issuerId,
+        userId: payload.issuerId,
       },
     });
     const updatedFriends = issuer.friends.filter((element: any) => {
@@ -918,7 +749,7 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        id: payload.issuerId,
+        userId: payload.issuerId,
       },
       data: {
         friends: updatedFriends,
@@ -984,15 +815,26 @@ export class MessageService {
     payload: roomJoinDTO,
   ) {
 
+    const roomToJoin = await this.prismaService.room.findUnique({
+      where: {
+        id: payload.roomId,
+      },
+      select: {
+        password: true,
+        bannedUsers: true,
+      },
+    });
+    if (roomToJoin.bannedUsers.includes(payload.userId))
+    {
+      client.emit('joinedRoom', "failure | banned");
+      return ;
+    }
+
+
     if (payload.visibility == 'public') {
       console.log("dkhlti hnaa ? (public) :3");
       this.roomJoinLogic(client, payload);
     } else {
-      const roomToJoin = await this.prismaService.room.findUnique({
-        where: {
-          id: payload.roomId,
-        },
-      });
       console.log("dkhlti hnaa ? :3");
       if (roomToJoin.password == payload.password) {
         this.roomJoinLogic(client, payload);
@@ -1022,7 +864,7 @@ export class MessageService {
     if (roomMember.inviterId) {
       const inviter = await this.prismaService.user.findUnique({
         where: {
-          id: roomMember.inviterId,
+          userId: roomMember.inviterId,
         },
       });
       const updatedRoomInvites = inviter.roomInvites.filter((element: any) => {
@@ -1030,7 +872,7 @@ export class MessageService {
       });
       await this.prismaService.user.update({
         where: {
-          id: roomMember.inviterId,
+          userId: roomMember.inviterId,
         },
         data: {
           roomInvites: updatedRoomInvites,

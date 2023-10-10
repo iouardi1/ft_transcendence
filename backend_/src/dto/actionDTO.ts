@@ -1,6 +1,6 @@
 export class actionDTO {
-  userId: number;
-  subjectId: number;
+  userId: string;
+  subjectId: string;
   roomId: number;
   action: string;
 }

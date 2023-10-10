@@ -241,38 +241,64 @@ export class HttpService {
         userId: userId,
       },
     });
+    const subjectRoom = await this.prismaService.room.findUnique({
+        where: {
+            id: roomId,
+        },
+        select: {
+            bannedUsers: true,
+        },
+    })
     const users = await this.prismaService.user.findMany({
       where: {
-        rooms: {
-          some: {
-            NOT: {
-              RoomId: roomId,
+        OR:[
+            {
+                rooms: {
+                  some: {
+                    NOT: {
+                      RoomId: roomId,
+                    },
+                  },
+                },
+            },
+            {
+                rooms: {
+                    none: {},
+                },
             }
-          }
-        },
+        ],
         NOT: {
-          userId: {
-            in: currentUser.blockedUsers,
-          },
+            AND: [
+                {
+                      userId: {
+                        in: currentUser.blockedUsers,
+                      },
+                },
+                {
+                    userId: {
+                        in: subjectRoom.bannedUsers,
+                      },
+                },
+            ],
+          
+              blockedUsers: {
+                  has: userId,
+              },
         },
-        blockedUsers: {
-          has: userId,
-        },
+        
     }})
-    users.map((user) => {
-      for (let i = 0; i < currentUser.roomInvites.length; i++) {
-        if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == "approved") {
-          //filter
+    console.log(users);
+    const filteredUsers = users.filter((user) => {
+        for (let i = 0; i < currentUser.roomInvites.length; i++) {
+            if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == roomId) {
+              const date = new Date(currentUser.roomInvites[i][2]);
+              const newDate = new Date();
+              const dateDiff = (newDate.getTime() - date.getTime()) / (1000 * 60 * 60);
+              return dateDiff >= 24;
+            }
         }
-        if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == "pending") {
-          const date = new Date(currentUser.roomInvites[i][2]);
-          const newDate = new Date();
-          const dateDiff = (newDate.getTime() - date.getTime()) / (1000 * 60 * 60);
-          if (dateDiff < 24) {
-            //filter
-          }
-        }
-      }
     })
+    console.log(filteredUsers);
+    return users;
   }
 }

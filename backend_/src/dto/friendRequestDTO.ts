@@ -1,5 +1,5 @@
 export class friendRequestDTO {
-    befriendedUserId: number;
-    issuerId: number;
+    befriendedUserId: string;
+    issuerId: string;
     notifId:  number;
 }

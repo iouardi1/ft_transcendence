@@ -1,6 +1,6 @@
 export class roomInviteDTO {
   invitee: string;
-  senderId: number;
+  senderId: string;
   roomId: number;
   notifId: number;
 }

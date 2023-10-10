@@ -95,7 +95,7 @@ model MatchHistory {
 
 model Notification {
   id Int @id @default(autoincrement())
-  senderId Int
+  senderId String
   type String
   read Boolean @default(false)
   interactedWith  Boolean @default(false)
@@ -104,7 +104,7 @@ model Notification {
 
   roomId Int?
   matchId Int?
-  participant User @relation("participantNotif", fields: [senderId], references: [id])
+  participant User @relation("participantNotif", fields: [senderId], references: [userId])
 }
 
 model Room {
@@ -115,19 +115,20 @@ model Room {
   visibility String
   password String?
   RoomMembers RoomMember[]
+  bannedUsers String[]
   lastUpdate DateTime @updatedAt
 }
 
 model RoomMember {
   id  Int @id  @default(autoincrement())
   RoomId  Int
-  memberId String
+  memberId String @unique
   role Role @default(USER)
   muted Boolean @default(false)
   room  Room  @relation(fields: [RoomId], references: [id])
   member User  @relation(fields: [memberId],references: [userId])
   joinTime DateTime
-  inviterId Int?
+  inviterId String?
   // leftTime DateTime
 }
 
