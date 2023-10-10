@@ -266,7 +266,7 @@ export class MessageService {
       },
       data: {
         roomInvites: {
-          push: { id: invitee.id, state: 'pending', date: Date() },
+          push: { userId: invitee.userId, state: 'pending', date: Date() },
         },
       },
     });
@@ -411,8 +411,8 @@ export class MessageService {
     //   mapy.get(sender.username).emit('notifSent', notif);
     // }
     const updatedRoomInvites = sender.roomInvites.map((element: any) => {
-      if (element.id === invitee.id) {
-        return { id: invitee.id, state: 'approved', date: Date() };
+      if (element.id === invitee.userId) {
+        return { userId: invitee.userId, state: 'approved', date: Date() };
       }
       return element;
     });
@@ -454,7 +454,7 @@ export class MessageService {
       },
     });
     const updatedRoomInvites = sender.roomInvites.filter((element: any) => {
-      return element.id !== invitee.id;
+      return element.id !== invitee.userId;
     });
     await this.prismaService.user.update({
       where: {

@@ -51,6 +51,11 @@ import {
         const userId = body.userId;
         return (await this.httpService.addPeopleFetch(userId));
     }
+    @Get('invToRoom/:id')
+    async fetchRoomSuggestions(@Param('id', ParseIntPipe) roomId: number, @Query() body: {userId: string}) {
+        const userId = body.userId;
+        return (await this.httpService.fetchRoomSuggestions(roomId, userId));
+    }
   }
 
   

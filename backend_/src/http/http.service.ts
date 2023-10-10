@@ -45,6 +45,14 @@ export class HttpService {
 
   async fetchRoomContent(roomId: number, userId: string) {
     let customArray: [any, string][] = [];
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+      select: {
+        image: true,
+      },
+    });
     const room = await this.prismaService.room.findUnique({
       where: {
         id: roomId,
@@ -70,6 +78,7 @@ export class HttpService {
       roomName: room.RoomName,
       roomImage: room.image,
       roomId: room.id,
+      userImage: user.image,
     };
   }
 
@@ -225,5 +234,45 @@ export class HttpService {
     });
     console.log(users);
     return users;
+  }
+  async fetchRoomSuggestions(roomId: number, userId: string) {
+    const currentUser = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    const users = await this.prismaService.user.findMany({
+      where: {
+        rooms: {
+          some: {
+            NOT: {
+              RoomId: roomId,
+            }
+          }
+        },
+        NOT: {
+          userId: {
+            in: currentUser.blockedUsers,
+          },
+        },
+        blockedUsers: {
+          has: userId,
+        },
+    }})
+    users.map((user) => {
+      for (let i = 0; i < currentUser.roomInvites.length; i++) {
+        if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == "approved") {
+          //filter
+        }
+        if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == "pending") {
+          const date = new Date(currentUser.roomInvites[i][2]);
+          const newDate = new Date();
+          const dateDiff = (newDate.getTime() - date.getTime()) / (1000 * 60 * 60);
+          if (dateDiff < 24) {
+            //filter
+          }
+        }
+      }
+    })
   }
 }
