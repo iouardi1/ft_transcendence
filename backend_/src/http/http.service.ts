@@ -10,6 +10,7 @@ import { async } from 'rxjs';
 import { roomDTO } from 'src/dto/roomDTO';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Socket } from 'socket.io';
+import { RoomMember, Room, User } from '@prisma/client';
 
 @Injectable()
 export class HttpService {
@@ -301,4 +302,73 @@ export class HttpService {
     console.log(filteredUsers);
     return users;
   }
+
+  sortMembers(members: ({rooms: RoomMember[];} & User)[], room: ({RoomMembers: RoomMember[];} & Room)) {
+    let sortedMembers: ({rooms: RoomMember[];} & User)[] = [];
+    let owner: ({rooms: RoomMember[];} & User);
+    let admins: ({rooms: RoomMember[];} & User)[] = [];
+    let users: ({rooms: RoomMember[];} & User)[] = [];
+    
+    members.forEach((member) => {
+      if (member.rooms[0].role == 'OWNER')
+          owner = member;
+      if (member.rooms[0].role == 'ADMIN')
+          admins.push(member);
+      if (member.rooms[0].role == 'USER')
+          users.push(member);
+    })
+    sortedMembers.push(owner, ...admins, ...users);
+    return sortedMembers;
+  }
+
+  async fetchRoomDashboard(roomId: number, userId: string) {
+    const room = await this.prismaService.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      include: {
+        RoomMembers: true,
+      }
+    });
+    const members = await this.prismaService.user.findMany({
+      where: {
+        rooms: {
+          some: {
+            RoomId: roomId,
+          }
+        },
+      },
+      include: {
+        rooms: {
+          where:{
+            RoomId: roomId,
+          }
+        },
+      },
+    });
+    const fetcher = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        rooms: true,
+      },
+    });
+    let roomMemberId: number;
+    for (let i = 0; i < fetcher.rooms.length; i++) {
+      if (fetcher.rooms[i].RoomId == roomId)
+        roomMemberId = fetcher.rooms[i].id;
+    }
+    const roomMember = await this.prismaService.roomMember.findUnique({
+      where: {
+        id: roomMemberId,
+      },
+      select: {
+        role: true,
+      },
+    });
+    console.log(this.sortMembers(members, room))
+    return ({room: room, participants: this.sortMembers(members, room), role: roomMember.role});
+  }
+
 }
