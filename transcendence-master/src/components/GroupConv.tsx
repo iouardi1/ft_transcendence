@@ -6,7 +6,6 @@ import axios from 'axios';
 
 
 const ContactBar = (barData) => {
-  console.log("barDaata: roomId", (barData.barData.roomId))
   const encodedData = encodeURIComponent(barData.barData.roomId);
   if (encodedData)
   {

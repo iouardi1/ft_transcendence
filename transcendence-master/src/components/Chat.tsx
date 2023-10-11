@@ -12,17 +12,7 @@ import { useState, useEffect } from 'react';
 // import JoinRoom from './JoinRoom.tsx';
 
 
-// interface ConvData {
-//   id: number;
-//   name: string;
-//   image: string;
-//   message1: string;
-//   message2: string;
-//   date: string;
-//   group: string;
-//   online: string;
-//   msgSent: boolean;
-// }
+
 
 interface PropsType {
   userId: string;

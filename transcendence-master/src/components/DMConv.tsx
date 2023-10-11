@@ -48,7 +48,7 @@ const ContactBar = (barData) => {
   const Mssg = (msgData) => {
     if (msgData.msgData.senderId !== msgData.userId) {
       return (
-        <div className="w-[60%] max-h-[60%] m-[15px]">
+        <div className="max-w-[60%] max-h-[60%] m-[15px]">
           <div className="w-full h-full">
             <div className=" w-[15px] h-[15px] mt-[15px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
             <div
@@ -70,11 +70,12 @@ const ContactBar = (barData) => {
       );
     } else {
       return (
-        <div className="w-full max-h-[90%] m-[15px] ml-[-10px] ">
-          <div className="w-full h-full flex flex-row-reverse">
+        <div className="w-[90%] max-h-[90%] m-[15px] ml-[10px] 
+        ">
+          <div className="w-full h-full flex flex-row-reverse justify-start">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -140,8 +141,9 @@ const DMConveComponent = (props: any) => {
   {
       return (
           <div
-          className="
-          ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] dark:border-[#272932] dark:bg-[#272932]"
+          className="ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] dark:border-[#272932] dark:bg-[#272932]
+          md:w-[65%] md:h-[88%]
+          "
         >
             <div className="w-full h-[10%] border-solid mb-[5px]">
               <ContactBar barData={dataState.dm}/>
