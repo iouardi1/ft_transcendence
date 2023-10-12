@@ -63,6 +63,8 @@ async handleAddRoom(
     @MessageBody() payload: roomInviteDTO,
   ) {
     console.log("ANA HONA");
+
+
     this.messageService.sendRoomInvite(client, payload, this.mapy);
   }
 
@@ -110,11 +112,32 @@ async handleAddRoom(
     this.messageService.muteUser(payload, this.mapy);
   }
 
+  @SubscribeMessage('unmute')
+  async handleUnmute(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.unmuteUser(payload, this.mapy);
+  }
+
   @SubscribeMessage('kick')
   async handleKick(
     @MessageBody() payload: actionDTO,
   ) {
     this.messageService.kickUser(payload, this.mapy);
+  }
+
+  @SubscribeMessage('ban')
+  async handleBan(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.banUser(payload, this.mapy);
+  }
+
+  @SubscribeMessage('unban')
+  async handleUnban(
+    @MessageBody() payload: actionDTO,
+  ) {
+    this.messageService.unbanUser(payload, this.mapy);
   }
 
   @SubscribeMessage('transferOwnership')
@@ -202,6 +225,6 @@ async handleAddRoom(
     /*For now, "token" is only a placeholder for the actual token to be intercepted, for now we will use it directly as a username, later we will do a lookup on it and figure out its corresponding user and then use the latter */
     let {token} = client.handshake.auth;
     this.mapy.set(token, client);
-    await this.messageService.fetchState(client, token);
+    //await this.messageService.fetchState(client, token);
   }
 }

@@ -46,12 +46,14 @@ export class HttpService {
 
   async fetchRoomContent(roomId: number, userId: string) {
     let customArray: [any, string][] = [];
+    let muted: boolean = false;
     const user = await this.prismaService.user.findUnique({
       where: {
         userId: userId,
       },
       select: {
         image: true,
+        rooms: true,
       },
     });
     const room = await this.prismaService.room.findUnique({
@@ -72,6 +74,10 @@ export class HttpService {
         customArray.push([msg, sender.image]);
       }
     });
+    for (let i = 0; i < user.rooms.length; i++) {
+      if (user.rooms[i].RoomId == roomId && user.rooms[i].muted == true)
+        muted = true;
+    }
     await Promise.all(asyncOperations);
     console.log(customArray);
     return {
@@ -80,6 +86,7 @@ export class HttpService {
       roomImage: room.image,
       roomId: room.id,
       userImage: user.image,
+      muted: muted,
     };
   }
 
@@ -87,11 +94,20 @@ export class HttpService {
     const rooms = await this.prismaService.room.findMany({
       where: {
         NOT: {
-          RoomMembers: {
-            some: {
-              memberId: userId,
+          OR: [
+            {
+              RoomMembers: {
+                some: {
+                  memberId: userId,
+                },
+              },
             },
-          },
+            {
+              bannedUsers: {
+                has: userId,
+              }
+            },
+          ]
         },
       },
       select: {
@@ -269,7 +285,7 @@ export class HttpService {
             }
         ],
         NOT: {
-            AND: [
+            OR: [
                 {
                       userId: {
                         in: currentUser.blockedUsers,
@@ -288,7 +304,6 @@ export class HttpService {
         },
         
     }})
-    console.log(users);
     const filteredUsers = users.filter((user) => {
         for (let i = 0; i < currentUser.roomInvites.length; i++) {
             if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == roomId) {

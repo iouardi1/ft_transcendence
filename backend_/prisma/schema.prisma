@@ -125,6 +125,7 @@ model RoomMember {
   memberId String
   role Role @default(USER)
   muted Boolean @default(false)
+  muteExpiration DateTime?
   room  Room  @relation(fields: [RoomId], references: [id])
   member User  @relation(fields: [memberId],references: [userId])
   joinTime DateTime

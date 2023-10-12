@@ -13,6 +13,8 @@ import { map } from 'rxjs';
 import { send } from 'process';
 import { join } from 'path';
 import { WebSocketServer } from '@nestjs/websockets';
+import { User } from '@prisma/client';
+import * as cron from 'node-cron';
 
 interface notifInfo {
   senderId: string;
@@ -406,7 +408,7 @@ export class MessageService {
 
   async getRoomMemberId(payload: actionDTO) {
     let roomMemberId: number;
-  
+    console.log (payload);
     const subject = await this.prismaService.user.findUnique({
       where: {
         userId: payload.subjectId,
@@ -416,13 +418,16 @@ export class MessageService {
       },
     });
     for (let i = 0; i < subject.rooms.length; i++) {
+      console.log(subject.rooms[i].RoomId,  payload.roomId)
       if (subject.rooms[i].RoomId == payload.roomId)
         roomMemberId = subject.rooms[i].id;
     }
+    console.log (roomMemberId);
     return {roomMemberId, subject};
   }
 
   async promoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    console.log("PAYLOAD", payload)
     const data = await this.getRoomMemberId(payload);
     
     await this.prismaService.roomMember.update({
@@ -460,12 +465,15 @@ export class MessageService {
   async muteUser(payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
     
+    let muteExpiration: Date = new Date();
+    muteExpiration.setSeconds(muteExpiration.getSeconds() + 10);
     await this.prismaService.roomMember.update({
       where: {
         id: data.roomMemberId,
       },
       data: {
         muted: true,
+        muteExpiration: muteExpiration,
       },
     });
 
@@ -474,6 +482,64 @@ export class MessageService {
     info = { senderId: payload.userId, type: 'mute' };
     this.notifProcessing(mapy, data.subject.userId, info);
     mapy.get(data.subject.userId).emit('muted');
+
+    //Unmute cron job gets launched once when a user gets muted, and starts running continuously
+    cron.schedule('* * * * * *', async () => {
+      const mutedUsers = await this.prismaService.user.findMany({
+        where: {
+          rooms: {
+            some: {
+              muted: true,
+              muteExpiration: {
+                lte: new Date(),
+              },
+            },
+          },
+        },
+        include: {
+          rooms: true,
+        },
+      });
+      await Promise.all(
+        mutedUsers.map(async (user: {rooms: RoomMember[];} & User) => {
+          for (let i = 0; i < user.rooms.length; i++) {
+            if (user.rooms[i].RoomId == payload.roomId) {
+              await this.prismaService.roomMember.update({
+                where: {
+                  id: user.rooms[i].id,
+                },
+                data: {
+                  muted: false,
+                  muteExpiration: null,
+                }
+              })
+              info = { senderId: user.userId, type: 'unmute' };
+              this.notifProcessing(mapy, user.userId, info);
+              mapy.get(user.userId).emit('unmuted');
+            }
+          }
+        })
+      );
+    });
+  }
+
+  async unmuteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+    const data = await this.getRoomMemberId(payload);
+
+    await this.prismaService.roomMember.update({
+      where: {
+        id: data.roomMemberId,
+      },
+      data: {
+        muted: false,
+      },
+    });
+
+    let info: notifInfo;
+
+    info = { senderId: payload.userId, type: 'unmute' };
+    this.notifProcessing(mapy, data.subject.userId, info);
+    mapy.get(data.subject.userId).emit('unmuted');
   }
 
   async kickUser(payload: actionDTO, mapy: Map<string, Socket>) {
@@ -776,7 +842,7 @@ export class MessageService {
         joinTime: payload.joinDate,
       },
     });
-    const room = await this.prismaService.room.update({
+    await this.prismaService.room.update({
       where: {
         id: payload.roomId,
       },
