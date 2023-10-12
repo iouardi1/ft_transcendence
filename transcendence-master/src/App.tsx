@@ -61,7 +61,8 @@ function App() {
             <HorzNav darkMode={darkMode} toggleDarkMode={toggleDarkMode} open={open} toggleOpen={toggleOpen} />
             <div className="flex mt-[80px] h-full">
               <VertNav open={open} />
-              <div className={`${open ? "" : ""} w-[calc(vw - 100px)] bg-[#EEEEFF] dark:bg-[#1A1C26] sm:w-[85%] w-full h-full flex z-0` }>
+              <div className={`${open ? " bg-[#EEEEFF] dark:bg-[#1A1C26] sm:w-custom-width h-full flex z-0 items" : ""} bg-[#EEEEFF] dark:bg-[#1A1C26] w-full h-full flex z-0`}
+                >
                   <Routes>
                     {/* <Route path="home" element={<Comp name="home"/>}/> */}
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}

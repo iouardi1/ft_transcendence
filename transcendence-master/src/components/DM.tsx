@@ -47,7 +47,7 @@ import { Link } from "react-router-dom";
                 {props.dmData.participants[0].displayName}
               </div>
               <div
-                className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px] overflow-hidden  whitespace-nowrap"
+                className="groupMsg text-black dark:text-white w-[70%] mt-[-40px] ml-[45px] overflow-hidden  whitespace-nowrap"
                 style={{
                   fontFamily: "poppins",
                   fontSize: "12px",

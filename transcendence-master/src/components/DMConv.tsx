@@ -12,8 +12,8 @@ const ContactBar = (barData) => {
             src={barData.barData.participants[0].image}
             alt={""}
           />
-          <div className="w-full h-[40px] mt-[-42px] ml-[55px] flex-wrap justify-around items-center">
-            <div className=" text-black dark:text-white w-full h-[50%]"
+          <div className="w-full h-[40px] mt-[-52px] ml-[55px] flex-wrap justify-around items-center">
+            <div className=" text-black dark:text-white w-full"
               style={{
                 fontFamily: "poppins",
                 fontSize: "20px",
@@ -25,19 +25,8 @@ const ContactBar = (barData) => {
             >
               {barData.barData.participants[0].displayName}
             </div>
-            <div
-              className="w-full h-[50%] mt-[7px] text-black dark:text-white"
-              style={{
-                fontFamily: "poppins",
-                fontSize: "15px",
-                fontStyle: "normal",
-                fontWeight: 300,
-                lineHeight: "normal",
-                letterSpacing: "1.5px",
-              }}
-            >
-              online
-            </div>
+          
+          
             <hr className=" w-[90%] h-[1px] my-[15px] bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
           </div>
         </div>
@@ -70,12 +59,12 @@ const ContactBar = (barData) => {
       );
     } else {
       return (
-        <div className="w-[90%] max-h-[90%] m-[15px] ml-[10px] 
+        <div className="w-[100%] max-h-[90%] m-[15px] ml-[-20px] 
         ">
           <div className="w-full h-full flex flex-row-reverse justify-start">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip"
+              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#6F37CF] text-left text-white dark:text-white text-clip"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",

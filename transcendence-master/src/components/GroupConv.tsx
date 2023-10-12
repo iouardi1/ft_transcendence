@@ -11,27 +11,23 @@ const ContactBar = (barData) => {
   {
     return (
         <div className='w-full h-full flex-wrap justify-center'>
-      <div className="w-full h-full flex p-[auto] items-center justify-between">
-          <img
-            className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px]"
-            src={ barData.barData.roomImage ? `data:image/jpeg;base64,${barData.barData.roomImage}` : logoImg }
-            alt={""}
-          />
-          <div className="w-[70%] h-full ml-[20px] flex items-center">
-            <div className=" text-black dark:text-white w-full h-[50%]"
-              style={{
-                fontFamily: "poppins",
-                fontSize: "20px",
-                fontStyle: "normal",
-                fontWeight: 600,
-                lineHeight: "normal",
-                letterSpacing: "1.5px",
-              }}
-            >
-              {barData.barData.roomName ? barData.barData.roomName : ""}
-            </div>
-            </div>
-            <div className='w-[20%] h-full flex items-center justify-end'>
+          <div className="w-full h-full flex p-[auto] items-center justify-between">
+              <img
+                className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px]"
+                src={ barData.barData.roomImage ? `data:image/jpeg;base64,${barData.barData.roomImage}` : logoImg }
+                alt={""}
+              />
+              <div className="w-[70%] h-full ml-[20px] flex items-center dark:text-white" style={{
+                    fontFamily: "poppins",
+                    fontSize: "20px",
+                    fontStyle: "normal",
+                    fontWeight: 600,
+                    lineHeight: "normal",
+                    letterSpacing: "1.5px",
+                  }}>
+                  {barData.barData.roomName ? barData.barData.roomName : ""}
+              </div>
+            <div className='w-[20%] h-full flex mr-[10px]'>
                 <div className='w-full h-full flex flex-row justify-end items-center'>
                     <Link to={`/chat/invToRoom/?id=${encodedData}`} 
                     className="flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]" style={{
@@ -39,15 +35,12 @@ const ContactBar = (barData) => {
                     fontSize: "25px",
                     }}>+</Link>
                 </div>
-                <div className='w-full h-full flex flex-row justify-end items-center'>
+                <div className='w-[25px] h-full flex flex-row justify-end items-center'>
                     <Link to={`/chat/roomSettings/?id=${encodedData}`} >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" 
                         className="w-8 h-8 dark:text-white text-center">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                     </svg>
-
-                                
-                
                     </Link>
                 </div>
             </div>
@@ -94,10 +87,10 @@ const ContactBar = (barData) => {
             <img
               className="logoImg rounded-[50px] w-[40px] h-[40px] ml-[10px]"
               src={msgData.msgData[1] ? msgData.msgData[1] : logoImg}
-              alt={"${defpaultConvdata.name}"}
+              alt={""}
             />
             <div
-              className="p-[10px] ml-[15px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#1A1C26] text-left text-white dark:text-white text-clip overflow-hidden"
+              className="p-[10px] ml-[15px] max-w-[60%] w-fit h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#6F37CF] text-left text-white dark:text-white text-clip overflow-hidden"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -161,6 +154,7 @@ const GroupConveComponent = (props:any) => {
 
   if (dataState)
   {
+    console.log("DATASTATE:   = ", dataState);
     return (
         <div
         className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
@@ -189,8 +183,9 @@ const GroupConveComponent = (props:any) => {
           
                       
                       <input 
+                        disabled={dataState.muted}
                         type="text"
-                        placeholder="Type your text.."
+                        placeholder={dataState.muted ? "You're muted :c" : "Type your text.."}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         className="w-[95%] h-full bg-transparent flex items-center justify-center ml-[10px]" style={{

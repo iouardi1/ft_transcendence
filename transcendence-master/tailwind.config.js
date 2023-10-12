@@ -43,8 +43,12 @@ export default {
       },
       fontFamily: {
         poppins: ["poppins", "sans-serif"],
-        // 'sans': [your_main_font],
-      // 'roboto': ['Roboto', 'sans-serif'],
+      },
+      width: {
+        'custom-width': 'calc(100% - 100px)',
+      },
+      height: {
+        'custom-height': 'calc(100% - 100px)',
       },
     },
     screens: {
