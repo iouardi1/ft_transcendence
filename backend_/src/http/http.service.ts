@@ -93,22 +93,24 @@ export class HttpService {
   async fetchRoomsToJoin(userId: string) {
     const rooms = await this.prismaService.room.findMany({
       where: {
-        NOT: {
-          OR: [
+          AND: [
             {
-              RoomMembers: {
-                some: {
-                  memberId: userId,
+              NOT: {
+                RoomMembers: {
+                  some: {
+                    memberId: userId,
+                  },
                 },
-              },
-            },
-            {
-              bannedUsers: {
-                has: userId,
               }
             },
+            {
+              NOT: {
+                bannedUsers: {
+                  has: userId,
+                }
+            }
+            },
           ]
-        },
       },
       select: {
         id: true,
@@ -118,6 +120,7 @@ export class HttpService {
         password: true,
       },
     });
+    console.log(rooms);
     const filteredRooms = rooms.filter((room: any) => {
       if (room.visibility != 'private') return room;
     });
