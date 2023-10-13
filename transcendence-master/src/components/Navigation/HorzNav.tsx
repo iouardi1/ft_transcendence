@@ -1,6 +1,7 @@
 // import { Switch, Menu, Transition } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import logo from "../../assets/logo.svg";
+import { useEffect } from "react";
 
 interface HorzNavProps {
   open: boolean;
@@ -62,6 +63,7 @@ export default function HorzNav(props: HorzNavProps) {
       </svg>
     ),
   };
+
 
   return (
     <div className="w-full max-h-[80px] m-0">

@@ -59,12 +59,12 @@ const ContactBar = (barData) => {
       );
     } else {
       return (
-        <div className="w-[100%] max-h-[90%] m-[15px] ml-[-20px] 
+        <div className="w-[100%] max-h-[90%] m-[15px] ml-[-30px] 
         ">
-          <div className="w-full h-full flex flex-row-reverse justify-start">
+          <div className="w-full h-full flex flex-row-reverse justify-start ml-[20px]">
             <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
             <div
-              className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#6F37CF] text-left text-white dark:text-white text-clip"
+              className="p-[10px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#6F37CF] text-left text-white dark:text-white text-clip"
               style={{
                 fontFamily: "poppins",
                 fontSize: "14px",
@@ -130,8 +130,8 @@ const DMConveComponent = (props: any) => {
   {
       return (
           <div
-          className="ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF] dark:border-[#272932] dark:bg-[#272932]
-          md:w-[65%] md:h-[88%]
+          className="g:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
+          ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]
           "
         >
             <div className="w-full h-[10%] border-solid mb-[5px]">

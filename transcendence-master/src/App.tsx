@@ -54,6 +54,8 @@ function App() {
       setSocket(socketInstance);
     }
 
+
+
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
