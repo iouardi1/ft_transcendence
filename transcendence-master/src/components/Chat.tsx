@@ -19,11 +19,11 @@ const Chat = (props: PropsType) => {
     ml-[2px] mr-[2px] mb-[10px] h-full w-full flex justify-around 100vh gap-[0px] mt-[20px]"
     >
       <div
-        className="lg:ml-[20px] lg:mr-[-10px] lg:my-[15px] lg:h-full lg:w-full lg:flex-wrap lg:gap-[0px] lg:items-start
-      ml-[20px] mr-[-10px] my-[15px] h-full w-full flex-wrap gap-[0px] items-start"
+        className=" lg:ml-[20px] lg:mr-[-10px] lg:my-[15px] lg:h-full lg:w-[30%] lg:flex-wrap lg:items-start
+      ml-[20px] mr-[-10px] my-[15px] h-full w-[50%] flex-wrap items-start"
       >
-        < GroupsComponent userId={userId}/>
-        < DMComponent userId={userId}/>
+        < GroupsComponent userId={userId} socket={props.socket}/>
+        < DMComponent userId={userId} socket={props.socket}/>
       </div>
       <Outlet/>
     </div>

@@ -7,7 +7,6 @@ import axios from "axios";
 
 
 const GroupBar = (props) => {
-    console.log("group bar:  ", props)
     const encodedData = encodeURIComponent(props.roomState.room.id);
     if (encodedData)
     {
@@ -20,7 +19,7 @@ const GroupBar = (props) => {
                     alt={""}
                 />
                 <div className="w-[70%] h-full ml-[20px] flex items-center justify-center">
-                    <div className=" text-black dark:text-white w-full h-[50%] text-center flex justify-center items-center"
+                    <div className=" text-black dark:text-white w-full h-[50%] flex justify-center items-center"
                     style={{
                         fontFamily: "poppins",
                         fontSize: "22px",
@@ -36,8 +35,8 @@ const GroupBar = (props) => {
                 <div className='w-[20%] h-full flex items-center justify-end'>
                     <div className='w-full h-full flex flex-row justify-end items-center'>
                         <Link to={`/chat/groupConv/?id=${encodedData}`} >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[20px]">
-                                <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z" clip-rule="evenodd" />
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[20px] dark:text-white">
+                                <path fillRule="evenodd" d="M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z" clipRule="evenodd" />
                             </svg>
                         </Link>
                     </div>
@@ -55,7 +54,7 @@ const ParticipantOwner = (props) => {
     const role = props.roomState.rooms[0].role;
     const [display, setDisplay] = useState(true);
 
-    // console.log("props in Owner:  ", props);
+    // console.log("props in Owner:  ", props.roomState.rooms[0]);
 
     const handleButtonClick = (action) => {
        if (props.socket)
@@ -91,11 +90,11 @@ const ParticipantOwner = (props) => {
             <div className="w-full h-full flex-wrap items-center">
                 <div className='w-full h-full flex items-center justify-end'>
                     <div 
-                        className={`w-[100px] h-[35px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
+                        className={`w-[70px] h-[30px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
                             role === 'OWNER' ? 'opacity-[100%]' : 'opacity-[70%]' } `}
                         style={{
                             fontFamily: "poppins",
-                            fontSize: "15px",
+                            fontSize: "13px",
                             fontStyle: "normal",
                             fontWeight: 600,
                             letterSpacing: "1.5px",
@@ -140,11 +139,16 @@ const ParticipantOwner = (props) => {
                                     <button onClick={() => handleButtonClick("demote")}>Demote</button>
                                 </li>
                             )}
-                            <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                                <button onClick={() => handleButtonClick((props.roomState.rooms[0].muted ? "unmute" : "mute")) }>
-                                    {props.roomState.rooms[0].muted ? "Unmute" : "Mute"}
-                                </button>
-                            </li>
+                           { props.roomState.rooms[0].muted === false && (
+                                <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                                    <button onClick={() => handleButtonClick("mute")}>Mute</button>
+                                </li>
+                            )}
+                           { props.roomState.rooms[0].muted && (
+                                <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                                    <button onClick={() => handleButtonClick("unmute")}>Unmute</button>
+                                </li>
+                            )}
                             <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
                                 <button onClick={() => handleButtonClick("kick") }>Kick</button>
                             </li>
@@ -165,6 +169,17 @@ const ParticipantOwner = (props) => {
 const ParticipantAdmin = (props) => {
     const role = props.roomState.rooms[0].role;
     const [display, setDisplay] = useState(true);
+
+
+    const handleButtonClick = (action) => {
+       if (props.socket)
+       {
+            console.log("THE action:", action);
+            // console.log("THE action:", action);
+            props.socket.emit(action, {userId: props.userId, subjectId: props.roomState.userId, roomId: props.roomState.rooms[0].RoomId});
+       }
+       setDisplay(true);
+      };
     return (
     <div className='w-full h-full flex-wrap justify-around items-center'>
         <div className="w-full h-full flex p-[auto] items-center justify-start">
@@ -189,11 +204,11 @@ const ParticipantAdmin = (props) => {
             <div className="w-full h-full flex-wrap justify-end items-center">
                 <div className='w-full h-full flex items-center justify-end'>    
                     <div 
-                        className={`w-[100px] h-[35px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
+                        className={`w-[70px] h-[30px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
                             role === 'OWNER' ? 'opacity-[100%]' : 'opacity-[70%]'} `}
                         style={{
                             fontFamily: "poppins",
-                            fontSize: "15px",
+                            fontSize: "13px",
                             fontStyle: "normal",
                             fontWeight: 600,
                             letterSpacing: "1.5px",
@@ -225,14 +240,21 @@ const ParticipantAdmin = (props) => {
                         fontSize: "15px",
                         fontWeight: 300,
                         }}>
+                            { props.roomState.rooms[0].muted === false && (
+                                <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                                    <button onClick={() => handleButtonClick("mute")}>Mute</button>
+                                </li>
+                            )}
+                           { props.roomState.rooms[0].muted && (
+                                <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                                    <button onClick={() => handleButtonClick("unmute")}>Unmute</button>
+                                </li>
+                            )}
                             <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                                <button onClick={() => setDisplay(true) }>Mute</button>
+                                <button onClick={() => handleButtonClick("kick") }>Kick</button>
                             </li>
                             <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                                <button onClick={() => setDisplay(true) }>Kick</button>
-                            </li>
-                            <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                                <button onClick={() => setDisplay(true) }>Ban</button>
+                                <button onClick={() => handleButtonClick("ban") }>Ban</button>
                             </li>
                         </ul>    
                     </div> 
@@ -270,11 +292,11 @@ const ParticipantAdmin1 = (props) => {
             </div>
             <div className='w-[30%] h-full flex items-center justify-end mr-[30px]'>
             <div 
-                className={` w-[100px] h-[35px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
+                className={`w-[70px] h-[30px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
                     role === 'OWNER' ? 'opacity-[100%]' : 'opacity-[70%]'}`}
                 style={{
                     fontFamily: "poppins",
-                    fontSize: "15px",
+                    fontSize: "13px",
                     fontStyle: "normal",
                     fontWeight: 600,
                     letterSpacing: "1.5px",
@@ -316,11 +338,11 @@ const ParticipantUser = (props) => {
             </div>
             <div className='w-[20%] h-full flex items-center justify-around'>
             <div 
-                className={`w-[100px] h-[35px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
+                className={`w-[70px] h-[30px] text-white rounded-[25px] bg-[#6F37CF] text-center flex justify-center items-center ${
                     role === 'OWNER' ? 'opacity-[100%]' : 'opacity-[70%]'}`}
                 style={{
                     fontFamily: "poppins",
-                    fontSize: "15px",
+                    fontSize: "13px",
                     fontStyle: "normal",
                     fontWeight: 600,
                     letterSpacing: "1.5px",
@@ -337,6 +359,16 @@ const ParticipantUser = (props) => {
 
 
 const ParticipantsNumber = (props) => {
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    props.socket.emit("leaveRoom", props.roomState.room.id)
+
+   
+    setIsButtonDisabled(true);
+  };
+
 
     return (
         <div className='w-full h-full flex-wrap justify-center'>
@@ -367,6 +399,24 @@ const ParticipantsNumber = (props) => {
             {props.roomState.participants.length}
 
             </div>
+            <div className=" w-[90px] h-[30px] flex justify-center items-center">
+                <button 
+                type='submit'
+                disabled={isButtonDisabled}
+                onClick= { handleSubmit }
+                className={`w-[60px] h-[30px] bg-[#D7385E]  text-white rounded-[25%] hover:shadow-lg dark:shadow-[0_25px_5px_-15px_rgba(60,0,50,0.3)] ${isButtonDisabled ? 'opacity-[50%] hover:shadow-none' : 'enabled-button'}`}
+                style={{
+                    fontFamily: "poppins",
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: 600,
+                    lineHeight: "normal",
+                    letterSpacing: "0.13px",
+                }}
+                >
+                Leave
+                </button>
+            </div>
         </div>
         <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
     </div>
@@ -381,7 +431,8 @@ const RoomSettings = (props) => {
     const receivedData = params.get('id');
 
     const [roomState, setRoomState] = useState(null);
-
+    
+    useEffect(() => {
     const fetchData = async () => {
         try {
           const response = await axios.get(`http://localhost:3003/chat/roomSettings/${receivedData}`, {
@@ -396,9 +447,9 @@ const RoomSettings = (props) => {
           console.error('Error fetching data:', error);
         }
       };
-        useEffect(() => {
           fetchData();
         }, []);
+    
     if (roomState)
     {
         return (
@@ -407,11 +458,11 @@ const RoomSettings = (props) => {
             ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex-wrap dark:border-[#272932] dark:bg-[#272932]"
             >
                 <div className='w-full h-full flex-wrap'>
-                    <div className="w-full h-[15%] border-solid mb-[25px]">
-                        <GroupBar roomState={roomState}/>
+                    <div className="w-full h-[15%] border-solid mb-[25px] flex items-center">
+                        <GroupBar roomState={roomState} socket={props.socket}/>
                     </div>
                     <div className="w-full h-[10%] mt-[25px] flex-wrap">
-                        < ParticipantsNumber roomState={roomState}/>
+                        < ParticipantsNumber roomState={roomState}  socket={props.socket}/>
                     </div>
                     <div className="w-full h-[10%] mt-[25px] flex-wrap">
                     {

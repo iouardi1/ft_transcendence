@@ -107,6 +107,7 @@ export default function invToRoom (props) {
 
   const [dataState, setDataState] = useState(null);
 
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:3003/chat/invToRoom/${receivedData}`, {
@@ -122,9 +123,8 @@ export default function invToRoom (props) {
     }
   };
 
-  useEffect(() => {
       fetchData();
-  }, []);
+  }, [dataState]);
 
   if (dataState)
   {

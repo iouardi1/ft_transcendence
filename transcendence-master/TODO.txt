@@ -1,8 +1,10 @@
 tomorrow's tasks nchaelah:
 
-    - check image size (only <500kb)
-    - Dashboard abatala
-    and we be done nchaelah
+    - leave room, banned users list
     - THE FOCKIN TOO LAARGE URL 
     - messages overflow the div
-    - muted kicked and banned conv
+    - muted kicked and banned and blocked conv and leave room
+    - handle unblock (Mois) :3
+    - sort msgs (dm and room) (Mois) :3
+    
+    and we be done nchaelah

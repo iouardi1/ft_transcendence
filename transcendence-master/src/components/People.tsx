@@ -5,7 +5,10 @@ import axios from 'axios';
 
 function DMsComponent (props:any)
 {
+  console.log("props in People:", props);
     const [dmData, setDmData] = useState(null);
+
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3003/chat/dms', {
@@ -15,16 +18,27 @@ function DMsComponent (props:any)
       });
       if (response.status === 200) {
         setDmData(response.data)
-    }
+        
+        
+        
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-
-  useEffect(() => {
-
-    fetchData();
+  
+  fetchData();
+  
+    props.socket.on("createdDm", () => {
+      console.log("HEEERE");
+      fetchData();
+    });
+    props.socket.on("createdMessage", () => {
+      console.log("HEEERE");
+      fetchData();
+    });
   }, []);
+
     if (dmData)
     {
         return (
@@ -49,11 +63,11 @@ function DMsComponent (props:any)
             <div className="convs h-[85%] overflow-y-scroll my-[15px] ml-[10px]">
             {
                     
-                    dmData.map( (dm) => (
-                    <DMComp key={dm.id} dmData={dm} userId={props.userId}/>))
-                }
+              dmData.map((dm) => (
+                <DMComp key={dm.id} dmData={dm} userId={props.userId}/>))
+            }
             </div>
-            </div>
+          </div>
         );
     }
 }

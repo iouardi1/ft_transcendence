@@ -7,6 +7,7 @@ function GroupsComponent(props:any) {
 
   const userId = props.userId;
   const [convData, setConvData] = useState(null);
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3003/chat/groups', {
@@ -22,10 +23,8 @@ function GroupsComponent(props:any) {
     }
   };
 
-  useEffect(() => {
-
     fetchData();
-  }, []);
+  }, [convData]);
 
   const [display, setDisplay] = useState(true);
   if (convData)

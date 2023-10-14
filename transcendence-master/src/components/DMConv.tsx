@@ -3,17 +3,23 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 
+
 const ContactBar = (barData) => {
-    return (
-      <div className="w-full h-full p-[20px] flex">
-        <div className="w-[100%] flex flex-wrap">
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+    barData.socket.emit("blockUser", barData.barData.participants[0].userId);
+ };
+
+  return (
+      <div className="w-full h-full p-[20px] flex-wrap items-center justify-center">
+        <div className="w-full h-full flex items-center justify-start">
           <img
-            className="logoImg rounded-[50px] w-[40px] h-[40px]"
+            className="logoImg rounded-[50px] w-[50px] h-[50px] flex items-center"
             src={barData.barData.participants[0].image}
             alt={""}
           />
-          <div className="w-full h-[40px] mt-[-52px] ml-[55px] flex-wrap justify-around items-center">
-            <div className=" text-black dark:text-white w-full"
+          <div className="w-full h-full ml-[55px] flex justify-around items-center">
+            <div className=" text-black dark:text-white w-full flex items-center"
               style={{
                 fontFamily: "poppins",
                 fontSize: "20px",
@@ -25,11 +31,14 @@ const ContactBar = (barData) => {
             >
               {barData.barData.participants[0].displayName}
             </div>
+            
           
           
-            <hr className=" w-[90%] h-[1px] my-[15px] bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
           </div>
+          
         </div>
+            <hr className=" w-[90%] h-[1px] my-[15px] bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%] flex justify-center"></hr>
+        
       </div>
     );
   };
@@ -87,9 +96,10 @@ const ContactBar = (barData) => {
 const DMConveComponent = (props: any) => {
 
   const socket = props.socket;
-  const maxLength = 1000;
+  const maxLength = 500;
 
   const [dataState, setDataState] = useState(null);
+  const [blockState, setBlockState] = useState(false);
 
   const { search } = useLocation();
   const params = new URLSearchParams(search);
@@ -97,6 +107,7 @@ const DMConveComponent = (props: any) => {
 
 
   const [message, setMessage] = useState('');
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:3003/chat/dms/${receivedData}`, {
@@ -112,8 +123,11 @@ const DMConveComponent = (props: any) => {
     }
   };
 
-  useEffect(() => {
       fetchData();
+      socket.on("blocked", () => {
+        setBlockState(true);
+
+      })
     
   }, []);
 
@@ -130,12 +144,11 @@ const DMConveComponent = (props: any) => {
   {
       return (
           <div
-          className="g:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
-          ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]
-          "
+          className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
+        ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
         >
             <div className="w-full h-[10%] border-solid mb-[5px]">
-              <ContactBar barData={dataState.dm}/>
+              <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
             </div>
             <div className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll">
             {
@@ -145,7 +158,7 @@ const DMConveComponent = (props: any) => {
             }
 
             </div>
-            <div className="w-[90%] h-[50px] border-solid flex  m-auto items-center">
+            <div className="w-[90%] h-[50px] border-none flex  m-auto items-center">
                 <img
                   className="logoImg rounded-[50px] w-[40px] h-[40px]"
                   src={dataState.image.image}
@@ -157,21 +170,24 @@ const DMConveComponent = (props: any) => {
                     <div className="w-full h-full bg-[#EEEEFF] dark:bg-[#1A1C26] dark:text-white rounded-[10px]">
                       <input 
                         type="text"
+                        disabled={blockState}
                         maxLength={maxLength}
                         placeholder="Type your text.."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-[95%] h-full bg-transparent flex items-center justify-center ml-[10px]" style={{
+                        className="w-[95%] h-full border-none bg-transparent flex items-center justify-center ml-[10px]" style={{
                           fontFamily: "poppins",
                           fontSize: "15px",
                           fontStyle: "normal",
                           fontWeight: 600,
                           letterSpacing: "1.5px",
+                          outline: 'none',
                       }}>
                       </input>
                       </div>
                       <button 
                         type='submit'
+                        disabled={blockState}
                         className="w-[10%] h-full m-auto flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                           viewBox="0 0 24 24" fill="#6F37CF" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 

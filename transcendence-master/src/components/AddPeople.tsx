@@ -16,7 +16,7 @@ const DmRoomButton = (props) => {
   return (
     <div className="icon w-[95%] h-full flex-wrap m-auto">
       
-      <div className="icon w-full h-[40px] flex items-center">
+      <div className="icon w-full h-[50px] flex items-center">
         <div className="w-full h-full flex items-center">
           <img
             className="logoImg rounded-[40px] w-[40px] h-[40px]"
@@ -83,7 +83,7 @@ const DmRoomButton = (props) => {
 
 function ExistinUser(userData) {
   return (
-    <div className='w-[350px] max-h-[60px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
+    <div className='w-[350px] max-h-[80px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
      dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
       <DmRoomButton userData={userData} socket={userData.socket}/>
     </div>
@@ -96,6 +96,7 @@ export default function AddPeople (props) {
   const socket = props.socket;
   const userId = props.userId;
   const [addUsers, setAddUsers] = useState(null);
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3003/chat/addPeople', {
@@ -111,10 +112,9 @@ export default function AddPeople (props) {
     }
   };
 
-  useEffect(() => {
 
     fetchData();
-  }, []);
+  }, [addUsers]);
 
   if (addUsers)
   {

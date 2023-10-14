@@ -112,6 +112,7 @@ export default function JoinRoom(props: any) {
   const userId = props.userId;
   const [rooms, setRooms] = useState(null); 
 
+  useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3003/chat/groupsList', {
@@ -127,9 +128,8 @@ export default function JoinRoom(props: any) {
       console.error('Error fetching data:', error);
     }
   };
-    useEffect(() => {
       fetchData();
-    }, []);
+    }, [rooms]);
 
     if (rooms)
     {

@@ -1,8 +1,11 @@
 
 import { Link } from "react-router-dom";
-  const DMComp = (props) => {
+
+
+
+const DMComp = (props) => {
     let date : Date;
-    date = props.dmData.messages.length ? new Date(props.dmData.messages[props.dmData.messages.length - 1].sentAt) : null;
+    date = props.dmData[1].length ? new Date(props.dmData[1][props.dmData[1].length - 1].sentAt) : null;
 
     let formattedDate = null;
 
@@ -17,7 +20,7 @@ import { Link } from "react-router-dom";
     }
 
 
-    const encodedData = encodeURIComponent(props.dmData.dmId);
+    const encodedData = encodeURIComponent(props.dmData[0]);
     if (encodedData)
     {
 
@@ -29,7 +32,7 @@ import { Link } from "react-router-dom";
             <div className="w-[70%] h-full ">
               <img
                 className="logoImg rounded-[50px] w-[40px] h-[40px]"
-                src={props.dmData.participants[0].image}
+                src={props.dmData[2][0].image}
                 alt={""}
               />
     
@@ -44,7 +47,7 @@ import { Link } from "react-router-dom";
                   letterSpacing: "0.75px",
                 }}
               >
-                {props.dmData.participants[0].displayName}
+                {props.dmData[2][0].displayName}
               </div>
               <div
                 className="groupMsg text-black dark:text-white w-[70%] mt-[-40px] ml-[45px] overflow-hidden  whitespace-nowrap"
@@ -57,7 +60,7 @@ import { Link } from "react-router-dom";
                   letterSpacing: "0.65px",
                 }}
               >
-                {props.dmData.messages.length ? props.dmData.messages[props.dmData.messages.length - 1].messageContent  : ""}
+                {props.dmData[1].length ? props.dmData[1][props.dmData[1].length - 1].messageContent  : ""}
               </div>
             </div>
             <div
