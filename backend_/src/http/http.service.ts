@@ -10,7 +10,7 @@ import { async } from 'rxjs';
 import { roomDTO } from 'src/dto/roomDTO';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Socket } from 'socket.io';
-import { RoomMember, Room, User } from '@prisma/client';
+import { RoomMember, Room, User, DM, Message } from '@prisma/client';
 
 @Injectable()
 export class HttpService {
@@ -93,24 +93,13 @@ export class HttpService {
   async fetchRoomsToJoin(userId: string) {
     const rooms = await this.prismaService.room.findMany({
       where: {
-          AND: [
-            {
-              NOT: {
-                RoomMembers: {
-                  some: {
-                    memberId: userId,
-                  },
-                },
-              }
+        NOT: {
+          RoomMembers: {
+            some: {
+              memberId: userId,
             },
-            {
-              NOT: {
-                bannedUsers: {
-                  has: userId,
-                }
-            }
-            },
-          ]
+          },
+        },
       },
       select: {
         id: true,
@@ -118,11 +107,12 @@ export class HttpService {
         RoomName: true,
         visibility: true,
         password: true,
+        bannedUsers: true,
       },
     });
-    console.log(rooms);
-    const filteredRooms = rooms.filter((room: any) => {
-      if (room.visibility != 'private') return room;
+    const filteredRooms = rooms.filter((room: Room) => {
+      if (room.visibility != 'private' && !room.bannedUsers.includes(userId))
+        return room;
     });
     return filteredRooms;
   }
@@ -161,8 +151,10 @@ export class HttpService {
             },
           },
           select: {
+            userId: true,
             displayName: true,
             image: true,
+            blockedUsers: true,
           },
         },
         msg: true,
@@ -172,12 +164,23 @@ export class HttpService {
       },
     });
 
-    const customArray = dms.map((dm) => ({
-      dmId: dm.id,
-      messages: dm.msg,
-      participants: dm.participants,
-    }));
-
+    const currentUser = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    let customArray: [number, Message[], User[]][] = [];
+    dms.forEach((dm: { participants: User[]; msg: Message[] } & DM) => {
+      console.log(dm.participants[0]);
+      if (
+        !dm.participants[0].blockedUsers.includes(userId) &&
+        !currentUser.blockedUsers.includes(dm.participants[0].userId)
+      ) {
+        console.log(dm.participants[0].userId);
+        customArray.push([dm.id, dm.msg, dm.participants]);
+      }
+    });
+    console.log(customArray);
     return customArray;
   }
 
@@ -194,6 +197,7 @@ export class HttpService {
             },
           },
           select: {
+            userId: true,
             displayName: true,
             image: true,
           },
@@ -209,6 +213,7 @@ export class HttpService {
         image: true,
       },
     });
+    console.log("DMMMMMM == ", dm);
     return { dm: dm, image: ownImage };
   }
 
@@ -233,28 +238,33 @@ export class HttpService {
             in: blockedUserIds,
           },
         },
-        AND: {
-          NOT: {
-            dms: {
-              some: {
-                id: {
-                  in: dmIds,
+        AND: [
+          {
+            NOT: {
+              dms: {
+                some: {
+                  id: {
+                    in: dmIds,
+                  },
                 },
               },
             },
-            blockedUsers: {
-              has: userId,
-            },
           },
-          userId: {
-            not: userId,
-          },
+        ],
+        userId: {
+          not: userId,
         },
       },
     });
-    console.log(users);
-    return users;
+    const filteredUsers = users.filter((user) => {
+      if (!user.blockedUsers.includes(userId)) {
+        return user;
+      }
+    })
+
+    return filteredUsers;
   }
+
   async fetchRoomSuggestions(roomId: number, userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {

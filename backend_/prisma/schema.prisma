@@ -52,7 +52,7 @@ model Message {
 }
 
 model DM {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   // participantId Int
   // msgId Int
   creatorId String
