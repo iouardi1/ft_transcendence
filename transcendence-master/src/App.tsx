@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import HorzNav from "./components/Navigation/HorzNav";
 import VertNav from "./components/Navigation/VertNav";
-import { BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
 // import Comp from "./components/Comp";
 import FindGame from "./components/FindGame";
 import Game from "./components/Game";
@@ -34,7 +34,7 @@ function App() {
   function toggleDarkMode() {
     setDarkMode(!darkMode);
   }
-
+  
   function toggleOpen() {
     setOpen(!open);
   }
@@ -43,19 +43,18 @@ function App() {
   if (token) {
     const decode: Token = jwt(token);
     const userId: string = decode.sub;
-
+    
     if (!socket)
     {
-        const socketInstance = io('http://localhost:3003', {
-          auth: {
-            token: userId,
-          }
-        });
+      const socketInstance = io('http://localhost:3003', {
+        auth: {
+          token: userId,
+        }
+      });
       setSocket(socketInstance);
     }
-
-
-
+    
+      const currentUrl = window.location.href;
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
@@ -75,7 +74,7 @@ function App() {
                       <Route path="joinRoom" element={<JoinRoom userId={userId} socket={socket}/>}/>
                       <Route path="addPeople" element={<AddPeople socket={socket} userId={userId}/>}/>
                       <Route path="dmConv" element={<DMConv socket={socket} userId={userId}/>}/>
-                      <Route path="groupConv" element={<GroupConv userId={userId} socket={socket}/>}/>
+                      <Route path="groupConv" element={<GroupConv userId={userId} socket={socket} location={currentUrl}/>}/>
                       <Route path="invToRoom" element={<InvToRoom socket={socket} userId={userId}/>}/>
                       <Route path="roomSettings" element={<RoomSettings socket={socket} userId={userId}/>}/>
                     </Route>

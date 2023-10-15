@@ -28,7 +28,11 @@ function DMsComponent (props:any)
   };
   
   fetchData();
-  
+
+    props.socket.on("dmDeleted", () => {
+    console.log("blocked BITCH");
+    fetchData();
+  })
     props.socket.on("createdDm", () => {
       console.log("HEEERE");
       fetchData();
@@ -37,6 +41,14 @@ function DMsComponent (props:any)
       console.log("HEEERE");
       fetchData();
     });
+    props.socket.on("blocked", () => {
+      console.log("blocked BITCH");
+      fetchData();
+    })
+    props.socket.on("unblocked", () => {
+      console.log("blocked BITCH");
+      fetchData();
+    })
   }, []);
 
     if (dmData)

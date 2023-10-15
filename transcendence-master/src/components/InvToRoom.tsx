@@ -124,7 +124,22 @@ export default function invToRoom (props) {
   };
 
       fetchData();
-  }, [dataState]);
+  
+      socket.on("blocked", () => {
+        console.log("blocked BITCH");
+        fetchData();
+      })
+      socket.on("unblocked", () => {
+        console.log("unblocked BITCH");
+        fetchData();
+      })
+      socket.on("banned", () => {
+        console.log("banned BITCH");
+        fetchData();
+      })
+
+      //need to listen to a new event if user has joined room on his own
+  }, []);
 
   if (dataState)
   {

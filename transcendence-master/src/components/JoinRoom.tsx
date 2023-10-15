@@ -122,7 +122,7 @@ export default function JoinRoom(props: any) {
       });
       if (response.status === 200) {
         setRooms(response.data);
-        console.log("rooms i get:", response.data);
+        // console.log("rooms i get:", response.data);
     }
     } catch (error) {
       console.error('Error fetching data:', error);

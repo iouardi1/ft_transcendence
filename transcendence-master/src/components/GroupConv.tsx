@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import logoImg from "../assets/panda.svg";
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const ContactBar = (barData) => {
@@ -110,41 +111,90 @@ const ContactBar = (barData) => {
   };
 
 
-
-const GroupConveComponent = (props:any) => {
-
+  
+  const GroupConveComponent = (props:any) => {
+    
+  
   const socket = props.socket;
 
-  const [dataState, setDataState] = useState(null);
+  const navigate = useNavigate();
 
+  const [dataState, setDataState] = useState(null);
+  
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const receivedData = params.get('id');
   
   const [message, setMessage] = useState('');
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3003/chat/groups/${receivedData}`, {
-        params: {
-          userId: props.userId,
-        }
-      });
-      if (response.status === 200) {
-        setDataState(response.data);
-    }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3003/chat/groups/${receivedData}`, {
+          params: {
+            userId: props.userId,
+          }
+        });
+        if (response.status === 200) {
+          setDataState(response.data);
+      }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
     fetchData();
+
+    props.socket.on("blocked", () => {
+      console.log("blocked BITCH");
+      fetchData();
+    })
+    props.socket.on("unblocked", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    
     socket.on("createdRoom", () =>{
       fetchData();
 
     })
+    socket.on("kicked", () =>
+    {
+        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
+        if(window.location.href === path)
+        {
+          navigate('/chat' , {replace: true});
 
-  }, [dataState]);
+        }
+      })
+    socket.on("leftRoom", () =>
+    {
+        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
+        if(window.location.href === path)
+        {
+          navigate('/chat' , {replace: true});
+
+        }
+      })
+  
+    socket.on("banned", () => {
+      navigate('/chat', {replace: true});
+    })
+
+    socket.on("muted", () => {
+      console.log("MUTED HWAAAA")
+      fetchData();
+    })
+
+    socket.on("unmuted", () => {
+      fetchData();
+    })
+
+    socket.on("createdMessage", () => {
+      console.log("CREATED MESSAGE")
+      fetchData();
+    })
+
+
+  }, []);
 
     const handleSubmit = (e) => {
       e.preventDefault(); 
@@ -157,7 +207,8 @@ const GroupConveComponent = (props:any) => {
       }
     };
 
-    console.log("chat room", dataState);
+
+    // console.log("chat room", dataState);
   if (dataState)
   {
     // console.log("DATASTATE:   = ", dataState);
@@ -206,6 +257,7 @@ const GroupConveComponent = (props:any) => {
                     </div>
                     <button
                       type='submit'
+                      disabled={dataState.muted}
                       className="w-[10%] h-full m-auto flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                           viewBox="0 0 24 24" fill="#6F37CF"  stroke="currentColor" strokeWidth="2"    strokeLinecap="round" strokeLinejoin="round" 

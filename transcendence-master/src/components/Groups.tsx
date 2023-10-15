@@ -24,7 +24,42 @@ function GroupsComponent(props:any) {
   };
 
     fetchData();
-  }, [convData]);
+
+    props.socket.on("blocked", () => {
+      console.log("blocked BITCH");
+      fetchData();
+    })
+    props.socket.on("leftRoom", () => {
+      console.log("blocked BITCH");
+      fetchData();
+    })
+    props.socket.on("unblocked", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    props.socket.on("createdRoom", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    props.socket.on("kicked", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    props.socket.on("joinedRoom", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    props.socket.on("banned", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    props.socket.on("createdMessage", () => {
+      console.log("unblocked BITCH");
+      fetchData();
+    })
+    
+
+  }, []);
 
   const [display, setDisplay] = useState(true);
   if (convData)

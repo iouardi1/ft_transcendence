@@ -4,6 +4,7 @@ import logoImg from "../assets/panda.svg";
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const GroupBar = (props) => {
@@ -360,12 +361,14 @@ const ParticipantUser = (props) => {
 
 const ParticipantsNumber = (props) => {
 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    props.socket.emit("leaveRoom", props.roomState.room.id)
-
-   
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    if (props.roomState.role !== "OWNER")
+    {
+        console.log("To leave room", props);
+        props.socket.emit("leaveRoom", props.roomState.room.id);
+    }
     setIsButtonDisabled(true);
   };
 
@@ -425,6 +428,9 @@ const ParticipantsNumber = (props) => {
 
 const RoomSettings = (props) => {
     const userId = props.userId;
+    const socket = props.socket;
+
+    const navigate = useNavigate();
   
     const { search } = useLocation();
     const params = new URLSearchParams(search);
@@ -433,25 +439,70 @@ const RoomSettings = (props) => {
     const [roomState, setRoomState] = useState(null);
     
     useEffect(() => {
-    const fetchData = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3003/chat/roomSettings/${receivedData}`, {
-            params: {
-              userId: userId,
+        const fetchData = async () => {
+            try {
+            const response = await axios.get(`http://localhost:3003/chat/roomSettings/${receivedData}`, {
+                params: {
+                userId: userId,
+                }
+            });
+            if (response.status === 200) {
+                setRoomState(response.data);
             }
-          });
-          if (response.status === 200) {
-            setRoomState(response.data);
-        }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
+            } catch (error) {
+            console.error('Error fetching data:', error);
+            }
+        };
           fetchData();
-        }, []);
+        
+        socket.on("joinedRoom", () => {
+            console.log("HUNAAAA");
+            fetchData();
+            // navigate('/chat');
+        })
+        socket.on("banned", () => {
+            console.log("HUNAAAA");
+            navigate('/chat' , {replace: true});
+        })
+        socket.on("muted", () => {
+                fetchData();
+        })
+        socket.on("unmuted", () => {
+                fetchData();
+        })
+        socket.on("leftRoom", (left: string) => {
+            if (userId === left)
+            {
+                console.log("HUNAAAA2");
+                navigate('/chat', {replace: true});
+            }
+            else
+            {
+                fetchData();
+            }
+
+        })
+        socket.on('kicked', (kickedId: string) =>
+        {
+            console.log("HUNAAAA1");
+            if (userId === kickedId)
+            {
+                console.log("HUNAAAA2");
+                navigate('/chat', {replace: true});
+            }
+            else
+            {
+                console.log("HUNAAAA3");
+                fetchData();
+            }
+        })
+
+        }, [roomState]);
+
     
     if (roomState)
     {
+        // console.log("roomStte: ", roomState);
         return (
             <div
             className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]

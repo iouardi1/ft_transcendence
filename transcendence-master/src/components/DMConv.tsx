@@ -1,12 +1,13 @@
-import { useState, useEffect, } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect, useRef, } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
 
 const ContactBar = (barData) => {
-  const handleSubmit = (e) => {
+  const handleBlock = (e) => {
     e.preventDefault(); 
+    console.log(barData.barData)
     barData.socket.emit("blockUser", barData.barData.participants[0].userId);
  };
 
@@ -31,7 +32,14 @@ const ContactBar = (barData) => {
             >
               {barData.barData.participants[0].displayName}
             </div>
-            
+            <button  
+              onClick={handleBlock}
+              className={`flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]`} style={{
+                  fontFamily: "Roboto",
+                  fontSize: "25px",
+                 textAlign : "center",
+                }}>  + 
+                </button>
           
           
           </div>
@@ -92,23 +100,25 @@ const ContactBar = (barData) => {
       );
     }
   };
+  
+  const DMConveComponent = (props: any) => {
+    
+    const socket = props.socket;
+    const maxLength = 500;
+    
+    const containerRef = useRef(null);
+    const navigate = useNavigate();
 
-const DMConveComponent = (props: any) => {
+    const [dataState, setDataState] = useState(null);
 
-  const socket = props.socket;
-  const maxLength = 500;
-
-  const [dataState, setDataState] = useState(null);
-  const [blockState, setBlockState] = useState(false);
-
-  const { search } = useLocation();
-  const params = new URLSearchParams(search);
-  const receivedData = params.get('id');
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    const receivedData = params.get('id');
 
 
-  const [message, setMessage] = useState('');
-  useEffect(() => {
-  const fetchData = async () => {
+    const [message, setMessage] = useState('');
+    useEffect(() => {
+    const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:3003/chat/dms/${receivedData}`, {
         params: {
@@ -124,8 +134,37 @@ const DMConveComponent = (props: any) => {
   };
 
       fetchData();
+      socket.on("dmDeleted", () => {
+        console.log("blocked BITCH");
+        const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
+        if(window.location.href === path)
+        {
+          navigate('/chat' , {replace: true});
+
+        }
+      })
       socket.on("blocked", () => {
-        setBlockState(true);
+        console.log("blocked BITCH");
+        const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
+        if(window.location.href === path)
+        {
+          navigate('/chat' , {replace: true});
+
+        }
+      })
+      socket.on("unblocked", () =>{
+        fetchData();
+      })
+      
+      socket.on("createdMessage", (message: any) => {
+        console.log("DM BITCH", message);
+        fetchData();
+        // Wait for the DOM to update after fetchData is complete
+        setTimeout(() => {
+          if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+          }
+        }, 0);
 
       })
     
@@ -150,8 +189,11 @@ const DMConveComponent = (props: any) => {
             <div className="w-full h-[10%] border-solid mb-[5px]">
               <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
             </div>
-            <div className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll">
+            <div 
+              ref={containerRef}
+              className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll ">
             {
+              
               dataState.dm.msg.map((element) => (
                  <Mssg key={element.id} msgData={element} userId={props.userId} />
               ))
@@ -170,7 +212,6 @@ const DMConveComponent = (props: any) => {
                     <div className="w-full h-full bg-[#EEEEFF] dark:bg-[#1A1C26] dark:text-white rounded-[10px]">
                       <input 
                         type="text"
-                        disabled={blockState}
                         maxLength={maxLength}
                         placeholder="Type your text.."
                         value={message}
@@ -187,7 +228,6 @@ const DMConveComponent = (props: any) => {
                       </div>
                       <button 
                         type='submit'
-                        disabled={blockState}
                         className="w-[10%] h-full m-auto flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                           viewBox="0 0 24 24" fill="#6F37CF" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
