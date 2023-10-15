@@ -121,6 +121,7 @@ async handleAddRoom(
 
   @SubscribeMessage('kick')
   async handleKick(
+    @ConnectedSocket() client: Socket,
     @MessageBody() payload: actionDTO,
   ) {
     this.messageService.kickUser(payload, this.mapy);
@@ -168,6 +169,14 @@ async handleAddRoom(
     @MessageBody() blockedUserId: string,
   ) {
     this.messageService.blockUser(client, blockedUserId, this.mapy);
+  }
+
+  @SubscribeMessage('unblockUser')
+  async handleUserUnblock(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() unblockedUserId: string,
+  ) {
+    this.messageService.unblockUser(client, unblockedUserId, this.mapy);
   }
 
   @SubscribeMessage('sendFriendRequest')

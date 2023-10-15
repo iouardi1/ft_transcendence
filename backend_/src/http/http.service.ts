@@ -15,6 +15,45 @@ import { RoomMember, Room, User, DM, Message } from '@prisma/client';
 @Injectable()
 export class HttpService {
   constructor(private prismaService: PrismaService) {}
+
+  async checkBlocked(userId: string, blockedUserId: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return user.blockedUsers.includes(blockedUserId);
+  }
+
+  compareMessages(a: Message, b: Message): number {
+
+    const dateA = new Date(a.sentAt);
+    const dateB = new Date(b.sentAt);
+    if (dateA < dateB) {
+      return -1;
+    } else if (dateA > dateB) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  compareMessagesComplex(a: [Message, string], b: [Message, string]): number {
+    const messageA = a[0];
+    const messageB = b[0];
+
+    const dateA = new Date(messageA.sentAt);
+    const dateB = new Date(messageB.sentAt);
+    if (dateA < dateB) {
+      return -1;
+    } else if (dateA > dateB) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   async fetchRooms(userId: string) {
     const rooms = await this.prismaService.room.findMany({
       where: {
@@ -31,21 +70,21 @@ export class HttpService {
         lastUpdate: 'desc',
       },
     });
+    const asyncOperations = rooms.map(async (room) => {
+      room.msgs = await Promise.all(room.msgs.map(async (msg) => {
+        const res = await this.checkBlocked(userId, msg.senderId);
+        return !res ? msg : null;
+      }));
+      room.msgs = room.msgs.filter((msg) => msg !== null);
+      room.msgs.sort(this.compareMessages);
+      return room
+    });
+    await Promise.all(asyncOperations);
     return rooms;
   }
 
-  async checkBlocked(userId: string, blockedUserId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    return user.blockedUsers.includes(blockedUserId);
-  }
-
   async fetchRoomContent(roomId: number, userId: string) {
-    let customArray: [any, string][] = [];
+    let customArray: [Message, string][] = [];
     let muted: boolean = false;
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -79,7 +118,7 @@ export class HttpService {
         muted = true;
     }
     await Promise.all(asyncOperations);
-    console.log(customArray);
+    customArray.sort(this.compareMessagesComplex);
     return {
       msgs: customArray,
       roomName: room.RoomName,
@@ -177,6 +216,7 @@ export class HttpService {
         !currentUser.blockedUsers.includes(dm.participants[0].userId)
       ) {
         console.log(dm.participants[0].userId);
+        dm.msg.sort(this.compareMessages)
         customArray.push([dm.id, dm.msg, dm.participants]);
       }
     });
@@ -213,7 +253,7 @@ export class HttpService {
         image: true,
       },
     });
-    console.log("DMMMMMM == ", dm);
+    dm.msg.sort(this.compareMessages);
     return { dm: dm, image: ownImage };
   }
 
@@ -260,8 +300,7 @@ export class HttpService {
       if (!user.blockedUsers.includes(userId)) {
         return user;
       }
-    })
-
+    });
     return filteredUsers;
   }
 
@@ -272,79 +311,85 @@ export class HttpService {
       },
     });
     const subjectRoom = await this.prismaService.room.findUnique({
-        where: {
-            id: roomId,
-        },
-        select: {
-            bannedUsers: true,
-        },
-    })
+      where: {
+        id: roomId,
+      },
+      select: {
+        bannedUsers: true,
+      },
+    });
     const users = await this.prismaService.user.findMany({
       where: {
-        OR:[
-            {
-                rooms: {
-                  some: {
-                    NOT: {
-                      RoomId: roomId,
-                    },
-                  },
+        OR: [
+          {
+            NOT: {
+              rooms: {
+                some: {
+                  RoomId: roomId,
                 },
-            },
-            {
-                rooms: {
-                    none: {},
-                },
-            }
-        ],
-        NOT: {
-            OR: [
-                {
-                      userId: {
-                        in: currentUser.blockedUsers,
-                      },
-                },
-                {
-                    userId: {
-                        in: subjectRoom.bannedUsers,
-                      },
-                },
-            ],
-          
-              blockedUsers: {
-                  has: userId,
               },
-        },
-        
-    }})
-    const filteredUsers = users.filter((user) => {
-        for (let i = 0; i < currentUser.roomInvites.length; i++) {
-            if (currentUser.roomInvites[i][0] == user.userId && currentUser.roomInvites[i][1] == roomId) {
-              const date = new Date(currentUser.roomInvites[i][2]);
-              const newDate = new Date();
-              const dateDiff = (newDate.getTime() - date.getTime()) / (1000 * 60 * 60);
-              return dateDiff >= 24;
-            }
-        }
+            },
+          },
+          {
+            rooms: {
+              none: {},
+            },
+          },
+        ],
+        AND: [
+          {
+            NOT: {
+              userId: {
+                in: currentUser.blockedUsers,
+              },
+            },
+          },
+          {
+            NOT: {
+              userId: {
+                in: subjectRoom.bannedUsers,
+              },
+            },
+          },
+        ],
+      },
+    });
+    const nonBlockedUsers = users.filter((user: User) => {
+      return !user.blockedUsers.includes(userId)
     })
-    console.log(filteredUsers);
-    return users;
+    const filteredUsers = nonBlockedUsers.filter((user) => {
+      if (currentUser.roomInvites.length == 0)
+        return true;
+      for (let i = 0; i < currentUser.roomInvites.length; i++) {
+        if (
+          currentUser.roomInvites[i][0] == user.userId &&
+          currentUser.roomInvites[i][1] == roomId
+        ) {
+          const date = new Date(currentUser.roomInvites[i][2]);
+          const newDate = new Date();
+          const dateDiff =
+            (newDate.getTime() - date.getTime()) / (1000 * 60 * 60);
+          return dateDiff >= 24;
+        }
+      }
+    });
+    return filteredUsers;
   }
 
-  sortMembers(members: ({rooms: RoomMember[];} & User)[], room: ({RoomMembers: RoomMember[];} & Room)) {
-    let sortedMembers: ({rooms: RoomMember[];} & User)[] = [];
-    let owner: ({rooms: RoomMember[];} & User);
-    let admins: ({rooms: RoomMember[];} & User)[] = [];
-    let users: ({rooms: RoomMember[];} & User)[] = [];
-    
+  sortMembers(
+    members: ({ rooms: RoomMember[] } & User)[],
+    room: { RoomMembers: RoomMember[] } & Room,
+  ) {
+    let sortedMembers: ({ rooms: RoomMember[] } & User)[] = [];
+    let owner: { rooms: RoomMember[] } & User;
+    let admins: ({ rooms: RoomMember[] } & User)[] = [];
+    let users: ({ rooms: RoomMember[] } & User)[] = [];
+
     members.forEach((member) => {
-      if (member.rooms[0].role == 'OWNER')
-          owner = member;
-      if (member.rooms[0].role == 'ADMIN')
-          admins.push(member);
-      if (member.rooms[0].role == 'USER')
-          users.push(member);
-    })
+      if (member.rooms[0].role == 'OWNER') owner = member;
+      if (member.rooms[0].role == 'ADMIN') admins.push(member);
+      if (member.rooms[0].role == 'USER') users.push(member);
+    });
     sortedMembers.push(owner, ...admins, ...users);
     return sortedMembers;
   }
@@ -356,21 +401,21 @@ export class HttpService {
       },
       include: {
         RoomMembers: true,
-      }
+      },
     });
     const members = await this.prismaService.user.findMany({
       where: {
         rooms: {
           some: {
             RoomId: roomId,
-          }
+          },
         },
       },
       include: {
         rooms: {
-          where:{
+          where: {
             RoomId: roomId,
-          }
+          },
         },
       },
     });
@@ -384,8 +429,7 @@ export class HttpService {
     });
     let roomMemberId: number;
     for (let i = 0; i < fetcher.rooms.length; i++) {
-      if (fetcher.rooms[i].RoomId == roomId)
-        roomMemberId = fetcher.rooms[i].id;
+      if (fetcher.rooms[i].RoomId == roomId) roomMemberId = fetcher.rooms[i].id;
     }
     const roomMember = await this.prismaService.roomMember.findUnique({
       where: {
@@ -395,8 +439,11 @@ export class HttpService {
         role: true,
       },
     });
-    console.log(this.sortMembers(members, room))
-    return ({room: room, participants: this.sortMembers(members, room), role: roomMember.role});
+    console.log(this.sortMembers(members, room));
+    return {
+      room: room,
+      participants: this.sortMembers(members, room),
+      role: roomMember.role,
+    };
   }
-
 }
