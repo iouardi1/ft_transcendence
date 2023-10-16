@@ -129,7 +129,26 @@ export default function JoinRoom(props: any) {
     }
   };
       fetchData();
-    }, [rooms]);
+      props.socket.on("createdRoom", () =>{
+        fetchData();
+  
+      })
+      props.socket.on("joinedRoom", () =>{
+        fetchData();
+  
+      })
+      props.socket.on("unbanned", () =>{
+        console.log("UNBAAAAANEDNENDENDN")
+        fetchData();
+  
+      })
+      props.socket.on("kicked", () =>{
+        fetchData();
+  
+      })
+
+
+    }, []);
 
     if (rooms)
     {

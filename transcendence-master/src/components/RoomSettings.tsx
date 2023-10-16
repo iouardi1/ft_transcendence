@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import BannedUsers from './../assets/userBanned.svg';
 
 
 const GroupBar = (props) => {
@@ -372,7 +373,11 @@ const ParticipantsNumber = (props) => {
     setIsButtonDisabled(true);
   };
 
+  console.log("participantsNum: ", props);
 
+  const encodedData = encodeURIComponent(props.roomState.room.id);
+  if (encodedData)
+  {
     return (
         <div className='w-full h-full flex-wrap justify-center'>
         <div className='w-full h-full flex justify-around items-center'>
@@ -402,6 +407,15 @@ const ParticipantsNumber = (props) => {
             {props.roomState.participants.length}
 
             </div>
+                <div>
+                    <Link to={`/chat/bannedUsers/?id=${encodedData}`}>
+                        <img 
+                        className="w-[30px] h-[30px] "
+                        src={BannedUsers}
+                            alt="" />
+    
+                    </Link>
+                </div>
             <div className=" w-[90px] h-[30px] flex justify-center items-center">
                 <button 
                 type='submit'
@@ -423,7 +437,8 @@ const ParticipantsNumber = (props) => {
         </div>
         <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
     </div>
-);
+    );
+}
 };
 
 const RoomSettings = (props) => {
@@ -470,6 +485,15 @@ const RoomSettings = (props) => {
         socket.on("unmuted", () => {
                 fetchData();
         })
+        socket.on("promoted", () => {
+                fetchData();
+        })
+        socket.on("demoted", () => {
+                fetchData();
+        })
+        socket.on("ownership", () => {
+                fetchData();
+        })
         socket.on("leftRoom", (left: string) => {
             if (userId === left)
             {
@@ -497,7 +521,7 @@ const RoomSettings = (props) => {
             }
         })
 
-        }, [roomState]);
+        }, []);
 
     
     if (roomState)

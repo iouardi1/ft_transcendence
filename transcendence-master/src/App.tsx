@@ -18,6 +18,7 @@ import AddPeople from "./components/AddPeople";
 import GroupConv from "./components/GroupConv";
 import InvToRoom from "./components/InvToRoom";
 import RoomSettings from "./components/RoomSettings";
+import BannedList from "./components/BannedList";
 import { io } from 'socket.io-client';
 
 
@@ -74,9 +75,10 @@ function App() {
                       <Route path="joinRoom" element={<JoinRoom userId={userId} socket={socket}/>}/>
                       <Route path="addPeople" element={<AddPeople socket={socket} userId={userId}/>}/>
                       <Route path="dmConv" element={<DMConv socket={socket} userId={userId}/>}/>
-                      <Route path="groupConv" element={<GroupConv userId={userId} socket={socket} location={currentUrl}/>}/>
+                      <Route path="groupConv" element={<GroupConv userId={userId} socket={socket}/>}/>
                       <Route path="invToRoom" element={<InvToRoom socket={socket} userId={userId}/>}/>
                       <Route path="roomSettings" element={<RoomSettings socket={socket} userId={userId}/>}/>
+                      <Route path="bannedUsers" element={<BannedList socket={socket} userId={userId}/>}/>
                     </Route>
                     {/* <Route path="stats" element={<Comp name="stats"/>}/>  */}
                     <Route path="game" element={<Game/>}/>

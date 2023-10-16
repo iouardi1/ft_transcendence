@@ -114,7 +114,7 @@ const ContactBar = (barData) => {
   
   const GroupConveComponent = (props:any) => {
     
-  
+  console.log("userId f conv: ", props);
   const socket = props.socket;
 
   const navigate = useNavigate();
@@ -156,27 +156,47 @@ const ContactBar = (barData) => {
       fetchData();
 
     })
-    socket.on("kicked", () =>
-    {
-        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
-        if(window.location.href === path)
-        {
-          navigate('/chat' , {replace: true});
-
-        }
-      })
-    socket.on("leftRoom", () =>
-    {
-        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
-        if(window.location.href === path)
-        {
-          navigate('/chat' , {replace: true});
-
-        }
-      })
   
-    socket.on("banned", () => {
-      navigate('/chat', {replace: true});
+    socket.on("kicked", (kickedId: string) =>
+    {
+      console.log("kicker id", props.userId);
+      console.log("kicked", kickedId);
+      if (props.userId === kickedId)
+      {
+        console.log(kickedId===props.userId);
+          const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
+          if( (window.location.href === path ) && (props.userId === kickedId) )
+          {
+            console.log("kicked id", kickedId);
+            navigate('/chat' , {replace: true});
+
+          }
+        }
+      })
+    socket.on("leftRoom", (leaver: string) =>
+    {
+      if (props.userId === leaver)
+      {
+        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
+        if((props.userId === leaver) && (window.location.href === path))
+        {
+          navigate('/chat' , {replace: true});
+
+        }
+      }
+    })
+
+  
+    socket.on("banned", (banned: string) => {
+      if (props.userId === banned)
+      {
+        const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
+        if((props.userId === banned) && window.location.href === path)
+        {
+          navigate('/chat' , {replace: true});
+
+        }
+      }
     })
 
     socket.on("muted", () => {

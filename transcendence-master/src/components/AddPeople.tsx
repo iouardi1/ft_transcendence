@@ -111,10 +111,26 @@ export default function AddPeople (props) {
       console.error('Error fetching data:', error);
     }
   };
-
-
     fetchData();
-  }, [addUsers]);
+  
+    socket.on("dmDeleted", () => {
+      console.log("ADD THE FOCKING DELETED")
+      fetchData();
+    })
+    socket.on("blocked", () => {
+      fetchData();
+      
+    })
+    socket.on("unblocked", () =>{
+      fetchData();
+    })
+    props.socket.on("createdDm", () => {
+      console.log("HEEERE");
+      fetchData();
+    });
+
+
+  }, []);
 
   if (addUsers)
   {
