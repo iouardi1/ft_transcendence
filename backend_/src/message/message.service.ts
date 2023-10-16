@@ -30,7 +30,7 @@ export class MessageService {
   private dmCronState: string = 'off';
   private muteCronState: string = 'off';
 
-  async createMessage(client: Socket, payload: messageDTO, server: Server) {
+  async createMessage(payload: messageDTO, server: Server) {
     console.log(payload);
     const message = await this.prismaService.message.create({
       data: {
@@ -137,14 +137,12 @@ export class MessageService {
                 },
               });
               if (mapy.get(dm.participants[0].userId)) {
+                mapy.get(dm.participants[0].userId).emit("dmDeleted");
                 mapy.get(dm.participants[0].userId).leave(dm.id.toString().concat('dm'));
-                if (dm.participants[0].userId = dm.creatorId)
-                  mapy.get(dm.participants[0].userId).emit("dmDeleted");
               }
               if (mapy.get(dm.participants[1].userId)) {
+                mapy.get(dm.participants[1].userId).emit("dmDeleted");
                 mapy.get(dm.participants[1].userId).leave(dm.id.toString().concat('dm'));
-                if (dm.participants[1].userId = dm.creatorId)
-                  mapy.get(dm.participants[1].userId).emit("dmDeleted");
               }
             }
           },
@@ -155,6 +153,7 @@ export class MessageService {
 
   async createRoom(
     client: Socket,
+    server: Server,
     payload: roomDTO,
     mapy: Map<string, Socket>,
   ) {
@@ -206,7 +205,7 @@ export class MessageService {
       },
     });
     console.log('AFTER BRUH');
-    client.emit('createdRoom', room);
+    server.emit('createdRoom', room);
     client.join(room.id.toString().concat("room"));
   }
 
@@ -331,6 +330,7 @@ export class MessageService {
 
   async roomInviteApproval(
     client: Socket,
+    server: Server,
     payload: roomInviteDTO,
     mapy: Map<string, Socket>,
   ) {
@@ -411,7 +411,8 @@ export class MessageService {
         },
       },
     });
-    client.emit('joinedRoom', room); //emit room to invitee
+    server.to(room.id.toString().concat('room')).emit('joinedRoom', room);
+    //client.emit('joinedRoom', room); //emit room to invitee
 
     const sender = await this.prismaService.user.findUnique({
       where: {
@@ -506,7 +507,7 @@ export class MessageService {
     return { roomMemberId, subject };
   }
 
-  async promoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async promoteUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     console.log('PAYLOAD', payload);
     const data = await this.getRoomMemberId(payload);
 
@@ -522,9 +523,13 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'promotion' };
     this.notifProcessing(mapy, data.subject.userId, info);
+    server.to(payload.roomId.toString().concat('room')).emit('promoted');
+    // client.emit('promoted');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('promoted');
   }
 
-  async demoteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async demoteUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
 
     await this.prismaService.roomMember.update({
@@ -540,9 +545,13 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'demotion' };
     this.notifProcessing(mapy, data.subject.userId, info);
+    server.to(payload.roomId.toString().concat('room')).emit('demoted');
+    // client.emit('demoted');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('demoted');
   }
 
-  async muteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async muteUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
 
     let muteExpiration: Date = new Date();
@@ -561,8 +570,10 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'mute' };
     this.notifProcessing(mapy, data.subject.userId, info);
-    if (mapy.get(data.subject.userId))
-      mapy.get(data.subject.userId).emit('muted');
+    server.to(payload.roomId.toString().concat('room')).emit('muted');
+    // client.emit('muted');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('muted');
 
     //Unmute cron job gets launched once when a user gets muted, and starts running continuously
     if (this.muteCronState == 'off') {
@@ -598,7 +609,9 @@ export class MessageService {
                 });
                 info = { senderId: user.userId, type: 'unmute' };
                 this.notifProcessing(mapy, user.userId, info);
-                mapy.get(user.userId).emit('unmuted');
+                server.to(payload.roomId.toString().concat('room')).emit('unmuted');
+                // client.emit('unmuted');
+                // mapy.get(user.userId).emit('unmuted');
               }
             }
           }),
@@ -607,7 +620,7 @@ export class MessageService {
     }
   }
 
-  async unmuteUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async unmuteUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
 
     await this.prismaService.roomMember.update({
@@ -623,11 +636,13 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'unmute' };
     this.notifProcessing(mapy, data.subject.userId, info);
-    if (mapy.get(data.subject.userId))
-      mapy.get(data.subject.userId).emit('unmuted');
+    server.to(payload.roomId.toString().concat('room')).emit('unmuted');
+    // client.emit('unmuted');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('unmuted');
   }
 
-  async kickUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async kickUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
 
     await this.prismaService.roomMember.delete({
@@ -640,11 +655,15 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'kick' };
     this.notifProcessing(mapy, data.subject.userId, info);
+    server.to(payload.roomId.toString().concat('room')).emit('kicked', data.subject.userId);
     if (mapy.get(data.subject.userId))
-      mapy.get(data.subject.userId).emit('kicked');
+      mapy.get(data.subject.userId).leave(payload.roomId.toString().concat('room'));
+    // client.emit('kicked');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('kicked');
   }
 
-  async banUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async banUser(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
     await this.prismaService.roomMember.delete({
       where: {
@@ -667,11 +686,15 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'ban' };
     this.notifProcessing(mapy, data.subject.userId, info);
+    server.to(payload.roomId.toString().concat('room')).emit('banned', data.subject.userId);
     if (mapy.get(data.subject.userId))
-      mapy.get(data.subject.userId).emit('banned');
+      mapy.get(data.subject.userId).leave(payload.roomId.toString().concat('room'));
+    // client.emit('banned');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('banned');
   }
 
-  async unbanUser(payload: actionDTO, mapy: Map<string, Socket>) {
+  async unbanUser(client: Socket, server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const subject = await this.prismaService.user.findUnique({
       where: {
         userId: payload.subjectId,
@@ -702,11 +725,12 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'unban' };
     this.notifProcessing(mapy, subject.userId, info);
+    server.to(payload.roomId.toString().concat('room')).emit('unbanned');
     if (mapy.get(subject.userId))
       mapy.get(subject.userId).emit('unbanned');
   }
 
-  async OwnershipTransfer(payload: actionDTO, mapy: Map<string, Socket>) {
+  async OwnershipTransfer(server: Server, payload: actionDTO, mapy: Map<string, Socket>) {
     const data = await this.getRoomMemberId(payload);
     await this.prismaService.roomMember.update({
       where: {
@@ -742,27 +766,10 @@ export class MessageService {
 
     info = { senderId: payload.userId, type: 'ownership transfer' };
     this.notifProcessing(mapy, data.subject.userId, info);
-    if (mapy.get(data.subject.userId))
-      mapy.get(data.subject.userId).emit('ownership');
-  }
-
-  async verifyMessageVisibility(
-    client: Socket,
-    senderId: string,
-    mapy: Map<string, Socket>,
-  ) {
-    let userId: string;
-    for (let entry of mapy.entries()) {
-      if (entry[1] == client) userId = entry[0];
-    }
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-    user.blockedUsers.includes(senderId)
-      ? client.emit('blockFeedback', 'display')
-      : client.emit('blockFeedback', 'no display');
+    server.to(payload.roomId.toString().concat('room')).emit('ownership');
+    // client.emit('ownership');
+    // if (mapy.get(data.subject.userId))
+    //   mapy.get(data.subject.userId).emit('ownership');
   }
 
   async blockUser(
@@ -952,8 +959,7 @@ export class MessageService {
     this.notifProcessing(mapy, issuer.userId, info);
   }
 
-  async roomJoinLogic(client: Socket, payload: roomJoinDTO) {
-    client.join(payload.roomId.toString().concat('room'));
+  async roomJoinLogic(client: Socket, server: Server, payload: roomJoinDTO) {
 
     const joiner = await this.prismaService.user.findUnique({
       where: {
@@ -992,10 +998,13 @@ export class MessageService {
         },
       },
     });
-    client.emit('joinedRoom', 'success');
+    // if the above operations fail, make sure the socket leaves this room
+    client.join(payload.roomId.toString().concat('room'));
+    server.to(payload.roomId.toString().concat('room')).emit('joinedRoom', 'success');
+    // client.emit('joinedRoom', 'success');
   }
 
-  async roomJoin(client: Socket, payload: roomJoinDTO) {
+  async roomJoin(server: Server, client: Socket, payload: roomJoinDTO) {
     const roomToJoin = await this.prismaService.room.findUnique({
       where: {
         id: payload.roomId,
@@ -1012,11 +1021,11 @@ export class MessageService {
 
     if (payload.visibility == 'public') {
       console.log('dkhlti hnaa ? (public) :3');
-      this.roomJoinLogic(client, payload);
+      this.roomJoinLogic(client, server, payload);
     } else {
       console.log('dkhlti hnaa ? :3');
       if (roomToJoin.password == payload.password) {
-        this.roomJoinLogic(client, payload);
+        this.roomJoinLogic(client, server, payload);
       } else {
         console.log(roomToJoin.password, payload.password);
         client.emit('joinedRoom', 'failure');
@@ -1024,13 +1033,13 @@ export class MessageService {
     }
   }
 
-  async roomExit(client: Socket, roomId: number, mapy: Map<string, Socket>) {
+  async roomExit(client: Socket, server: Server, roomId: number, mapy: Map<string, Socket>) {
     let userId: string;
 
     for (let entry of mapy.entries()) {
       if (entry[1] == client) userId = entry[0];
     }
-    const user = await this.prismaService.user.findUnique({
+    await this.prismaService.user.findUnique({
       where: {
         userId: userId,
       },
@@ -1048,7 +1057,7 @@ export class MessageService {
       if (room.RoomMembers[i].memberId == userId)
         roomMemberId = room.RoomMembers[i].id;
     }
-    const roomMember = await this.prismaService.roomMember.findUnique({
+    await this.prismaService.roomMember.findUnique({
       where: {
         id: roomMemberId,
       },
@@ -1059,7 +1068,9 @@ export class MessageService {
         id: roomMemberId,
       },
     });
-    client.emit("leftRoom", userId);
+    server.to(roomId.toString().concat('room')).emit("leftRoom", userId);
+    client.leave(roomId.toString().concat('room'));
+    //client.emit("leftRoom", userId);
   }
 
   async fetchState(client: Socket, userId: string) {

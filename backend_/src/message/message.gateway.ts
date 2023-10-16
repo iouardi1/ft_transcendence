@@ -43,18 +43,17 @@ export class MessageGateway
 
   @SubscribeMessage('createRoom')
 async handleAddRoom(
-  @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomDTO,
   ) {
-    this.messageService.createRoom(client, payload, this.mapy);
+    this.messageService.createRoom(client, this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
-    @ConnectedSocket() client: Socket,
     @MessageBody() payload: messageDTO,
   ) {
-    this.messageService.createMessage(client, payload, this.server);
+    this.messageService.createMessage(payload, this.server);
   }
 
   @SubscribeMessage('roomInvite')
@@ -73,12 +72,11 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomInviteDTO,
   ) {
-    this.messageService.roomInviteApproval(client, payload, this.mapy);
+    this.messageService.roomInviteApproval(client, this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('roomInviteRejected')
   async handleRoomInviteRejection(
-    @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomInviteDTO,
   ) {
     this.messageService.roomInviteRejection(payload, this.mapy);
@@ -95,65 +93,57 @@ async handleAddRoom(
   async handlePromotion(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.promoteUser(payload, this.mapy);
+    this.messageService.promoteUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('demote')
   async handleDemotion(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.demoteUser(payload, this.mapy);
+    this.messageService.demoteUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('mute')
   async handleMute(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.muteUser(payload, this.mapy);
+    this.messageService.muteUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('unmute')
   async handleUnmute(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.unmuteUser(payload, this.mapy);
+    this.messageService.unmuteUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('kick')
   async handleKick(
-    @ConnectedSocket() client: Socket,
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.kickUser(payload, this.mapy);
+    this.messageService.kickUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('ban')
   async handleBan(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.banUser(payload, this.mapy);
+    this.messageService.banUser(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('unban')
   async handleUnban(
+    @ConnectedSocket() client: Socket,
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.unbanUser(payload, this.mapy);
+    this.messageService.unbanUser(client, this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('transferOwnership')
   async handleOwnershipTransfer(
     @MessageBody() payload: actionDTO,
   ) {
-    this.messageService.OwnershipTransfer(payload, this.mapy);
-  }
-
-  @SubscribeMessage('verifyMessageVisibility')
-  async handleMessageVisibility(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() senderId: string,
-  ) {
-    this.messageService.verifyMessageVisibility(client, senderId, this.mapy);
+    this.messageService.OwnershipTransfer(this.server, payload, this.mapy);
   }
 
   @SubscribeMessage('changeRoomVisibility')
@@ -206,7 +196,7 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: roomJoinDTO,
   ) {
-    this.messageService.roomJoin(client, payload);
+    this.messageService.roomJoin(this.server, client, payload);
   }
 
   @SubscribeMessage('leaveRoom')
@@ -214,7 +204,7 @@ async handleAddRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() roomId: number,
   ) {
-    this.messageService.roomExit(client, roomId, this.mapy);
+    this.messageService.roomExit(client, this.server, roomId, this.mapy);
   }
 
   afterInit(server: Server) {

@@ -36,6 +36,12 @@ import {
         const userId = body.userId;
         return (await this.httpService.fetchRoomsToJoin(userId));
     }
+
+    @Get('bannedUsers/:id')
+    async fetchBannedUsers(@Param('id', ParseIntPipe) roomId: number) {
+        return (await this.httpService.fetchBannedUsers(roomId));
+    }
+
     @Get('dms')
     async fetchDMs(@Query() body: {userId: string}) {
         const userId = body.userId;

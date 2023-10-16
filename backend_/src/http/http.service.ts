@@ -446,4 +446,26 @@ export class HttpService {
       role: roomMember.role,
     };
   }
+
+  async fetchBannedUsers(roomId: number) {
+    const room = await this.prismaService.room.findUnique({
+      where: {
+        id: roomId,
+      },
+    });
+    const members = await this.prismaService.user.findMany({
+      where: {
+        userId : {
+          in: room.bannedUsers,
+        },
+      },
+      select: {
+        userId: true,
+        username: true,
+        image: true,
+      },
+    });
+    return members;
+    
+  }
 }
