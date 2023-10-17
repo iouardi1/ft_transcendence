@@ -118,7 +118,7 @@ export class MessageService {
 
     if (this.dmCronState == 'off') {
       this.dmCronState = 'on';
-      cron.schedule('* * * * *', async () => {
+      cron.schedule('5 * * * *', async () => {
         console.log('CRON');
         const dms = await this.prismaService.dM.findMany({
           include: {

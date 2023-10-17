@@ -191,7 +191,7 @@ export class HttpService {
           },
           select: {
             userId: true,
-            displayName: true,
+            username: true,
             image: true,
             blockedUsers: true,
           },
