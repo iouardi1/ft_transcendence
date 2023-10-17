@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logoImg from "../assets/panda.svg";
 import { Link, Navigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -119,6 +119,8 @@ const ContactBar = (barData) => {
 
   const navigate = useNavigate();
 
+  const containerRef = useRef(null);
+
   const [dataState, setDataState] = useState(null);
   
   const { search } = useLocation();
@@ -154,6 +156,11 @@ const ContactBar = (barData) => {
     
     socket.on("createdRoom", () =>{
       fetchData();
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+      }, 0);
 
     })
   
@@ -211,6 +218,12 @@ const ContactBar = (barData) => {
     socket.on("createdMessage", () => {
       console.log("CREATED MESSAGE")
       fetchData();
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+      }, 200);
+
     })
 
 
@@ -240,7 +253,8 @@ const ContactBar = (barData) => {
           <div className="w-full h-[10%] border-solid mb-[25px]">
             <ContactBar barData={dataState}/>
           </div>
-          <div className="w-full h-[77%] mt-[25px] flex-wrap overflow-hidden overflow-y-scroll">
+          <div className="w-full h-[77%] mt-[25px] flex-wrap overflow-hidden overflow-y-scroll"
+                ref={containerRef}>
           {
               dataState.msgs.map((msg) => (
               <Mssg key={msg.id} msgData={msg} userId={props.userId} />

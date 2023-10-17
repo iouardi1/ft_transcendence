@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -32,14 +32,34 @@ const ContactBar = (barData) => {
             >
               {barData.barData.participants[0].displayName}
             </div>
-            <button  
+            {/* <div> */}
+            <Link 
+              to="/chat/invitToGame"
+              // to="/chat/dmConv"
+              className="w-[60px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:dark:shadow-lg hover:shadow-lg"
+              >
+                <div className="w-full h-full text-white text-center mt-[5px]"
+                style={{
+                  fontFamily: "poppins",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 600,
+                  lineHeight: "normal",
+                  letterSpacing: "0.13px",
+                  }}>
+
+                  Play
+                </div>
+              </Link>
+            {/* </div> */}
+            {/* <button  
               onClick={handleBlock}
               className={`flex items-center justify-center bg-[#6F37CF] hover:bg-[#4e1ba7] text-white font-bold h-[25px] w-[25px] rounded-full m-[10px] mr-[15px]`} style={{
                   fontFamily: "Roboto",
                   fontSize: "25px",
                  textAlign : "center",
                 }}>  + 
-                </button>
+                </button> */}
           
           
           </div>
@@ -118,55 +138,58 @@ const ContactBar = (barData) => {
 
     const [message, setMessage] = useState('');
     useEffect(() => {
-    const fetchData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3003/chat/dms/${receivedData}`, {
-        params: {
-          userId: props.userId,
-        }
-      });
-      if (response.status === 200) {
-        setDataState(response.data);
-    }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-      fetchData();
-      socket.on("dmDeleted", () => {
-        console.log("blocked BITCH");
-        const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
-        if(window.location.href === path)
-        {
-          navigate('/chat' , {replace: true});
-
-        }
-      })
-      socket.on("blocked", () => {
-        console.log("blocked BITCH");
-        const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
-        if(window.location.href === path)
-        {
-          navigate('/chat' , {replace: true});
-
-        }
-      })
-      socket.on("unblocked", () =>{
-        fetchData();
-      })
-      
-      socket.on("createdMessage", (message: any) => {
-        console.log("DM BITCH", message);
-        fetchData();
-        // Wait for the DOM to update after fetchData is complete
-        setTimeout(() => {
-          if (containerRef.current) {
-            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      if (receivedData)
+      {
+      const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3003/chat/dms/${receivedData}`, {
+          params: {
+            userId: props.userId,
           }
-        }, 0);
+        });
+        if (response.status === 200) {
+          setDataState(response.data);
+      }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-      })
+        fetchData();
+        socket.on("dmDeleted", () => {
+          console.log("blocked BITCH");
+          const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
+          if(window.location.href === path)
+          {
+            navigate('/chat' , {replace: true});
+
+          }
+        })
+        socket.on("blocked", () => {
+          console.log("blocked BITCH");
+          const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
+          if(window.location.href === path)
+          {
+            navigate('/chat' , {replace: true});
+
+          }
+        })
+        socket.on("unblocked", () =>{
+          fetchData();
+        })
+        
+        socket.on("createdMessage", (message: any) => {
+          console.log("DM BITCH", message);
+          fetchData();
+          // Wait for the DOM to update after fetchData is complete
+          setTimeout(() => {
+            if (containerRef.current) {
+              containerRef.current.scrollTop = containerRef.current.scrollHeight;
+            }
+          }, 200);
+
+        })
+      }
     
   }, []);
 
@@ -182,7 +205,7 @@ const ContactBar = (barData) => {
   if (dataState)
   {
       return (
-          <div
+          <div key={receivedData}
           className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
         ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex flex-wrap dark:border-[#272932] dark:bg-[#272932]"
         >
@@ -190,14 +213,14 @@ const ContactBar = (barData) => {
               <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
             </div>
             <div 
-              ref={containerRef}
-              className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll ">
+              className="w-full h-[80%] flex-wrap overflow-hidden overflow-y-scroll "
+                ref={containerRef}>
             {
               
-              dataState.dm.msg.map((element) => (
-                 <Mssg key={element.id} msgData={element} userId={props.userId} />
-              ))
-            }
+                dataState.dm.msg.map((element) => (
+                <Mssg key={element.id} msgData={element} userId={props.userId} />
+                ))
+              }
 
             </div>
             <div className="w-[90%] h-[50px] border-none flex  m-auto items-center">

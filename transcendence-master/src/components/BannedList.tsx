@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 const UnbanButton = (props) => {
@@ -98,6 +98,7 @@ function BannedList (props:any)
 {
     const socket = props.socket;
 
+    const navigate = useNavigate();
   
   const { search } = useLocation();
   const params = new URLSearchParams(search);
@@ -128,8 +129,16 @@ function BannedList (props:any)
             fetchData();
         })
 
-        socket.on('banned', () => {
-            fetchData();
+        socket.on('banned', (bannedId: string) => {
+          if (props.userId === bannedId)
+            {
+                console.log("HUNAAAA2");
+                navigate('/chat', {replace: true});
+            }
+            else
+            {
+                fetchData();
+            }
         })
     }, []);
 

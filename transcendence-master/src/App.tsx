@@ -55,7 +55,8 @@ function App() {
       setSocket(socketInstance);
     }
     
-      const currentUrl = window.location.href;
+      
+      const key = location.pathname;
     return (
       <BrowserRouter> 
         <div className={`${darkMode ? "dark" : ""}`}>
@@ -65,7 +66,7 @@ function App() {
               <VertNav open={open} />
               <div className={`${open ? " bg-[#EEEEFF] dark:bg-[#1A1C26] sm:w-custom-width h-full flex z-0 items" : ""} bg-[#EEEEFF] dark:bg-[#1A1C26] w-full h-full flex z-0`}
                 >
-                  <Routes>
+                  <Routes location={location} key={key}>
                     {/* <Route path="home" element={<Comp name="home"/>}/> */}
                     {/* <Route path="chat" element={<Comp name="chat"/>}/> */}
                     <Route path="play" element={<FindGame />} />

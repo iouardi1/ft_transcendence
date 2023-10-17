@@ -17,13 +17,14 @@ const JoinRoomButton = (props: any) => {
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the form from submitting traditionally
 
+    setIsButtonDisabled(true);
     if (props.group.visibility === 'protected') {
       props.socket.emit('joinRoom', {visibility: "protected", password: password, roomId: props.group.id, userId: props.userId, joinDate: new Date()})
     } else {
       props.socket.emit('joinRoom', {visibility: "public", password: password, roomId: props.group.id, userId: props.userId, joinDate: new Date()})
     }
+    setIsButtonDisabled(false);
     
-    setIsButtonDisabled(true);
   };
 
   return (

@@ -137,6 +137,22 @@ export default function invToRoom (props) {
         console.log("banned BITCH");
         fetchData();
       })
+      socket.on("unbanned", () => {
+        console.log("banned BITCH");
+        fetchData();
+      })
+      socket.on("kicked", () => {
+        console.log("banned BITCH");
+        fetchData();
+      })
+      socket.on("leftRoom", () => {
+        console.log("banned BITCH");
+        fetchData();
+      })
+      socket.on("joinedRoom", () => {
+        console.log("banned BITCH");
+        fetchData();
+      })
 
       //need to listen to a new event if user has joined room on his own
   }, []);

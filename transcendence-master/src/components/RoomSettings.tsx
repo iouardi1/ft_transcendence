@@ -362,18 +362,9 @@ const ParticipantUser = (props) => {
 
 const ParticipantsNumber = (props) => {
 
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    if (props.roomState.role !== "OWNER")
-    {
-        console.log("To leave room", props);
-        props.socket.emit("leaveRoom", props.roomState.room.id);
-    }
-    setIsButtonDisabled(true);
-  };
 
   console.log("participantsNum: ", props);
+  const [display, setDisplay] = useState(true);
 
   const encodedData = encodeURIComponent(props.roomState.room.id);
   if (encodedData)
@@ -407,6 +398,7 @@ const ParticipantsNumber = (props) => {
             {props.roomState.participants.length}
 
             </div>
+            {props.roomState.role !== "USER" && (
                 <div>
                     <Link to={`/chat/bannedUsers/?id=${encodedData}`}>
                         <img 
@@ -416,24 +408,32 @@ const ParticipantsNumber = (props) => {
     
                     </Link>
                 </div>
-            <div className=" w-[90px] h-[30px] flex justify-center items-center">
-                <button 
-                type='submit'
-                disabled={isButtonDisabled}
-                onClick= { handleSubmit }
-                className={`w-[60px] h-[30px] bg-[#D7385E]  text-white rounded-[25%] hover:shadow-lg dark:shadow-[0_25px_5px_-15px_rgba(60,0,50,0.3)] ${isButtonDisabled ? 'opacity-[50%] hover:shadow-none' : 'enabled-button'}`}
-                style={{
-                    fontFamily: "poppins",
-                    fontSize: "14px",
-                    fontStyle: "normal",
-                    fontWeight: 600,
-                    lineHeight: "normal",
-                    letterSpacing: "0.13px",
-                }}
-                >
-                Leave
+            )}
+            
+            {props.roomState.role === "OWNER" && (
+            <div>
+                <button onClick={() => {setDisplay(!display)}}
+                className={`flex items-center justify-center w-[25px] rounded-full ${!display ? "mt-[26px]" : ""}`}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" 
+                    fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.94 4.99939L19.001 10.0604L18.0394 11.022C17.8618 11.0074 17.6823 11 17.501 11C13.9111 11 11.001 13.9101 11.001 17.5C11.001 17.6813 11.0084 17.8608 11.023 18.0384L9.06283 19.9985C8.78596 20.2753 8.44162 20.4752 8.06386 20.5782L2.94817 21.9734C2.38829 22.1261 1.87456 21.6123 2.02726 21.0525L3.42244 15.9368C3.52547 15.559 3.7253 15.2147 4.00217 14.9378L13.94 4.99939ZM21.0312 2.96948C22.4286 4.36695 22.4286 6.63268 21.0312 8.03014L20.061 8.99939L15 3.93939L15.9705 2.96948C17.368 1.57202 19.6337 1.57202 21.0312 2.96948ZM14.2792 13.9754C14.5939 15.0656 13.9396 16.1991 12.838 16.4716L12.2538 16.6161C12.2089 16.9038 12.1855 17.199 12.1855 17.4998C12.1855 17.8145 12.2111 18.123 12.2601 18.4232L12.7996 18.5532C13.9121 18.8211 14.5734 19.9661 14.2496 21.0636L14.0633 21.6949C14.5024 22.0805 15.0029 22.3937 15.5474 22.6165L16.0407 22.0977C16.8293 21.2685 18.1515 21.2687 18.9398 22.0982L19.4385 22.623C19.9821 22.4027 20.4821 22.0925 20.9213 21.7101L20.7233 21.0242C20.4085 19.9339 21.0629 18.8005 22.1645 18.528L22.7482 18.3835C22.7931 18.0958 22.8165 17.8006 22.8165 17.4998C22.8165 17.1851 22.7909 16.8765 22.7418 16.5762L22.2029 16.4464C21.0904 16.1785 20.4291 15.0335 20.7529 13.9359L20.9391 13.3051C20.4999 12.9193 19.9995 12.6061 19.4549 12.3833L18.9618 12.9018C18.1732 13.7311 16.8509 13.7309 16.0627 12.9013L15.5639 12.3765C15.0203 12.5967 14.5204 12.9068 14.0811 13.2892L14.2792 13.9754ZM17.501 18.9998C16.7004 18.9998 16.0513 18.3282 16.0513 17.4998C16.0513 16.6714 16.7004 15.9998 17.501 15.9998C18.3016 15.9998 18.9507 16.6714 18.9507 17.4998C18.9507 18.3282 18.3016 18.9998 17.501 18.9998Z" fill="#8F8F8F"/>
+                    </svg>
                 </button>
+                <div className={`${display ? "hidden" : ""} w-[150px] z-10 flex items-center bg-[#EEEEFF] dark:bg-[#1A1C26] dark:text-white rounded-[15px] text-black shadow-xl  dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]`}>
+                    <ul 
+                    className='w-full flex flex-col items-center text-center'
+                    style={{
+                        fontFamily: "poppins",
+                        fontSize: "15px",
+                        fontWeight: 300,
+                    }}>
+                      <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                        <button onClick={() => setDisplay(true)}>Change Password</button>
+                      </li>
+                    </ul>    
+                  </div>
             </div>
+            )}
         </div>
         <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
     </div>
@@ -452,64 +452,35 @@ const RoomSettings = (props) => {
     const receivedData = params.get('id');
 
     const [roomState, setRoomState] = useState(null);
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
     
     useEffect(() => {
         const fetchData = async () => {
             try {
             const response = await axios.get(`http://localhost:3003/chat/roomSettings/${receivedData}`, {
                 params: {
-                userId: userId,
+                    userId: userId,
                 }
             });
             if (response.status === 200) {
                 setRoomState(response.data);
             }
-            } catch (error) {
+        } catch (error) {
             console.error('Error fetching data:', error);
-            }
-        };
-          fetchData();
-        
-        socket.on("joinedRoom", () => {
+        }
+    };
+    fetchData();
+    
+    socket.on("joinedRoom", () => {
             console.log("HUNAAAA");
             fetchData();
             // navigate('/chat');
         })
-        socket.on("banned", () => {
-            console.log("HUNAAAA");
-            navigate('/chat' , {replace: true});
-        })
-        socket.on("muted", () => {
-                fetchData();
-        })
-        socket.on("unmuted", () => {
-                fetchData();
-        })
-        socket.on("promoted", () => {
-                fetchData();
-        })
-        socket.on("demoted", () => {
-                fetchData();
-        })
-        socket.on("ownership", () => {
-                fetchData();
-        })
-        socket.on("leftRoom", (left: string) => {
-            if (userId === left)
-            {
-                console.log("HUNAAAA2");
-                navigate('/chat', {replace: true});
-            }
-            else
-            {
-                fetchData();
-            }
-
-        })
-        socket.on('kicked', (kickedId: string) =>
+        socket.on("banned", (bannedId: string) => 
         {
-            console.log("HUNAAAA1");
-            if (userId === kickedId)
+            if (userId === bannedId)
             {
                 console.log("HUNAAAA2");
                 navigate('/chat', {replace: true});
@@ -520,16 +491,66 @@ const RoomSettings = (props) => {
                 fetchData();
             }
         })
-
+        socket.on("muted", () => {
+            fetchData();
+        })
+        socket.on("unmuted", () => {
+            fetchData();
+        })
+        socket.on("promoted", () => {
+                fetchData();
+            })
+            socket.on("demoted", () => {
+                fetchData();
+            })
+            socket.on("ownership", () => {
+                fetchData();
+            })
+            socket.on("leftRoom", (left: string) => {
+                if (userId === left)
+                {
+                    console.log("HUNAAAA2");
+                    navigate('/chat', {replace: true});
+                }
+                else
+                {
+                    fetchData();
+                }
+                
+            })
+            socket.on('kicked', (kickedId: string) =>
+            {
+                console.log("HUNAAAA1");
+                if (userId === kickedId)
+                {
+                    console.log("HUNAAAA2");
+                    navigate('/chat', {replace: true});
+                }
+                else
+                {
+                    console.log("HUNAAAA3");
+                    fetchData();
+                }
+            })
+            
         }, []);
-
-    
-    if (roomState)
-    {
-        // console.log("roomStte: ", roomState);
-        return (
-            <div
-            className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
+        
+        
+        
+        if (roomState)
+        {
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (roomState.role !== "OWNER")
+                {
+                    socket.emit("leaveRoom", roomState.room.id);
+                    setIsButtonDisabled(true);
+                }
+            };
+            // console.log("roomStte: ", roomState);
+            return (
+                <div
+                className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
             ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex-wrap dark:border-[#272932] dark:bg-[#272932]"
             >
                 <div className='w-full h-full flex-wrap'>
@@ -588,6 +609,44 @@ const RoomSettings = (props) => {
                     }
                     </div>
                 </div>
+                    <div className=" w-full h-[10%] flex justify-center items-start mt-[-50px]">
+                        {roomState.role !== "OWNER" && (
+                            <button 
+                            type='submit'
+                            disabled={isButtonDisabled}
+                            onClick= { handleSubmit }
+                            className={`w-[60px] h-[30px] bg-[#D7385E]  text-white rounded-[25%] hover:shadow-lg dark:shadow-[0_25px_5px_-15px_rgba(60,0,50,0.3)] ${isButtonDisabled ? 'opacity-[50%] hover:shadow-none' : 'enabled-button'}`}
+                            style={{
+                                fontFamily: "poppins",
+                                fontSize: "14px",
+                                fontStyle: "normal",
+                                fontWeight: 600,
+                                lineHeight: "normal",
+                                letterSpacing: "0.13px",
+                            }}
+                            >
+                            Leave
+                            </button>
+                        )}
+                        {roomState.role === "OWNER" && (
+                            <button 
+                            type='submit'
+                            disabled={roomState.role === "OWNER"}
+                            onClick= { handleSubmit }
+                            className={`w-[60px] h-[30px] bg-[#D7385E]  text-white rounded-[25%] hover:shadow-lg dark:shadow-[0_25px_5px_-15px_rgba(60,0,50,0.3)] opacity-[50%] hover:shadow-none`}
+                            style={{
+                                fontFamily: "poppins",
+                                fontSize: "14px",
+                                fontStyle: "normal",
+                                fontWeight: 600,
+                                lineHeight: "normal",
+                                letterSpacing: "0.13px",
+                            }}
+                            >
+                            Leave
+                            </button>
+                        )}
+                    </div>
             </div>
         );
     }

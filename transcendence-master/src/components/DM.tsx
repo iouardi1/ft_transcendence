@@ -25,9 +25,9 @@ const DMComp = (props) => {
     {
 
       return (
-        <Link 
-        to={`/chat/dmConv/?id=${encodedData}`}>
         <div className="icon w-full h-[40px] mb-[15px] flex-wrap">
+          <Link 
+          to={`/chat/dmConv/?id=${encodedData}`}>
           <div className="icon w-full h-[40px] mb-[15px] flex justify-between">
             <div className="w-[70%] h-full ">
               <img
@@ -47,7 +47,7 @@ const DMComp = (props) => {
                   letterSpacing: "0.75px",
                 }}
               >
-                {props.dmData[2][0].displayName}
+                {props.dmData[2][0].username}
               </div>
               <div
                 className="groupMsg text-black dark:text-white w-[70%] mt-[-40px] ml-[45px] overflow-hidden  whitespace-nowrap"
@@ -79,8 +79,8 @@ const DMComp = (props) => {
             </div>
           </div>
           <hr className=" w-[90%] h-[1px] my-[-9px] bg-[#2C2C2CBD] opacity-[15%] border-0  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
-        </div>
         </Link>
+        </div>
       );
     }
   };

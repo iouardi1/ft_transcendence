@@ -65,6 +65,9 @@ function CreateRoom(props: any) {
       image: imageBase64, 
       password: password,
     });
+    setIsButtonDisabled(false);
+    setClicked("");
+    e.target.reset();
   }
 
   const maxLength = 15;
@@ -122,7 +125,7 @@ function CreateRoom(props: any) {
             
               <input 
                 required
-                className="form-input w-[55%] file:w-[100%] file:h-[40px] file:border-none file:text-[#8F8F8F] file:dark:text-white file:rounded-[25px] file:dark:bg-[#403F43] file:bg-[#EEEEFF] file:dark:hover:bg-[#6F37CF] file:p-[5px] "
+                className="form-input w-[55%] file:w-[100%] file:h-[40px] file:border-none file:text-[#8F8F8F] file:dark:text-white file:rounded-[25px] file:dark:bg-[#403F43] file:bg-[#EEEEFF] file:p-[5px] "
                 style={{
                   fontFamily: "poppins",
                   fontSize: "15px",

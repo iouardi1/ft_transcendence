@@ -1,12 +1,7 @@
 tomorrow's tasks nchaelah:
 
-
-    - test socket listens in suggestions AND room settings AND bannedUsers list
-    - banned users list (ONLY FOR OWNER AND ADMINS)
-    - Dashboard kick/ban problems
-    - text scroll (dm/rooms)
-    - Play button
-    - for created room once submitted re render new page
-    - join room, joining multiple rooms in succession blocks out some buttons
+    - change/remove room password for OWNER AND room has to be protected
+    - access profiles through chat interface
+    -youssef username length
     
     and we be done nchaelah
