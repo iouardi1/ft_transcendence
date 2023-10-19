@@ -2,7 +2,7 @@
 import { useLocation } from "react-router-dom";
 import logoImg from "../assets/panda.svg";
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import BannedUsers from './../assets/userBanned.svg';
@@ -363,12 +363,38 @@ const ParticipantUser = (props) => {
 const ParticipantsNumber = (props) => {
 
 
-  console.log("participantsNum: ", props);
-  const [display, setDisplay] = useState(true);
+    
+    const encodedData = encodeURIComponent(props.roomState.room.id);
+    if (encodedData)
+    {
+      console.log("participantsNum: ", props);
+      const [display, setDisplay] = useState(true);
 
-  const encodedData = encodeURIComponent(props.roomState.room.id);
-  if (encodedData)
-  {
+      const formRef = useRef(null);
+    
+    
+      const [inputValue, setInputValue] = useState('');
+    
+      const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+      };
+    
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        props.socket.emit("changePassword", [props.roomState.room.id , inputValue]);
+        setInputValue('');
+      };
+    
+      const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+          // Trigger form submission when the Enter key is pressed
+          handleSubmit(e);
+          setDisplay(true);
+        }
+    
+      };
+      const maxLength = 15;
+
     return (
         <div className='w-full h-full flex-wrap justify-center'>
         <div className='w-full h-full flex justify-around items-center'>
@@ -410,7 +436,7 @@ const ParticipantsNumber = (props) => {
                 </div>
             )}
             
-            {props.roomState.role === "OWNER" && (
+            {props.roomState.role === "OWNER" && props.roomState.room.visibility == "protected" &&(
             <div>
                 <button onClick={() => {setDisplay(!display)}}
                 className={`flex items-center justify-center w-[25px] rounded-full ${!display ? "mt-[26px]" : ""}`}>
@@ -427,8 +453,21 @@ const ParticipantsNumber = (props) => {
                         fontSize: "15px",
                         fontWeight: 300,
                     }}>
-                      <li className='w-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
-                        <button onClick={() => setDisplay(true)}>Change Password</button>
+                      <li className='w-full h-full rounded-[15px] hover:text-white hover:bg-[#6F37CF]'>
+                        <form ref={formRef} onSubmit={handleSubmit} className="w-full h-full rounded-[15px]">
+                                <input
+                                    type="password"
+                                    placeholder="change password"
+                                    maxLength={maxLength}
+                                    value={inputValue}
+                                    onChange={handleInputChange}
+                                    onKeyPress={handleKeyPress}
+                                    className="
+                                    w-full h-full bg-[#EEEEFF] dark:bg-[#1A1C26] dark:text-white text-center"
+                                />
+                                <button type="submit" style={{ display: 'none' }}></button>
+                            </form>
+                        {/* <button onClick={() => setDisplay(true)}>Change Password</button> */}
                       </li>
                     </ul>    
                   </div>

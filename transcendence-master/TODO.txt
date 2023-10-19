@@ -1,7 +1,7 @@
 tomorrow's tasks nchaelah:
 
-    - change/remove room password for OWNER AND room has to be protected
     - access profiles through chat interface
-    -youssef username length
+    - Routes issue
     
     and we be done nchaelah
+
