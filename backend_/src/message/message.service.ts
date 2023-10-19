@@ -209,14 +209,13 @@ export class MessageService {
     client.join(room.id.toString().concat("room"));
   }
 
-  async changeRoomVisibility(visibilityPair: [number, string, string]) {
+  async changePassword(info: [number, string]) {
     await this.prismaService.room.update({
       where: {
-        id: visibilityPair[0],
+        id: info[0],
       },
       data: {
-        visibility: visibilityPair[1],
-        password: visibilityPair[2] ? visibilityPair[2] : null,
+        password: info[1],
       },
     });
   }

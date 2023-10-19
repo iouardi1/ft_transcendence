@@ -146,11 +146,11 @@ async handleAddRoom(
     this.messageService.OwnershipTransfer(this.server, payload, this.mapy);
   }
 
-  @SubscribeMessage('changeRoomVisibility')
-  async handleRoomVisibility(
-    @MessageBody() visibilityObject: [number, string, string],
+  @SubscribeMessage('changePassword')
+  async handleRoomPasswordChange(
+    @MessageBody() info: [number, string],
   ) {
-    this.messageService.changeRoomVisibility(visibilityObject);
+    this.messageService.changePassword(info);
   }
 
   @SubscribeMessage('blockUser')
