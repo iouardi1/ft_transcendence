@@ -4,6 +4,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 
 const ContactBar = (barData) => {
@@ -128,13 +129,20 @@ const ContactBar = (barData) => {
   const receivedData = params.get('id');
   
   const [message, setMessage] = useState('');
+
+  const token = Cookies.get('accessToken');
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:3003/chat/groups/${receivedData}`, {
           params: {
             userId: props.userId,
-          }
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (response.status === 200) {
           setDataState(response.data);

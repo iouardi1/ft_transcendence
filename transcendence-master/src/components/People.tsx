@@ -2,11 +2,13 @@ import DMComp from './DM.tsx';
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 function DMsComponent (props:any)
 {
   console.log("props in People:", props);
     const [dmData, setDmData] = useState(null);
+    const token = Cookies.get('accessToken');
 
   useEffect(() => {
   const fetchData = async () => {
@@ -14,7 +16,10 @@ function DMsComponent (props:any)
       const response = await axios.get('http://localhost:3003/chat/dms', {
         params: {
           userId: props.userId,
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         setDmData(response.data)

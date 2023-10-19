@@ -1,7 +1,7 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
 const DmRoomButton = (props) => {
@@ -96,13 +96,19 @@ export default function AddPeople (props) {
   const socket = props.socket;
   const userId = props.userId;
   const [addUsers, setAddUsers] = useState(null);
+
+  const token = Cookies.get('accessToken');
+
   useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:3003/chat/addPeople', {
         params: {
           userId: props.userId,
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         setAddUsers(response.data)

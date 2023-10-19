@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import BannedUsers from './../assets/userBanned.svg';
+import Cookies from 'js-cookie';
 
 
 const GroupBar = (props) => {
@@ -494,6 +495,8 @@ const RoomSettings = (props) => {
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+    const token = Cookies.get('accessToken');
+
     
     useEffect(() => {
         const fetchData = async () => {
@@ -501,7 +504,10 @@ const RoomSettings = (props) => {
             const response = await axios.get(`http://localhost:3003/chat/roomSettings/${receivedData}`, {
                 params: {
                     userId: userId,
-                }
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
             });
             if (response.status === 200) {
                 setRoomState(response.data);

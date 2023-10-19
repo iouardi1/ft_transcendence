@@ -97,3 +97,18 @@ function App() {
 }
 
 export default App;
+
+
+// if (token) {
+//   const response = await axios.post(
+//     "http://localhost:3003/auth/data", // Replace with your API endpoint
+//     {
+//       id: props.match.opponentId,
+//     },
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     }
+  // );

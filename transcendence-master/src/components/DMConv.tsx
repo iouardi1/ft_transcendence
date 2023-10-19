@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import Cookies from 'js-cookie';
 
 
 const ContactBar = (barData) => {
@@ -135,6 +135,7 @@ const ContactBar = (barData) => {
     const params = new URLSearchParams(search);
     const receivedData = params.get('id');
 
+    const token = Cookies.get('accessToken');
 
     const [message, setMessage] = useState('');
     useEffect(() => {
@@ -145,7 +146,10 @@ const ContactBar = (barData) => {
         const response = await axios.get(`http://localhost:3003/chat/dms/${receivedData}`, {
           params: {
             userId: props.userId,
-          }
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (response.status === 200) {
           setDataState(response.data);

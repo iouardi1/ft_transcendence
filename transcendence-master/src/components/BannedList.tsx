@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 
 const UnbanButton = (props) => {
@@ -104,13 +105,19 @@ function BannedList (props:any)
   const params = new URLSearchParams(search);
   const receivedData = params.get('id');
 
+  const token = Cookies.get('accessToken');
+
 
   console.log("oprps in banned list", props);
     const [banData, setBanData] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get(`http://localhost:3003/chat/bannedUsers/${receivedData}`);
+            const response = await axios.get(`http://localhost:3003/chat/bannedUsers/${receivedData}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             if (response.status === 200) {
                 setBanData(response.data)
               

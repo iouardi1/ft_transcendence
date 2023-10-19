@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
 const InvToRoomButton = (props) => {
@@ -107,13 +107,18 @@ export default function invToRoom (props) {
 
   const [dataState, setDataState] = useState(null);
 
+  const token = Cookies.get('accessToken');
+
   useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:3003/chat/invToRoom/${receivedData}`, {
         params: {
           userId: userId,
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         setDataState(response.data);
@@ -151,6 +156,10 @@ export default function invToRoom (props) {
       })
       socket.on("joinedRoom", () => {
         console.log("banned BITCH");
+        fetchData();
+      })
+      socket.on("resetRoomInvite", () => {
+        console.log("reset BITCH");
         fetchData();
       })
 

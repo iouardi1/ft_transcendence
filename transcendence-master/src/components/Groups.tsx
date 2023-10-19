@@ -1,25 +1,35 @@
-import React, { useState, useEffect} from 'react';
+import { useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import Group from './Group.tsx';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+
 
 function GroupsComponent(props:any) {
 
   const userId = props.userId;
   const [convData, setConvData] = useState(null);
+  const token = Cookies.get('accessToken');
+
   useEffect(() => {
   const fetchData = async () => {
+    if (token)
+    {
     try {
       const response = await axios.get('http://localhost:3003/chat/groups', {
         params: {
           userId: props.userId,
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         setConvData(response.data)
     }
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
     }
   };
 

@@ -1,6 +1,7 @@
 import logoImg from "../assets/panda.svg";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 
 const JoinRoomButton = (props: any) => {
@@ -111,7 +112,8 @@ function ExistinRoom(props: any) {
 
 export default function JoinRoom(props: any) {
   const userId = props.userId;
-  const [rooms, setRooms] = useState(null); 
+  const [rooms, setRooms] = useState(null);
+  const token = Cookies.get('accessToken');
 
   useEffect(() => {
   const fetchData = async () => {
@@ -119,7 +121,10 @@ export default function JoinRoom(props: any) {
       const response = await axios.get('http://localhost:3003/chat/groupsList', {
         params: {
           userId: props.userId,
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status === 200) {
         setRooms(response.data);
