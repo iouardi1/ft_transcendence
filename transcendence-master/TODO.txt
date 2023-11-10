@@ -1,7 +1,0 @@
-tomorrow's tasks nchaelah:
-
-    - access profiles through chat interface
-    - Routes issue
-    
-    and we be done nchaelah
-
