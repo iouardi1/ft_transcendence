@@ -1,24 +1,25 @@
-We had an amazing time on our website, where users enjoyed playing Pong together. We crafted a sleek user interface, introduced a chat feature, and hosted real-time multiplayer online games! Our journey followed these guidelines:
+ft_transcendence
+ft_transcendence is a real-time multiplayer Pong game web application that brings players together for fast-paced, dynamic gameplay. The project is designed to be engaging, offering a seamless user interface, integrated chat features, and an interactive multiplayer experience. With a strong backend and a visually appealing frontend, players can connect, challenge each other, and communicate in real time.
 
-- Our backend was crafted with NestJS, ensuring a solid foundation.
-- For the frontend, we embraced a TypeScript framework, adding our touch of creativity.
-- Embracing libraries of our choice, we made sure to stay current with the latest stable versions.
-- PostgreSQL became our database of choice; simplicity and efficiency in one.
-- Our website, a dynamic single-page application, allowed users to navigate seamlessly with the Back and Forward buttons.
-- Compatibility was key, ensuring a smooth experience on the latest versions of Google Chrome and another browser of our choice.
-- The user's journey was error-free and warning-free, creating a hassle-free browsing experience.
-- Launching everything with a single call: docker-compose up --build.
-
-In addition, we delved into creating a vibrant chat experience:
-
-- Users could create public, private, or password-protected chat rooms, shaping their interaction.
-- Direct messages flowed effortlessly between users, fostering connections.
-- Users had the power to block others, tailoring their chat experience.
-- Channel creators automatically became owners, with the ability to set passwords and manage access.
-- Channel owners, also administrators, had the authority to appoint other administrators.
-- Administrators could manage user interactions within the channel.
-- Playing Pong and connecting took a new turn with the ability to invite others through the chat interface.
-- Exploring other players' profiles became a seamless part of the chat experience.
+Key Features
+Real-Time Multiplayer Pong: Play the classic Pong game with others in real-time, with a sleek, minimalist interface.
+Chat Functionality:
+Public and Private Chat Rooms: Create and join rooms with flexible privacy settings, including password protection.
+Direct Messages: Effortlessly send and receive messages between users.
+User Blocking: Customize your experience by blocking unwanted players.
+Room Administration: Channel creators are automatically assigned as owners with full control over access and permissions. Administrators can be appointed for better user management.
+Game Invitations: Invite players to join games directly from the chat interface.
+Profile Exploration: View other players' profiles and connect based on mutual interests.
+Tech Stack
+Backend: Built with NestJS, a progressive Node.js framework for building scalable and efficient server-side applications.
+Frontend: Developed using TypeScript and a modern JavaScript framework, delivering an interactive, responsive experience.
+Database: PostgreSQL for data storage, ensuring simplicity, efficiency, and scalability.
+Real-time Communication: WebSockets for real-time game interaction and chat functionality.
+Docker: The entire project is containerized and can be run easily with docker-compose up --build.
+Features in Detail
+Seamless Navigation: The website is a dynamic single-page application, allowing users to switch between pages without full reloads. Back and Forward buttons work seamlessly for easy navigation.
+Cross-Browser Compatibility: The application has been optimized for the latest versions of Google Chrome and [another browser of your choice].
+Error-Free Experience: The platform provides an intuitive and error-free user experience, ensuring that users can focus on playing and chatting.
 
 ![addDmDark](https://github.com/iouardi1/ft_transcendence/assets/93824928/95761d1f-fe28-4c0b-93a3-f4634201b189)
 
