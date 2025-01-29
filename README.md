@@ -1,6 +1,6 @@
 # ft_transcendence
 
-## 
+
 is a real-time multiplayer Pong game web application that brings players together for fast-paced, dynamic gameplay. The project is designed to be engaging, offering a seamless user interface, integrated chat features, and an interactive multiplayer experience. With a strong backend and a visually appealing frontend, players can connect, challenge each other, and communicate in real time.
 
 ## Key Features
