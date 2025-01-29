@@ -1,6 +1,7 @@
 # ft_transcendence
 
 
+
 ### ft_transcendence 
 is a real-time multiplayer Pong game web application that brings players together for fast-paced, dynamic gameplay. The project is designed to be engaging, offering a seamless user interface, integrated chat features, and an interactive multiplayer experience. With a strong backend and a visually appealing frontend, players can connect, challenge each other, and communicate in real time.
 
@@ -26,6 +27,8 @@ Features in Detail
 Seamless Navigation: The website is a dynamic single-page application, allowing users to switch between pages without full reloads. Back and Forward buttons work seamlessly for easy navigation.
 Cross-Browser Compatibility: The application has been optimized for the latest versions of Google Chrome and [another browser of your choice].
 Error-Free Experience: The platform provides an intuitive and error-free user experience, ensuring that users can focus on playing and chatting.
+
+
 
 ![addDmDark](https://github.com/iouardi1/ft_transcendence/assets/93824928/95761d1f-fe28-4c0b-93a3-f4634201b189)
 
