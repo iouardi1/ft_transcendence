@@ -1,17 +1,22 @@
 # ft_transcendence
+
+
 ### ft_transcendence 
 is a real-time multiplayer Pong game web application that brings players together for fast-paced, dynamic gameplay. The project is designed to be engaging, offering a seamless user interface, integrated chat features, and an interactive multiplayer experience. With a strong backend and a visually appealing frontend, players can connect, challenge each other, and communicate in real time.
 
 ## Key Features
-Real-Time Multiplayer Pong: Play the classic Pong game with others in real-time, with a sleek, minimalist interface.
-Chat Functionality:
-Public and Private Chat Rooms: Create and join rooms with flexible privacy settings, including password protection.
-Direct Messages: Effortlessly send and receive messages between users.
-User Blocking: Customize your experience by blocking unwanted players.
+### Real-Time Multiplayer Pong: 
+Play the classic Pong game with others in real-time, with a sleek, minimalist interface.
+
+### Chat Functionality:
+#### Public and Private Chat Rooms: Create and join rooms with flexible privacy settings, including password protection.
+#### Direct Messages: Effortlessly send and receive messages between users.
+#### User Blocking: Customize your experience by blocking unwanted players.
 Room Administration: Channel creators are automatically assigned as owners with full control over access and permissions. Administrators can be appointed for better user management.
 Game Invitations: Invite players to join games directly from the chat interface.
 Profile Exploration: View other players' profiles and connect based on mutual interests.
-Tech Stack
+
+## Tech Stack
 Backend: Built with NestJS, a progressive Node.js framework for building scalable and efficient server-side applications.
 Frontend: Developed using TypeScript and a modern JavaScript framework, delivering an interactive, responsive experience.
 Database: PostgreSQL for data storage, ensuring simplicity, efficiency, and scalability.
